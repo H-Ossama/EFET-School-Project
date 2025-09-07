@@ -58,10 +58,13 @@ def signup(): # define the sign up function
                 password=generate_password_hash(password, method='pbkdf2:sha256'), 
                 role='visiteur', 
                 status='pending',
-                age=request.form.get('age', 18),
+                age=request.form.get('age'),
+                phone=request.form.get('phone', ''),
                 address=request.form.get('address', ''),
                 registration=f'USER_{datetime.now().strftime("%Y%m%d%H%M%S")}',
-                gender=request.form.get('gender', 'Other'),
+                gender=request.form.get('gender', 'male'),
+                major=request.form.get('major', ''),
+                about_me=request.form.get('aboutMe', ''),
                 register_date=datetime.now().date()
             )
             

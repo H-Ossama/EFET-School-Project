@@ -2,6 +2,11 @@
 
 {% block title %}Inscription - EFET{% endblock title %}
 
+{% block styles %}
+<!-- Add custom signup page styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+{% endblock %}
+
 {% block content %}
 <section class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
     <!-- Animated Background -->
@@ -51,111 +56,261 @@
             {% endif %}
             {% endwith %}
 
+            <!-- Welcome Animation -->
+            <div class="welcome-animation mb-6 hidden">
+                <div class="flex justify-center items-center space-x-2 mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center animate-bounce shadow-lg">
+                        <i class="fas fa-check text-white text-xl checkmark-animation"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-semibold text-center text-gray-800 mb-2 animate-fadeInUp">Bienvenue à EFET !</h3>
+                <p class="text-center text-gray-600 animate-fadeInUp" style="animation-delay: 0.2s;">Votre compte a été créé avec succès. Vous allez être redirigé...</p>
+            </div>
+
             <form method="POST" action="/signup" class="space-y-6" id="signupForm">
-                <!-- Email Field -->
-                <div class="space-y-2">
-                    <label for="email" class="block text-sm font-medium text-gray-700">
-                        Adresse Email
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-gray-400"></i>
+                <!-- Two Column Layout for Form Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Left Column -->
+                    <div class="space-y-4">
+                        <!-- Email Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="email" class="block text-sm font-medium text-gray-700">
+                                Adresse Email <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input 
+                                    id="email"
+                                    name="email" 
+                                    type="email" 
+                                    required 
+                                    class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="votre.email@efet.ma"
+                                    autofocus
+                                >
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <i id="emailCheck" class="fas fa-check text-green-500 hidden"></i>
+                                </div>
+                            </div>
+                            <p id="emailError" class="text-xs text-red-600 hidden"></p>
                         </div>
-                        <input 
-                            id="email"
-                            name="email" 
-                            type="email" 
-                            required 
-                            class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
-                            placeholder="votre.email@efet.ma"
-                            autofocus
-                        >
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <i id="emailCheck" class="fas fa-check text-green-500 hidden"></i>
-                        </div>
-                    </div>
-                    <p id="emailError" class="text-xs text-red-600 hidden"></p>
-                </div>
 
-                <!-- Name Field -->
-                <div class="space-y-2">
-                    <label for="name" class="block text-sm font-medium text-gray-700">
-                        Nom Complet
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-user text-gray-400"></i>
+                        <!-- Name Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="name" class="block text-sm font-medium text-gray-700">
+                                Nom Complet <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input 
+                                    id="name"
+                                    name="name" 
+                                    type="text" 
+                                    required 
+                                    class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="Votre nom complet"
+                                >
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <i id="nameCheck" class="fas fa-check text-green-500 hidden"></i>
+                                </div>
+                            </div>
+                            <p id="nameError" class="text-xs text-red-600 hidden"></p>
                         </div>
-                        <input 
-                            id="name"
-                            name="name" 
-                            type="text" 
-                            required 
-                            class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
-                            placeholder="Votre nom complet"
-                        >
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <i id="nameCheck" class="fas fa-check text-green-500 hidden"></i>
-                        </div>
-                    </div>
-                    <p id="nameError" class="text-xs text-red-600 hidden"></p>
-                </div>
 
-                <!-- Password Field -->
-                <div class="space-y-2">
-                    <label for="password" class="block text-sm font-medium text-gray-700">
-                        Mot de Passe
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
+                        <!-- Password Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="password" class="block text-sm font-medium text-gray-700">
+                                Mot de Passe <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input 
+                                    id="password"
+                                    name="password" 
+                                    type="password" 
+                                    required 
+                                    class="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="••••••••"
+                                    minlength="6"
+                                >
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword()">
+                                    <i id="passwordToggle" class="fas fa-eye-slash text-gray-400 hover:text-gray-600 transition-colors duration-200"></i>
+                                </button>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex space-x-1 mb-1">
+                                    <div id="strength1" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                    <div id="strength2" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                    <div id="strength3" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                    <div id="strength4" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                </div>
+                                <p id="passwordStrength" class="text-xs text-gray-500">Minimum 6 caractères</p>
+                            </div>
                         </div>
-                        <input 
-                            id="password"
-                            name="password" 
-                            type="password" 
-                            required 
-                            class="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
-                            placeholder="••••••••"
-                            minlength="6"
-                        >
-                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword()">
-                            <i id="passwordToggle" class="fas fa-eye-slash text-gray-400 hover:text-gray-600 transition-colors duration-200"></i>
-                        </button>
-                    </div>
-                    <div class="mt-2">
-                        <div class="flex space-x-1 mb-1">
-                            <div id="strength1" class="h-1 w-1/4 bg-gray-200 rounded"></div>
-                            <div id="strength2" class="h-1 w-1/4 bg-gray-200 rounded"></div>
-                            <div id="strength3" class="h-1 w-1/4 bg-gray-200 rounded"></div>
-                            <div id="strength4" class="h-1 w-1/4 bg-gray-200 rounded"></div>
-                        </div>
-                        <p id="passwordStrength" class="text-xs text-gray-500">Minimum 6 caractères</p>
-                    </div>
-                </div>
 
-                <!-- Confirm Password Field -->
-                <div class="space-y-2">
-                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
-                        Confirmer le Mot de Passe
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
+                        <!-- Confirm Password Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
+                                Confirmer le Mot de Passe <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input 
+                                    id="confirmPassword"
+                                    name="confirmPassword" 
+                                    type="password" 
+                                    required 
+                                    class="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="••••••••"
+                                >
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <i id="confirmCheck" class="fas fa-check text-green-500 hidden"></i>
+                                </div>
+                            </div>
+                            <p id="confirmError" class="text-xs text-red-600 hidden"></p>
                         </div>
-                        <input 
-                            id="confirmPassword"
-                            name="confirmPassword" 
-                            type="password" 
-                            required 
-                            class="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
-                            placeholder="••••••••"
-                        >
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <i id="confirmCheck" class="fas fa-check text-green-500 hidden"></i>
+
+                        <!-- Phone Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="phone" class="block text-sm font-medium text-gray-700">
+                                Numéro de Téléphone
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-phone text-gray-400"></i>
+                                </div>
+                                <input 
+                                    id="phone"
+                                    name="phone" 
+                                    type="tel" 
+                                    class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="Votre numéro de téléphone"
+                                >
+                            </div>
                         </div>
                     </div>
-                    <p id="confirmError" class="text-xs text-red-600 hidden"></p>
+
+                    <!-- Right Column -->
+                    <div class="space-y-4">
+                        <!-- Age Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="age" class="block text-sm font-medium text-gray-700">
+                                Âge
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-birthday-cake text-gray-400"></i>
+                                </div>
+                                <input 
+                                    id="age"
+                                    name="age" 
+                                    type="number" 
+                                    min="16"
+                                    max="100"
+                                    class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="Votre âge"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Gender Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="gender" class="block text-sm font-medium text-gray-700">
+                                Genre
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-venus-mars text-gray-400"></i>
+                                </div>
+                                <select 
+                                    id="gender"
+                                    name="gender" 
+                                    class="appearance-none relative block w-full pl-10 pr-8 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                >
+                                    <option value="male">Masculin</option>
+                                    <option value="female">Féminin</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="address" class="block text-sm font-medium text-gray-700">
+                                Adresse
+                            </label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-3 flex items-start pointer-events-none">
+                                    <i class="fas fa-map-marker-alt text-gray-400"></i>
+                                </div>
+                                <textarea 
+                                    id="address"
+                                    name="address" 
+                                    rows="3"
+                                    class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="Votre adresse complète"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Major Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="major" class="block text-sm font-medium text-gray-700">
+                                Filière d'intérêt
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-graduation-cap text-gray-400"></i>
+                                </div>
+                                <select 
+                                    id="major"
+                                    name="major" 
+                                    class="appearance-none relative block w-full pl-10 pr-8 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                >
+                                    <option value="">Sélectionnez une filière (optionnel)</option>
+                                    <option value="Informatique">Informatique</option>
+                                    <option value="Commerce">Commerce</option>
+                                    <option value="Finance">Finance et Comptabilité</option>
+                                    <option value="Management">Management</option>
+                                    <option value="Logistique">Logistique</option>
+                                    <option value="Santé">Santé</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- About Me Field -->
+                        <div class="space-y-2 form-field form-field-animation opacity-0 animate-fadeInUp">
+                            <label for="aboutMe" class="block text-sm font-medium text-gray-700">
+                                À propos de moi
+                            </label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-3 flex items-start pointer-events-none">
+                                    <i class="fas fa-comment text-gray-400"></i>
+                                </div>
+                                <textarea 
+                                    id="aboutMe"
+                                    name="aboutMe" 
+                                    rows="2"
+                                    class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                                    placeholder="Parlez-nous un peu de vous (optionnel)"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Terms and Conditions -->
@@ -188,7 +343,7 @@
                     <button 
                         type="submit" 
                         id="submitBtn"
-                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none pulse-on-hover"
                     >
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                             <i class="fas fa-user-plus group-hover:text-purple-300 transition-colors duration-200"></i>
@@ -223,20 +378,32 @@
         </div>
 
         <!-- Benefits -->
-        <div class="glass-card p-6 text-center" data-aos="fade-up" data-aos-delay="400">
+        <div class="glass-card p-6 text-center animate-on-scroll opacity-0" data-aos="fade-up" data-aos-delay="400">
             <h3 class="font-semibold text-gray-800 mb-4">Pourquoi rejoindre EFET ?</h3>
-            <div class="grid grid-cols-3 gap-4 text-sm">
-                <div class="text-center">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="text-center p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-all duration-300 benefit-card">
                     <i class="fas fa-graduation-cap text-blue-500 text-xl mb-2"></i>
-                    <p class="text-gray-600">Formation Excellence</p>
+                    <p class="text-gray-600">Formation d'Excellence</p>
                 </div>
-                <div class="text-center">
+                <div class="text-center p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-all duration-300 benefit-card">
                     <i class="fas fa-users text-green-500 text-xl mb-2"></i>
                     <p class="text-gray-600">Communauté Active</p>
                 </div>
-                <div class="text-center">
+                <div class="text-center p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-all duration-300 benefit-card">
                     <i class="fas fa-certificate text-purple-500 text-xl mb-2"></i>
-                    <p class="text-gray-600">Certifications</p>
+                    <p class="text-gray-600">Certifications Reconnues</p>
+                </div>
+                <div class="text-center p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-all duration-300 benefit-card">
+                    <i class="fas fa-briefcase text-red-500 text-xl mb-2"></i>
+                    <p class="text-gray-600">Insertion Professionnelle</p>
+                </div>
+                <div class="text-center p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-all duration-300 benefit-card">
+                    <i class="fas fa-globe text-indigo-500 text-xl mb-2"></i>
+                    <p class="text-gray-600">Réseau International</p>
+                </div>
+                <div class="text-center p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-all duration-300 benefit-card">
+                    <i class="fas fa-laptop-code text-yellow-500 text-xl mb-2"></i>
+                    <p class="text-gray-600">Équipements Modernes</p>
                 </div>
             </div>
         </div>
@@ -289,6 +456,23 @@
         return strength >= 2;
     }
 
+    // Show welcome animation
+    function showWelcomeAnimation() {
+        const form = document.getElementById('signupForm');
+        const welcomeAnimation = document.querySelector('.welcome-animation');
+        
+        form.classList.add('hidden');
+        welcomeAnimation.classList.remove('hidden');
+        
+        // Add entrance animation classes
+        welcomeAnimation.classList.add('animate-fadeIn');
+        
+        // Redirect after animation
+        setTimeout(() => {
+            window.location.href = "{{ url_for('auth.login') }}";
+        }, 3000);
+    }
+
     // Form validation
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('signupForm');
@@ -296,6 +480,10 @@
         const nameField = document.getElementById('name');
         const passwordField = document.getElementById('password');
         const confirmPasswordField = document.getElementById('confirmPassword');
+        const phoneField = document.getElementById('phone');
+        const ageField = document.getElementById('age');
+        const addressField = document.getElementById('address');
+        const aboutMeField = document.getElementById('aboutMe');
         const submitBtn = document.getElementById('submitBtn');
         
         // Email validation
@@ -335,6 +523,58 @@
             }
         });
         
+        // Phone validation
+        phoneField.addEventListener('blur', function() {
+            const phone = this.value.trim();
+            const phoneRegex = /^[0-9+\-\s]{8,15}$/; // Basic phone validation
+            
+            if (phone && !phoneRegex.test(phone)) {
+                this.classList.add('border-red-300');
+                this.classList.remove('border-green-300');
+            } else if (phone) {
+                this.classList.add('border-green-300');
+                this.classList.remove('border-red-300');
+            }
+        });
+        
+        // Age validation
+        ageField.addEventListener('blur', function() {
+            const age = parseInt(this.value.trim());
+            
+            if (age && (age < 16 || age > 100)) {
+                this.classList.add('border-red-300');
+                this.classList.remove('border-green-300');
+            } else if (age) {
+                this.classList.add('border-green-300');
+                this.classList.remove('border-red-300');
+            }
+        });
+        
+        // Address validation (just for styling)
+        addressField.addEventListener('blur', function() {
+            const address = this.value.trim();
+            
+            if (address.length > 5) {
+                this.classList.add('border-green-300');
+                this.classList.remove('border-red-300');
+            } else if (address) {
+                this.classList.add('border-red-300');
+                this.classList.remove('border-green-300');
+            }
+        });
+        
+        // About Me validation (just for styling)
+        if (aboutMeField) {
+            aboutMeField.addEventListener('blur', function() {
+                const aboutMe = this.value.trim();
+                
+                if (aboutMe.length > 0) {
+                    this.classList.add('border-green-300');
+                    this.classList.remove('border-red-300');
+                }
+            });
+        }
+        
         // Password validation
         passwordField.addEventListener('input', function() {
             checkPasswordStrength(this.value);
@@ -369,13 +609,68 @@
         
         confirmPasswordField.addEventListener('blur', validateConfirmPassword);
         
-        // Form submission
+        // Form submission with validation
         form.addEventListener('submit', function(e) {
+            // Validate required fields
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                confirmPasswordField.classList.add('border-red-300');
+                document.getElementById('confirmError').textContent = 'Les mots de passe ne correspondent pas';
+                document.getElementById('confirmError').classList.remove('hidden');
+                return;
+            }
+            
+            if (ageField.value && (parseInt(ageField.value) < 16 || parseInt(ageField.value) > 100)) {
+                e.preventDefault();
+                ageField.classList.add('border-red-300');
+                alert('L\'âge doit être compris entre 16 et 100');
+                return;
+            }
+            
+            // Phone number validation
+            if (phoneField.value) {
+                const phoneRegex = /^[0-9+\-\s]{8,15}$/;
+                if (!phoneRegex.test(phoneField.value.trim())) {
+                    e.preventDefault();
+                    phoneField.classList.add('border-red-300');
+                    alert('Numéro de téléphone invalide');
+                    return;
+                }
+            }
+            
             // Show loading state
             submitBtn.disabled = true;
             document.getElementById('submitText').textContent = 'Création en cours...';
             document.getElementById('submitSpinner').classList.remove('hidden');
+            
+            // Simulate success (remove in production and handle server response)
+            // For demo purposes only - in real implementation, this should be handled
+            // on server response after form submission success
+            // e.preventDefault(); // Remove this line in production
+            // setTimeout(showWelcomeAnimation, 2000); // Remove this line in production
         });
+
+        // Add animation classes to elements when they come into view
+        const animateOnScroll = function() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            elements.forEach(element => {
+                const position = element.getBoundingClientRect();
+                // If element is in viewport
+                if(position.top < window.innerHeight && position.bottom >= 0) {
+                    element.classList.add('animate-fadeInUp');
+                    element.classList.remove('opacity-0');
+                }
+            });
+        };
+
+        // Initial check for elements in view
+        animateOnScroll();
+        
+        // Add animation on scroll
+        window.addEventListener('scroll', animateOnScroll);
     });
 </script>
 {% endblock %}
