@@ -67,14 +67,20 @@ def signup(): # define the sign up function
             db.session.commit()
             
             # Create an admin notification for new registration
-            from models import AdminNotification
-            notification = AdminNotification(
-                user_id=new_user.id,
-                notification_type='new_registration',
-                message=f"Nouvel utilisateur {new_user.name} ({new_user.email}) s'est inscrit et attend l'approbation."
-            )
-            db.session.add(notification)
-            db.session.commit()
+            try:
+                from models import AdminNotification
+                notification = AdminNotification(
+                    user_id=new_user.id,
+                    notification_type='new_registration',
+                    message=f"Nouvel utilisateur {new_user.name} ({new_user.email}) s'est inscrit et attend l'approbation."
+                )
+                db.session.add(notification)
+                db.session.commit()
+            except Exception as notif_error:
+                # Don't fail signup if notification creation fails
+                print(f"Notification creation failed: {notif_error}")
+                db.session.rollback()
+                db.session.commit()  # Commit the user anyway
             
             flash('Inscription réussie! Votre compte est en attente d\'approbation.')
             return redirect(url_for('auth.login'))

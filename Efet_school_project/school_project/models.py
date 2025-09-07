@@ -98,10 +98,6 @@ class AdminNotification(db.Model):
     resolved_at = db.Column(db.DateTime)
     resolved_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    # Relationships
-    user = db.relationship('User', foreign_keys=[user_id], backref='notifications')
-    resolver = db.relationship('User', foreign_keys=[resolved_by])
-    
 class EmailLog(db.Model):
     __tablename__ = 'email_log'
     __table_args__ = {'extend_existing': True}
@@ -113,7 +109,3 @@ class EmailLog(db.Model):
     message = db.Column(db.Text)
     sent_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     status = db.Column(db.String(50), default='sent')  # sent, failed, pending
-    
-    # Relationships
-    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='received_emails')
-    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_emails')
