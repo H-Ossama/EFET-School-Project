@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'school_project'))
 
 try:
-    from school_project import create_app, db
-    from school_project.models import *
+    from school_project import create_app
+    from school_project import db  # Import db from the same module
     
     logger.info("Imports successful")
 except ImportError as e:
