@@ -119,7 +119,7 @@ def login(): # define login page function
             # take the user-supplied password, hash it, and compare it
             # to the hashed password in the database
             if not user:
-                flash('Please sign up before!')
+                flash('Email non reconnu. Veuillez vous inscrire.')
                 return redirect(url_for('auth.signup'))
             elif not check_password_hash(user.password, password):
                 flash('Please check your login details and try again.')

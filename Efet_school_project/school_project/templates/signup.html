@@ -2,6 +2,12 @@
 
 {% block title %}Inscription - EFET{% endblock title %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+<!-- Make sure Tailwind CSS is loaded correctly -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+{% endblock head %}
+
 {% block styles %}
 <!-- Add custom signup page styles -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
@@ -37,18 +43,27 @@
         <div class="glass-card p-8" data-aos="fade-up" data-aos-delay="200">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-lg animate-fadeInUp">
+            <div class="mb-6 p-4 {% if 'réussie' in messages[0] %}bg-green-50 border-l-4 border-green-400{% else %}bg-red-50 border-l-4 border-red-400{% endif %} rounded-lg animate-fadeInUp">
                 <div class="flex">
                     <div class="flex-shrink-0">
+                        {% if 'réussie' in messages[0] %}
+                        <i class="fas fa-check-circle text-green-400"></i>
+                        {% else %}
                         <i class="fas fa-exclamation-triangle text-red-400"></i>
+                        {% endif %}
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm text-red-700">
+                        <p class="text-sm {% if 'réussie' in messages[0] %}text-green-700{% else %}text-red-700{% endif %}">
                             {{ messages[0] }}
+                            {% if not 'réussie' in messages[0] and 'Veuillez vous inscrire' in messages[0] %}
+                            <br>
+                            <span class="text-gray-600 mt-1 block">Remplissez le formulaire ci-dessous pour créer un compte.</span>
+                            {% elif not 'réussie' in messages[0] %}
                             <br>
                             <a href="{{ url_for('auth.login') }}" class="underline hover:text-red-900 transition-colors duration-200">
                                 Aller à la page de connexion
                             </a>
+                            {% endif %}
                         </p>
                     </div>
                 </div>
@@ -666,8 +681,20 @@
             });
         };
 
+        // Form field animations
+        const animateFormFields = function() {
+            const formFields = document.querySelectorAll('.form-field-animation');
+            formFields.forEach((field, index) => {
+                setTimeout(() => {
+                    field.classList.add('animate-fadeInUp');
+                    field.classList.remove('opacity-0');
+                }, index * 100); // Staggered effect with 100ms delay between each field
+            });
+        };
+
         // Initial check for elements in view
         animateOnScroll();
+        animateFormFields();
         
         // Add animation on scroll
         window.addEventListener('scroll', animateOnScroll);
