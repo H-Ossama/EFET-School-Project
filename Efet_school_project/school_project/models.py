@@ -2,6 +2,9 @@ from flask_login import UserMixin
 from __init__ import db
 
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
@@ -20,6 +23,9 @@ class User(UserMixin, db.Model):
     year = db.Column(db.Integer)
 
 class Payment(db.Model):
+    __tablename__ = 'payment'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     student_id = db.Column(db.Integer)
     month_paid = db.Column(db.Date)
@@ -29,6 +35,9 @@ class Payment(db.Model):
     type = db.Column(db.String(1000))
 
 class Grade(db.Model):
+    __tablename__ = 'grade'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer)
     grade = db.Column(db.Float)
@@ -36,11 +45,17 @@ class Grade(db.Model):
     grade_date = db.Column(db.Date)
 
 class Major(db.Model):
+    __tablename__ = 'major'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     major_name = db.Column(db.String(100))
     duration = db.Column(db.Float)
 
 class Message(db.Model):
+    __tablename__ = 'message'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     msg_from = db.Column(db.Integer)
     msg_to = db.Column(db.Integer)
@@ -53,6 +68,9 @@ class Message(db.Model):
         return f'<Message {self.id}: from {self.msg_from} to {self.msg_to}>'
 
 class Absence(db.Model):
+    __tablename__ = 'absence'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer)
     date_absence = db.Column(db.DateTime)
@@ -60,11 +78,17 @@ class Absence(db.Model):
     details = db.Column(db.String(1000))
 
 class Subject(db.Model):
+    __tablename__ = 'subject'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     id_prof = db.Column(db.Integer)
 
 class AdminNotification(db.Model):
+    __tablename__ = 'admin_notification'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     notification_type = db.Column(db.String(50), default='new_registration')  # new_registration, role_change, etc.
@@ -79,6 +103,9 @@ class AdminNotification(db.Model):
     resolver = db.relationship('User', foreign_keys=[resolved_by])
     
 class EmailLog(db.Model):
+    __tablename__ = 'email_log'
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True)
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

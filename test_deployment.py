@@ -12,10 +12,10 @@ def test_imports():
     """Test if all imports work correctly"""
     print("Testing imports...")
     
-    # Add school_project to path
-    current_dir = Path(__file__).parent / 'Efet_school_project'
-    school_project_dir = current_dir / 'school_project'
-    sys.path.insert(0, str(school_project_dir))
+    # Add current directory and school_project to path
+    current_dir = os.getcwd()
+    sys.path.insert(0, current_dir)
+    sys.path.insert(0, os.path.join(current_dir, 'school_project'))
     
     try:
         from school_project import create_app, db
@@ -61,7 +61,13 @@ def main():
     print("=" * 50)
     
     # Change to the correct directory
-    os.chdir(Path(__file__).parent / 'Efet_school_project')
+    project_dir = Path(__file__).parent / 'Efet_school_project'
+    if project_dir.exists():
+        os.chdir(project_dir)
+        print(f"📁 Changed to directory: {project_dir}")
+    else:
+        print(f"❌ Directory not found: {project_dir}")
+        sys.exit(1)
     
     success = True
     success &= test_imports()
