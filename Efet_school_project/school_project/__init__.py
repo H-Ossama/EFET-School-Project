@@ -29,7 +29,10 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     else:
         # Local SQLite - use absolute path
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/db.sqlite'
+        instance_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'instance')
+        os.makedirs(instance_path, exist_ok=True)
+        db_path = os.path.join(instance_path, 'db.sqlite')
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
                    # deactivate Flask-SQLAlchemy track modifications

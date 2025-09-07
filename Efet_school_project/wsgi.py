@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple WSGI entry point for Railway deployment
+Simple and clean WSGI entry point for Railway deployment
 """
 
 import os
@@ -20,15 +20,16 @@ try:
     # Import the app from app.py
     from app import app
     logger.info("Successfully imported app from app.py")
+    
 except Exception as e:
     logger.error(f"Failed to import app: {e}")
-    # Create a minimal Flask app for health checking
+    # Create a minimal Flask app for Railway health checks
     from flask import Flask
     app = Flask(__name__)
     
     @app.route('/health')
     def health():
-        return {'status': 'partial', 'error': str(e)}, 200
+        return {'status': 'error', 'error': str(e)}, 200
     
     @app.route('/')
     def root():

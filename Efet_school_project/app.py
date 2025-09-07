@@ -26,6 +26,38 @@ except ImportError as e:
 app = create_app()
 logger.info("Flask app created")
 
+# Add error handlers
+@app.errorhandler(500)
+def internal_error(error):
+    logger.error(f"500 error: {error}")
+    db.session.rollback()
+    return f"Internal Server Error: {error}", 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logger.error(f"Unhandled exception: {e}")
+    return f"An error occurred: {str(e)}", 500
+
+# Add debug endpoint for Railway
+@app.route('/debug')
+def debug_info():
+    """Debug endpoint to check app status"""
+    try:
+        with app.app_context():
+            from school_project.models import User
+            user_count = User.query.count()
+            return {
+                'status': 'running',
+                'database': 'connected',
+                'user_count': user_count,
+                'tables_created': 'yes'
+            }
+    except Exception as e:
+        return {
+            'status': 'error',
+            'error': str(e)
+        }, 500
+
 # Add health check endpoint
 @app.route('/health')
 def health_check():
@@ -59,6 +91,30 @@ try:
     with app.app_context():
         db.create_all()
         logger.info("Database tables created successfully!")
+        
+        # Check if we have an admin user, create one if not
+        from school_project.models import User
+        admin = User.query.filter_by(role='admin').first()
+        if not admin:
+            from werkzeug.security import generate_password_hash
+            from datetime import datetime
+            
+            admin_user = User(
+                email='admin@efet.edu',
+                name='Administrator',
+                password=generate_password_hash('admin123', method='pbkdf2:sha256'),
+                role='admin',
+                status='approved',
+                age=30,
+                address='EFET School',
+                registration='ADMIN001',
+                gender='Other',
+                register_date=datetime.now().date()
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+            logger.info("Default admin user created")
+        
 except Exception as e:
     logger.error(f"Database initialization failed: {e}")
     # Don't exit, let the app start anyway
