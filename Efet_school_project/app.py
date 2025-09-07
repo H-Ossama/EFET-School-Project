@@ -11,7 +11,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Add the school_project directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'school_project'))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)  # Add parent directory
+sys.path.insert(0, current_dir)  # Add current directory
+school_project_path = os.path.join(current_dir, 'school_project')
+sys.path.insert(0, school_project_path)
 
 try:
     from school_project import create_app

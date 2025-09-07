@@ -7,7 +7,7 @@ def get_db():
     return current_app.extensions['sqlalchemy'].db
 
 # Import the db instance directly - this should work now
-from __init__ import db
+from school_project import db
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'

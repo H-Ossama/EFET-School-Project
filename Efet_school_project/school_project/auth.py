@@ -25,8 +25,9 @@ def signup(): # define the sign up function
         return render_template('signup.html')
     else: # if the request is POST, then we check if the email
           # doesn't already exist and then we save data
-        from models import User, AdminNotification
-        from __init__ import db
+        from flask import current_app
+        from school_project.models import User, AdminNotification
+        from school_project import db
         
         try:
             email = request.form.get('email')
@@ -98,7 +99,7 @@ def login(): # define login page function
         return render_template('login.html')
     else: # if the request is POST then we check if the user exist
           # and with the right password
-        from models import User
+        from school_project.models import User
         try:
             email = request.form.get('email')
             password = request.form.get('password')

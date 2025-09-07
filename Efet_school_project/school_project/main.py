@@ -4,11 +4,11 @@
 from flask import Blueprint, render_template, flash, g, request, redirect, url_for, jsonify, current_app
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from __init__ import create_app
-from models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
-from tools import get_all_payments, get_student_infos, get_all_grades, get_all_majors, get_all_students, get_user_messages, get_all_users, get_student_absence, get_grades_mean, get_all_subjects, get_all_teachers, get_all_teachers, get_all_absence, get_one_payment
+from school_project import create_app
+from school_project.models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
+from school_project.tools import get_all_payments, get_student_infos, get_all_grades, get_all_majors, get_all_students, get_user_messages, get_all_users, get_student_absence, get_grades_mean, get_all_subjects, get_all_teachers, get_all_teachers, get_all_absence, get_one_payment
 import sqlite3
-from __init__ import db
+from school_project import db
 from datetime import datetime
 from fpdf import FPDF
 from pathlib import Path

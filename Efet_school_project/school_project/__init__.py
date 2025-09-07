@@ -48,7 +48,7 @@ def create_app():
     
     # Import User model for login manager after db is initialized
     with app.app_context():
-        from models import User
+        from school_project.models import User
         
         @login_manager.user_loader
         def load_user(user_id): #reload user object from the user ID
@@ -59,9 +59,9 @@ def create_app():
     
     # blueprint for auth routes in our app
     # blueprint allow you to orgnize your flask app
-    from auth import auth as auth_blueprint
+    from school_project.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
     # blueprint for non-auth parts of app
-    from main import main as main_blueprint
+    from school_project.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
     return app
