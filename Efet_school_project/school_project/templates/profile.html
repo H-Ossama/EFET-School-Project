@@ -41,7 +41,12 @@
                     
                     <!-- Role Badge -->
                     <div class="mb-6">
-                        {% if current_user.role == 'admin' %}
+                        {% if current_user.role == 'owner' %}
+                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                            <i class="fas fa-crown mr-2"></i>
+                            Propriétaire
+                        </span>
+                        {% elif current_user.role == 'admin' %}
                         <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800">
                             <i class="fas fa-crown mr-2"></i>
                             Administrateur

@@ -23,12 +23,16 @@ if os.path.exists(school_project_dir):
     sys.path.insert(0, school_project_dir)
     logger.info(f"Added {school_project_dir} to Python path")
 
+# Initialize a variable to store any import error
+import_error = None
+
 try:
     # Import the app from app.py
     from app import app
     logger.info("Successfully imported app from app.py")
     
 except Exception as e:
+    import_error = e
     logger.error(f"Failed to import app: {e}")
     # Create a minimal Flask app for Railway health checks
     from flask import Flask
@@ -36,11 +40,11 @@ except Exception as e:
     
     @app.route('/health')
     def health():
-        return {'status': 'error', 'error': str(e)}, 200
+        return {'status': 'error', 'error': str(import_error)}, 200
     
     @app.route('/')
     def root():
-        return {'status': 'error', 'message': 'App failed to initialize', 'error': str(e)}, 500
+        return {'status': 'error', 'message': 'App failed to initialize', 'error': str(import_error)}, 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

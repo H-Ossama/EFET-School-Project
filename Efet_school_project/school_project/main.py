@@ -6,7 +6,31 @@ from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from school_project import create_app
 from school_project.models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
-from school_project.tools import get_all_payments, get_student_infos, get_all_grades, get_all_majors, get_all_students, get_user_messages, get_all_users, get_student_absence, get_grades_mean, get_all_subjects, get_all_teachers, get_all_teachers, get_all_abs@main.route('/admin/pending_users')
+from school_project.tools import get_all_payments, get_student_infos, get_all_grades, get_all_majors, get_all_students, get_user_messages, get_all_users, get_student_absence, get_grades_mean, get_all_subjects, get_all_teachers, get_all_absence, get_one_payment
+import sqlite3
+from school_project import db
+from datetime import datetime
+from fpdf import FPDF
+from pathlib import Path
+from functools import wraps
+import os
+
+def require_approved_user(f):
+    """Decorator to require that user has been approved by admin"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            if current_user.role == 'visiteur' or current_user.status == 'pending':
+                flash('Votre compte est en attente d\'approbation. L\'administration vous contactera dans les 72 heures pour confirmer votre situation.', 'warning')
+                return render_template('pending_approval.html')
+        return f(*args, **kwargs)
+    return decorated_function
+
+####################################################################
+# our main blueprint
+main = Blueprint('main', __name__)
+
+####################################################################
 @login_required
 def pending_users():
     if current_user.role not in ['admin', 'owner']:
@@ -19,9 +43,23 @@ def pending_users():
 # All Users Management Routes (OWNER only)
 ####################################################################
 
-@main.route('/admin/all_users')
+@main.route('/all_users')
 @login_required
 def all_users():
+    """Route for all_users page"""
+    if current_user.role != 'owner':
+        return redirect('/forbidden')
+    
+    all_users = User.query.all()
+    majors = Major.query.all()
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    
+    return render_template('all_users.html', all_users=all_users, majors=majors, current_date=current_date)
+
+@main.route('/admin/all_users')
+@login_required
+def admin_all_users():
+    """Admin route for all_users page"""
     if current_user.role != 'owner':
         return redirect('/forbidden')
     
@@ -258,31 +296,7 @@ def change_user_role():
     return redirect(url_for('main.all_users'))
 
 ####################################################################
-app = create_app() # we initialize our flask app using the
-####################################################################e_payment
-import sqlite3
-from school_project import db
-from datetime import datetime
-from fpdf import FPDF
-from pathlib import Path
-from functools import wraps
-import os
-
-def require_approved_user(f):
-    """Decorator to require that user has been approved by admin"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user.is_authenticated:
-            if current_user.role == 'visiteur' or current_user.status == 'pending':
-                flash('Votre compte est en attente d\'approbation. L\'administration vous contactera dans les 72 heures pour confirmer votre situation.', 'warning')
-                return render_template('pending_approval.html')
-        return f(*args, **kwargs)
-    return decorated_function
-
-####################################################################
-# our main blueprint
-main = Blueprint('main', __name__)
-
+# Continue with the rest of the routes
 ####################################################################
 @main.route('/forbidden') # home page
 def forbidden():
@@ -468,11 +482,19 @@ def upload_file():
 
 @main.route('/dashboard')
 @login_required
-@require_approved_user
 def dashboard():
+    # Print user information for debugging
+    print(f"User: {current_user.name}, Role: {current_user.role}, Status: {current_user.status}")
+    
+    # Check if user has pending status or visitor role
+    if current_user.role == 'visiteur' or current_user.status == 'pending':
+        flash('Votre compte est en attente d\'approbation. L\'administration vous contactera dans les 72 heures pour confirmer votre situation.', 'warning')
+        return render_template('pending_approval.html')
+    
     messages = get_user_messages(current_user.id)
-    # if you are an admin: go to admin dashboard (manage students, grades, payments, majors ..)
-    if current_user.role == 'admin':
+    
+    # Owner role should have the same access as admin (highest level access)
+    if current_user.role == 'admin' or current_user.role == 'owner':
         students = get_all_students()
         majors = get_all_majors()
         all_subject = get_all_subjects()
@@ -1017,9 +1039,8 @@ def admin_notifications():
     # Fetch users for each notification and attach them to the notification objects
     for notification in notifications:
         user = User.query.get(notification.user_id)
-        # Only set the user if it exists
-        if user:
-            notification.user = user
+        # Set the user attribute for all notifications (will be None if user doesn't exist)
+        notification.user = user
     
     return render_template('admin_notifications.html', notifications=notifications)
 
