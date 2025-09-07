@@ -11,14 +11,6 @@ Visit the application at: [https://web-production-20d60.up.railway.app](https://
 
 RUN BY: cd /home/hattan/Desktop/Devlopmment/EFET-School-Project && source .venv/bin/activate && cd Efet_school_project/school_project && python main.py
 
-## 🔑 Admin Login Credentials
-
-- **Email**: anass@gmail.com  
-- **Password**: admin123
-
-- **Email**: admin@efet.ma  
-- **Password**: admin123
-
 ## 🧪 Test Accounts
 
 - **Test Visitor**: visitor@test.com / password123 (pending approval)
