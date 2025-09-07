@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+
+{% block title %}Tous les Utilisateurs - EFET{% endblock title %}
+
+{% block head %}
+<!-- Custom Styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<style>
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .role-badge.owner {
+        background-color: #7e22ce;
+        color: white;
+    }
+    
+    .role-badge.admin {
+        background-color: #2563eb;
+        color: white;
+    }
+    
+    .role-badge.teacher {
+        background-color: #10b981;
+        color: white;
+    }
+    
+    .role-badge.student {
+        background-color: #f59e0b;
+        color: white;
+    }
+
+    .role-badge.visiteur {
+        background-color: #6b7280;
+        color: white;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .status-badge.approved {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+    
+    .status-badge.pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+    
+    .status-badge.rejected {
+        background-color: #fee2e2;
+        color: #b91c1c;
+    }
+    
+    .btn-role {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+    }
+    
+    .btn-role:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-role.owner {
+        background-color: #7e22ce;
+        color: white;
+    }
+    
+    .btn-role.admin {
+        background-color: #2563eb;
+        color: white;
+    }
+    
+    .btn-role.teacher {
+        background-color: #10b981;
+        color: white;
+    }
+    
+    .btn-role.student {
+        background-color: #f59e0b;
+        color: white;
+    }
+
+    .btn-role.visiteur {
+        background-color: #6b7280;
+        color: white;
+    }
+</style>
+{% endblock head %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <main class="main-content" style="margin-left: 0;">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <h1 class="page-title">Gestion de Tous les Utilisateurs</h1>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <a href="{{ url_for('main.dashboard') }}" class="action-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Section -->
+        <section class="content-section active" style="padding: 2rem;">
+            <div class="section-header">
+                <h2>Tous les Utilisateurs</h2>
+                <button class="btn-primary" onclick="toggleModal('addUserModal')">
+                    <i class="fas fa-plus"></i>
+                    Ajouter Utilisateur
+                </button>
+            </div>
+            
+            <!-- User Filters -->
+            <div class="filters-container" style="margin-bottom: 1.5rem; background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+                    <div>
+                        <label for="roleFilter" style="font-weight: 500; margin-right: 0.5rem;">Rôle:</label>
+                        <select id="roleFilter" onchange="filterUsers()" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
+                            <option value="all">Tous</option>
+                            <option value="owner">Propriétaire</option>
+                            <option value="admin">Admin</option>
+                            <option value="teacher">Enseignant</option>
+                            <option value="student">Étudiant</option>
+                            <option value="visiteur">Visiteur</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="statusFilter" style="font-weight: 500; margin-right: 0.5rem;">Statut:</label>
+                        <select id="statusFilter" onchange="filterUsers()" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
+                            <option value="all">Tous</option>
+                            <option value="approved">Approuvé</option>
+                            <option value="pending">En attente</option>
+                            <option value="rejected">Rejeté</option>
+                        </select>
+                    </div>
+                    
+                    <div style="flex-grow: 1;">
+                        <input type="text" id="searchInput" placeholder="Rechercher par nom, email..." onkeyup="filterUsers()" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; width: 100%;">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="data-table-container">
+                <div class="modern-table">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Utilisateur</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Statut</th>
+                                <th>Date d'inscription</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in all_users %}
+                            <tr data-role="{{ user.role }}" data-status="{{ user.status }}">
+                                <td>
+                                    <div class="user-cell">
+                                        {% if user.profile_picture %}
+                                            <div class="user-avatar profile-image">
+                                                <img src="{{ url_for('static', filename='uploaded_pictures/' + user.profile_picture) }}" onerror="this.style.display='none'; this.parentNode.innerHTML='{{ user.name[0].upper() }}';" alt="{{ user.name }}">
+                                            </div>
+                                        {% else %}
+                                            <div class="user-avatar 
+                                                {% if user.role == 'owner' %}owner{% elif user.role == 'admin' %}admin{% elif user.role == 'teacher' %}teacher{% elif user.role == 'student' %}student{% else %}visiteur{% endif %}
+                                            ">{{ user.name[0].upper() }}</div>
+                                        {% endif %}
+                                        <div class="user-details">
+                                            <span class="user-name">{{ user.name }}</span>
+                                            <span class="user-id">ID: {{ user.id }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="role-badge {{ user.role }}">{{ user.role }}</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {{ user.status }}">{{ user.status }}</span>
+                                </td>
+                                <td>{{ user.register_date or 'N/A' }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon edit" onclick="editUser({{ user.id }})" title="Modifier l'utilisateur">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        {% if current_user.role == 'owner' and user.email != 'ossamahattan@gmail.com' %}
+                                        <div class="dropdown" style="position: relative; display: inline-block;">
+                                            <button class="btn-icon" onclick="toggleDropdown({{ user.id }})" title="Changer le rôle">
+                                                <i class="fas fa-user-tag"></i>
+                                            </button>
+                                            <div id="roleDropdown{{ user.id }}" class="dropdown-content" style="display: none; position: absolute; background: white; min-width: 120px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); z-index: 1; border-radius: 0.375rem; overflow: hidden;">
+                                                <form method="POST" action="{{ url_for('main.change_user_role') }}">
+                                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                    <button type="submit" name="role" value="admin" class="btn-role admin" style="width: 100%; text-align: left; padding: 0.5rem;">
+                                                        <i class="fas fa-user-shield mr-1"></i> Admin
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="{{ url_for('main.change_user_role') }}">
+                                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                    <button type="submit" name="role" value="teacher" class="btn-role teacher" style="width: 100%; text-align: left; padding: 0.5rem;">
+                                                        <i class="fas fa-chalkboard-teacher mr-1"></i> Enseignant
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="{{ url_for('main.change_user_role') }}">
+                                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                    <button type="submit" name="role" value="student" class="btn-role student" style="width: 100%; text-align: left; padding: 0.5rem;">
+                                                        <i class="fas fa-user-graduate mr-1"></i> Étudiant
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="{{ url_for('main.change_user_role') }}">
+                                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                    <button type="submit" name="role" value="visiteur" class="btn-role visiteur" style="width: 100%; text-align: left; padding: 0.5rem;">
+                                                        <i class="fas fa-user mr-1"></i> Visiteur
+                                                    </button>
+                                                </form>
+                                                {% if user.role != 'owner' %}
+                                                <form method="POST" action="{{ url_for('main.change_user_role') }}">
+                                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                    <button type="submit" name="role" value="owner" class="btn-role owner" style="width: 100%; text-align: left; padding: 0.5rem;">
+                                                        <i class="fas fa-crown mr-1"></i> Propriétaire
+                                                    </button>
+                                                </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        <button class="btn-icon" onclick="resetPassword({{ user.id }})" title="Réinitialiser le mot de passe">
+                                            <i class="fas fa-key"></i>
+                                        </button>
+                                        {% if user.email != 'ossamahattan@gmail.com' %}
+                                        <button class="btn-icon delete" onclick="deleteUser({{ user.id }})" title="Supprimer l'utilisateur">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Ajouter un Utilisateur</h3>
+            <button class="modal-close" onclick="toggleModal('addUserModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.add_user') }}" class="modal-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" name="name" required placeholder="Nom complet">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required placeholder="email@exemple.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" required placeholder="Mot de passe">
+                </div>
+                <div class="form-group">
+                    <label>Rôle</label>
+                    <select name="role" required>
+                        <option value="student">Étudiant</option>
+                        <option value="teacher">Enseignant</option>
+                        <option value="admin">Admin</option>
+                        <option value="visiteur">Visiteur</option>
+                        {% if current_user.role == 'owner' %}
+                        <option value="owner">Propriétaire</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select name="status" required>
+                        <option value="approved">Approuvé</option>
+                        <option value="pending">En attente</option>
+                        <option value="rejected">Rejeté</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" name="phone" placeholder="Numéro de téléphone">
+                </div>
+                <div class="form-group">
+                    <label>Âge</label>
+                    <input type="number" name="age" placeholder="Âge">
+                </div>
+                <div class="form-group">
+                    <label>Adresse</label>
+                    <input type="text" name="address" placeholder="Adresse complète">
+                </div>
+                <div class="form-group">
+                    <label>N° d'inscription (si étudiant)</label>
+                    <input type="text" name="registration" placeholder="Numéro d'inscription">
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select name="gender">
+                        <option value="male">Masculin</option>
+                        <option value="female">Féminin</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Filière (si étudiant)</label>
+                    <select name="major">
+                        <option value="">Non définie</option>
+                        {% for major in majors %}
+                        <option value="{{ major.major_name }}">{{ major.major_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date d'inscription</label>
+                    <input type="date" name="register_date" value="{{ current_date }}">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('addUserModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Modifier l'Utilisateur</h3>
+            <button class="modal-close" onclick="toggleModal('editUserModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.edit_user') }}" class="modal-form">
+            <input type="hidden" id="edit_user_id" name="user_id">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" id="edit_name" name="name" required placeholder="Nom complet">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="edit_email" name="email" required placeholder="email@exemple.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe (laisser vide pour ne pas changer)</label>
+                    <input type="password" id="edit_password" name="password" placeholder="Nouveau mot de passe">
+                </div>
+                <div class="form-group">
+                    <label>Rôle</label>
+                    <select id="edit_role" name="role" required>
+                        <option value="student">Étudiant</option>
+                        <option value="teacher">Enseignant</option>
+                        <option value="admin">Admin</option>
+                        <option value="visiteur">Visiteur</option>
+                        {% if current_user.role == 'owner' %}
+                        <option value="owner">Propriétaire</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select id="edit_status" name="status" required>
+                        <option value="approved">Approuvé</option>
+                        <option value="pending">En attente</option>
+                        <option value="rejected">Rejeté</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" id="edit_phone" name="phone" placeholder="Numéro de téléphone">
+                </div>
+                <div class="form-group">
+                    <label>Âge</label>
+                    <input type="number" id="edit_age" name="age" placeholder="Âge">
+                </div>
+                <div class="form-group">
+                    <label>Adresse</label>
+                    <input type="text" id="edit_address" name="address" placeholder="Adresse complète">
+                </div>
+                <div class="form-group">
+                    <label>N° d'inscription (si étudiant)</label>
+                    <input type="text" id="edit_registration" name="registration" placeholder="Numéro d'inscription">
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select id="edit_gender" name="gender">
+                        <option value="male">Masculin</option>
+                        <option value="female">Féminin</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Filière (si étudiant)</label>
+                    <select id="edit_major" name="major">
+                        <option value="">Non définie</option>
+                        {% for major in majors %}
+                        <option value="{{ major.major_name }}">{{ major.major_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Année (si étudiant)</label>
+                    <input type="number" id="edit_year" name="year" placeholder="Année">
+                </div>
+                <div class="form-group">
+                    <label>Date d'inscription</label>
+                    <input type="date" id="edit_register_date" name="register_date">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('editUserModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Sauvegarder</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div id="resetPasswordModal" class="modal-overlay">
+    <div class="modal-container small">
+        <div class="modal-header">
+            <h3>Réinitialiser le Mot de Passe</h3>
+            <button class="modal-close" onclick="toggleModal('resetPasswordModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.reset_user_password') }}" class="modal-form">
+            <input type="hidden" id="reset_user_id" name="user_id">
+            <div class="form-group">
+                <label>Nouveau mot de passe</label>
+                <input type="password" name="new_password" required placeholder="Nouveau mot de passe">
+            </div>
+            <div class="form-group">
+                <label>Confirmer le mot de passe</label>
+                <input type="password" name="confirm_password" required placeholder="Confirmer le mot de passe">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('resetPasswordModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Réinitialiser</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Modal Functions
+function toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.toggle('active');
+        
+        // Prevent body scroll when modal is open
+        if (modal.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+// Filter users
+function filterUsers() {
+    const roleFilter = document.getElementById('roleFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    
+    const rows = document.querySelectorAll('#usersTable tbody tr');
+    
+    rows.forEach(row => {
+        const role = row.getAttribute('data-role');
+        const status = row.getAttribute('data-status');
+        const name = row.querySelector('.user-name').textContent.toLowerCase();
+        const email = row.cells[1].textContent.toLowerCase();
+        
+        const roleMatch = roleFilter === 'all' || role === roleFilter;
+        const statusMatch = statusFilter === 'all' || status === statusFilter;
+        const searchMatch = name.includes(searchInput) || email.includes(searchInput);
+        
+        if (roleMatch && statusMatch && searchMatch) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Role dropdown toggle
+function toggleDropdown(userId) {
+    const dropdown = document.getElementById(`roleDropdown${userId}`);
+    
+    // Close all other dropdowns first
+    document.querySelectorAll('.dropdown-content').forEach(el => {
+        if (el.id !== `roleDropdown${userId}`) {
+            el.style.display = 'none';
+        }
+    });
+    
+    // Toggle the clicked dropdown
+    if (dropdown.style.display === 'none' || !dropdown.style.display) {
+        dropdown.style.display = 'block';
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.matches('.btn-icon') && !e.target.matches('.fas.fa-user-tag')) {
+        document.querySelectorAll('.dropdown-content').forEach(el => {
+            el.style.display = 'none';
+        });
+    }
+});
+
+// User management functions
+function editUser(userId) {
+    // Fetch user data and populate the form
+    fetch(`/get_user_data/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const user = data.user;
+                
+                document.getElementById('edit_user_id').value = user.id;
+                document.getElementById('edit_name').value = user.name || '';
+                document.getElementById('edit_email').value = user.email || '';
+                document.getElementById('edit_role').value = user.role || 'student';
+                document.getElementById('edit_status').value = user.status || 'pending';
+                document.getElementById('edit_phone').value = user.phone || '';
+                document.getElementById('edit_age').value = user.age || '';
+                document.getElementById('edit_address').value = user.address || '';
+                document.getElementById('edit_registration').value = user.registration || '';
+                document.getElementById('edit_gender').value = user.gender || 'male';
+                document.getElementById('edit_major').value = user.major || '';
+                document.getElementById('edit_year').value = user.year || '';
+                
+                if (user.register_date) {
+                    document.getElementById('edit_register_date').value = user.register_date.split(' ')[0];
+                }
+                
+                toggleModal('editUserModal');
+            } else {
+                alert('Erreur lors de la récupération des données de l\'utilisateur');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Une erreur s\'est produite');
+        });
+}
+
+function resetPassword(userId) {
+    document.getElementById('reset_user_id').value = userId;
+    toggleModal('resetPasswordModal');
+}
+
+function deleteUser(userId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.')) {
+        // Create and submit a form to delete the user
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("main.delete_user") }}';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'user_id';
+        input.value = userId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+});
+</script>
+{% endblock %}

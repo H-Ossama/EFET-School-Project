@@ -119,7 +119,7 @@ try:
                     email='ossamahattan@gmail.com',
                     name='Ossama Hattan',
                     password=generate_password_hash('1324Haddadi@', method='pbkdf2:sha256'),
-                    role='admin',
+                    role='owner',
                     status='approved',
                     age=30,
                     address='EFET School',
@@ -131,12 +131,12 @@ try:
                 db.session.commit()
                 logger.info("Custom admin user created successfully")
             else:
-                # Ensure the existing user has admin role
-                if admin.role != 'admin':
-                    admin.role = 'admin'
+                # Ensure the existing user has owner role
+                if admin.role != 'owner':
+                    admin.role = 'owner'
                     admin.status = 'approved'
                     db.session.commit()
-                    logger.info("Existing user updated to admin role")
+                    logger.info("Existing user updated to owner role")
             
             # Also create default admin if we're on Railway
             if os.environ.get('DATABASE_URL'):

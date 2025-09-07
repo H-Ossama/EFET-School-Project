@@ -6,7 +6,260 @@ from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from school_project import create_app
 from school_project.models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
-from school_project.tools import get_all_payments, get_student_infos, get_all_grades, get_all_majors, get_all_students, get_user_messages, get_all_users, get_student_absence, get_grades_mean, get_all_subjects, get_all_teachers, get_all_teachers, get_all_absence, get_one_payment
+from school_project.tools import get_all_payments, get_student_infos, get_all_grades, get_all_majors, get_all_students, get_user_messages, get_all_users, get_student_absence, get_grades_mean, get_all_subjects, get_all_teachers, get_all_teachers, get_all_abs@main.route('/admin/pending_users')
+@login_required
+def pending_users():
+    if current_user.role not in ['admin', 'owner']:
+        return redirect('/forbidden')
+    
+    pending_users = User.query.filter_by(status='pending').all()
+    return render_template('pending_users.html', users=pending_users)
+
+####################################################################
+# All Users Management Routes (OWNER only)
+####################################################################
+
+@main.route('/admin/all_users')
+@login_required
+def all_users():
+    if current_user.role != 'owner':
+        return redirect('/forbidden')
+    
+    all_users = User.query.all()
+    majors = Major.query.all()
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    
+    return render_template('all_users.html', all_users=all_users, majors=majors, current_date=current_date)
+
+@main.route('/get_user_data/<int:user_id>', methods=['GET'])
+@login_required
+def get_user_data(user_id):
+    if current_user.role != 'owner':
+        return jsonify({"success": False, "message": "Unauthorized"}), 403
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"success": False, "message": "User not found"}), 404
+    
+    # Convert user to JSON-friendly format
+    user_data = {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "age": user.age,
+        "address": user.address,
+        "registration": user.registration,
+        "gender": user.gender,
+        "role": user.role,
+        "status": user.status,
+        "major": user.major,
+        "year": user.year,
+        "phone": user.phone,
+        "register_date": user.register_date.strftime('%Y-%m-%d') if user.register_date else None
+    }
+    
+    return jsonify({"success": True, "user": user_data})
+
+@main.route('/admin/add_user', methods=['POST'])
+@login_required
+def add_user():
+    if current_user.role != 'owner':
+        return redirect('/forbidden')
+    
+    name = request.form.get('name')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    role = request.form.get('role')
+    status = request.form.get('status')
+    age = request.form.get('age')
+    phone = request.form.get('phone')
+    address = request.form.get('address')
+    registration = request.form.get('registration')
+    gender = request.form.get('gender')
+    major = request.form.get('major')
+    register_date = request.form.get('register_date')
+    
+    # Check if email already exists
+    if User.query.filter_by(email=email).first():
+        flash('Email déjà utilisé', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    # Create new user
+    new_user = User(
+        name=name,
+        email=email,
+        password=generate_password_hash(password, method='pbkdf2:sha256'),
+        role=role,
+        status=status,
+        age=age,
+        phone=phone,
+        address=address,
+        registration=registration,
+        gender=gender,
+        major=major
+    )
+    
+    # Parse register date if provided
+    if register_date:
+        try:
+            register_date_obj = datetime.strptime(register_date, '%Y-%m-%d')
+            new_user.register_date = register_date_obj
+        except ValueError:
+            pass
+    
+    db.session.add(new_user)
+    db.session.commit()
+    
+    flash(f'Utilisateur {name} ajouté avec succès', 'success')
+    return redirect(url_for('main.all_users'))
+
+@main.route('/admin/edit_user', methods=['POST'])
+@login_required
+def edit_user():
+    if current_user.role != 'owner':
+        return redirect('/forbidden')
+    
+    user_id = request.form.get('user_id')
+    name = request.form.get('name')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    role = request.form.get('role')
+    status = request.form.get('status')
+    age = request.form.get('age')
+    phone = request.form.get('phone')
+    address = request.form.get('address')
+    registration = request.form.get('registration')
+    gender = request.form.get('gender')
+    major = request.form.get('major')
+    year = request.form.get('year')
+    register_date = request.form.get('register_date')
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash('Utilisateur non trouvé', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    # Check if email is changed and already exists for another user
+    if email != user.email and User.query.filter_by(email=email).first():
+        flash('Email déjà utilisé par un autre utilisateur', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    # Update user details
+    user.name = name
+    user.email = email
+    user.role = role
+    user.status = status
+    user.age = age
+    user.phone = phone
+    user.address = address
+    user.registration = registration
+    user.gender = gender
+    user.major = major
+    user.year = year
+    
+    # Update password if provided
+    if password:
+        user.password = generate_password_hash(password, method='pbkdf2:sha256')
+    
+    # Parse register date if provided
+    if register_date:
+        try:
+            register_date_obj = datetime.strptime(register_date, '%Y-%m-%d')
+            user.register_date = register_date_obj
+        except ValueError:
+            pass
+    
+    db.session.commit()
+    
+    flash(f'Utilisateur {name} mis à jour avec succès', 'success')
+    return redirect(url_for('main.all_users'))
+
+@main.route('/admin/delete_user', methods=['POST'])
+@login_required
+def delete_user():
+    if current_user.role != 'owner':
+        return redirect('/forbidden')
+    
+    user_id = request.form.get('user_id')
+    
+    # Don't allow deletion of owner account with email ossamahattan@gmail.com
+    user = User.query.get(user_id)
+    if not user:
+        flash('Utilisateur non trouvé', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    if user.email == 'ossamahattan@gmail.com':
+        flash('Vous ne pouvez pas supprimer le compte propriétaire principal', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    # Delete user
+    db.session.delete(user)
+    db.session.commit()
+    
+    flash(f'Utilisateur supprimé avec succès', 'success')
+    return redirect(url_for('main.all_users'))
+
+@main.route('/admin/reset_user_password', methods=['POST'])
+@login_required
+def reset_user_password():
+    if current_user.role != 'owner':
+        return redirect('/forbidden')
+    
+    user_id = request.form.get('user_id')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+    
+    if new_password != confirm_password:
+        flash('Les mots de passe ne correspondent pas', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash('Utilisateur non trouvé', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    # Update password
+    user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
+    db.session.commit()
+    
+    flash(f'Mot de passe de {user.name} réinitialisé avec succès', 'success')
+    return redirect(url_for('main.all_users'))
+
+@main.route('/admin/change_user_role', methods=['POST'])
+@login_required
+def change_user_role():
+    if current_user.role != 'owner':
+        return redirect('/forbidden')
+    
+    user_id = request.form.get('user_id')
+    new_role = request.form.get('role')
+    
+    # Validate role
+    valid_roles = ['owner', 'admin', 'teacher', 'student', 'visiteur']
+    if new_role not in valid_roles:
+        flash('Rôle invalide', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash('Utilisateur non trouvé', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    # Don't allow changing role of ossamahattan@gmail.com
+    if user.email == 'ossamahattan@gmail.com' and new_role != 'owner':
+        flash('Vous ne pouvez pas changer le rôle du propriétaire principal', 'error')
+        return redirect(url_for('main.all_users'))
+    
+    # Update role
+    user.role = new_role
+    db.session.commit()
+    
+    flash(f'Rôle de {user.name} changé à {new_role} avec succès', 'success')
+    return redirect(url_for('main.all_users'))
+
+####################################################################
+app = create_app() # we initialize our flask app using the
+####################################################################e_payment
 import sqlite3
 from school_project import db
 from datetime import datetime
@@ -755,7 +1008,7 @@ def get_student_data(student_id):
 @main.route('/admin/notifications')
 @login_required
 def admin_notifications():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'owner']:
         return redirect('/forbidden')
     
     # Get all notifications with user information
@@ -773,7 +1026,7 @@ def admin_notifications():
 @main.route('/admin/approve_user', methods=['POST'])
 @login_required
 def approve_user():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'owner']:
         return redirect('/forbidden')
     
     user_id = request.form.get('user_id')
@@ -799,7 +1052,7 @@ def approve_user():
 @main.route('/admin/reject_user', methods=['POST'])
 @login_required
 def reject_user():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'owner']:
         return redirect('/forbidden')
     
     user_id = request.form.get('user_id')

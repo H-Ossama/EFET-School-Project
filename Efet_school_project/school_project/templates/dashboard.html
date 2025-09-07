@@ -33,6 +33,14 @@
                             <span>Tableau de Bord</span>
                         </a>
                     </li>
+                    {% if current_user.role == 'owner' %}
+                    <li class="menu-item">
+                        <a href="{{ url_for('main.all_users') }}" data-tooltip="Tous les Utilisateurs">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Tous les Utilisateurs</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     <li class="menu-item">
                         <a href="#students-section" onclick="showSection('students-section')" data-tooltip="Étudiants">
                             <i class="fas fa-users"></i>

@@ -847,17 +847,15 @@
                 </li>
                 {% endif %}
                 
-                {% if current_user.role == 'admin' %}
-                <li class="nav-item">
-                    <a href="{{ url_for('main.admin_notifications') }}" class="nav-link {% if request.path == url_for('main.admin_notifications') %}active{% endif %}">
-                        <i class="fas fa-bell nav-icon"></i>
-                        <span>Notifications</span>
-                        <span class="notification-badge">3</span>
-                    </a>
-                </li>
-                {% endif %}
-                
-                <li class="nav-item">
+            {% if current_user.role == 'admin' or current_user.role == 'owner' %}
+            <li class="nav-item">
+                <a href="{{ url_for('main.admin_notifications') }}" class="nav-link {% if request.path == url_for('main.admin_notifications') %}active{% endif %}">
+                    <i class="fas fa-bell nav-icon"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge">3</span>
+                </a>
+            </li>
+            {% endif %}                <li class="nav-item">
                     <a href="{{ url_for('auth.logout') }}" class="btn-primary">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Déconnexion</span>
@@ -965,7 +963,7 @@
             </a>
             {% endif %}
             
-            {% if current_user.role == 'admin' %}
+            {% if current_user.role == 'admin' or current_user.role == 'owner' %}
             <a href="{{ url_for('main.admin_notifications') }}" class="nav-link {% if request.path == url_for('main.admin_notifications') %}active{% endif %}">
                 <i class="fas fa-bell nav-icon"></i>
                 <span>Notifications</span>
