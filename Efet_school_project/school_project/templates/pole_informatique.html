@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block title %}Pôle Informatique | EFET - École Française d'Enseignement Technique{% endblock title %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 bg-gradient-to-r from-purple-700 to-indigo-700 text-white">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <div class="w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-laptop-code text-purple-600 text-3xl"></i>
+            </div>
+            <h1 class="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight shadow-text">
+                Pôle Informatique
+            </h1>
+            <p class="text-xl text-gray-200 max-w-3xl mx-auto shadow-text">
+                Formez-vous aux métiers du numérique, du développement et de la cybersécurité avec nos programmes d'excellence
+            </p>
+        </div>
+    </div>
+    
+    <!-- Wave Separator -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full">
+            <path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,202.7C960,181,1056,139,1152,138.7C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Overview Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-6">
+                    Présentation du Pôle
+                </h2>
+                <div class="space-y-4 text-gray-600">
+                    <p>
+                        Le <strong>Pôle Informatique</strong> de l'EFET vous propose des formations complètes et adaptées aux exigences du marché technologique actuel. Nos programmes couvrent tous les aspects essentiels du développement informatique, de la gestion de systèmes et de la cybersécurité.
+                    </p>
+                    <p>
+                        Que vous soyez intéressé par le développement web, les applications mobiles, la gestion informatique ou la cybersécurité, nos formations vous offrent un équilibre parfait entre théorie et pratique, vous permettant d'acquérir les compétences recherchées par les employeurs.
+                    </p>
+                </div>
+                
+                <div class="mt-8 space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold text-gray-800">Apprentissage par projets</h4>
+                            <p class="text-gray-600">Approche pédagogique basée sur des projets concrets, des hackathons et des défis techniques.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold text-gray-800">Formateurs experts en IT</h4>
+                            <p class="text-gray-600">Enseignements assurés par des développeurs, ingénieurs et experts en sécurité informatique en activité.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold text-gray-800">Équipements de pointe</h4>
+                            <p class="text-gray-600">Laboratoires informatiques avec les dernières technologies et accès aux plateformes cloud professionnelles.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative" data-aos="fade-left">
+                <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Informatique" class="rounded-lg shadow-2xl w-full h-auto">
+                <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-xl max-w-xs transform -rotate-3">
+                    <div class="text-gray-800 font-semibold">Développez vos compétences numériques</div>
+                    <div class="text-gray-600 text-sm">Pour répondre aux besoins d'un monde connecté</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Programmes Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Nos Programmes de Formation
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Des formations adaptées aux besoins du marché technologique
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
+                <div class="text-purple-500 text-sm font-semibold uppercase tracking-wider mb-2">Technicien</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Gestion informatisée</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Outils bureautiques avancés</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Gestion de bases de données</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Initiation au développement</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Support informatique</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>2 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                <div class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
+                <div class="text-purple-500 text-sm font-semibold uppercase tracking-wider mb-2">Technicien Spécialisé</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Developpement informatique</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Langages de programmation</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Développement web</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Bases de données avancées</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Méthodes agiles</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>2 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                <div class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
+                <div class="text-purple-500 text-sm font-semibold uppercase tracking-wider mb-2">Bachelor</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Developpement web</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Frameworks web modernes</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Développement front-end avancé</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">API et services web</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">UX/UI Design</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>3 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
+                <div class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
+                <div class="text-purple-500 text-sm font-semibold uppercase tracking-wider mb-2">Master</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Cybersécurité & Haute disponibilité</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Sécurité des réseaux</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Ethical hacking</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Architecture cloud sécurisée</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Gestion des incidents de sécurité</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>2 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Advantages Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Pourquoi Choisir Notre Pôle Informatique
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Les avantages qui font la différence
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-code text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-4">Technologies Actuelles</h3>
+                <p class="text-gray-600 text-center">
+                    Des programmes constamment mis à jour pour suivre l'évolution rapide des technologies et frameworks informatiques.
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-industry text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-4">Partenariats Industriels</h3>
+                <p class="text-gray-600 text-center">
+                    Des collaborations avec des entreprises technologiques et startups pour des projets réels et des opportunités d'emploi.
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-lightbulb text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-4">Innovation et Créativité</h3>
+                <p class="text-gray-600 text-center">
+                    Un environnement qui favorise l'innovation, la résolution de problèmes et l'esprit entrepreneurial dans le domaine tech.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Career Opportunities Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Débouchés et Carrières
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Les métiers auxquels vous prépare notre formation
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden" data-aos="fade-right">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-briefcase text-purple-600 mr-3"></i>
+                    Secteurs d'Emploi
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-800">Entreprises de Services Numériques</h4>
+                            <p class="text-gray-600">Sociétés de conseil et de services informatiques (ESN) offrant expertise et solutions techniques.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-800">Startups et Scale-ups</h4>
+                            <p class="text-gray-600">Entreprises innovantes en phase de croissance recherchant des talents techniques polyvalents.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-800">Départements IT des Grands Groupes</h4>
+                            <p class="text-gray-600">Services informatiques et digitaux des grandes entreprises tous secteurs confondus.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden" data-aos="fade-left">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-user-tie text-purple-600 mr-3"></i>
+                    Métiers Possibles
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Développeur web</div>
+                        <div class="text-sm text-purple-600">10000 - 18000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Expert en cybersécurité</div>
+                        <div class="text-sm text-purple-600">15000 - 30000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Administrateur système</div>
+                        <div class="text-sm text-purple-600">12000 - 20000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Développeur mobile</div>
+                        <div class="text-sm text-purple-600">12000 - 22000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Data Analyst</div>
+                        <div class="text-sm text-purple-600">15000 - 25000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">DevOps Engineer</div>
+                        <div class="text-sm text-purple-600">18000 - 30000 MAD</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-purple-600 to-indigo-700 text-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="font-poppins font-bold text-3xl md:text-4xl mb-6" data-aos="fade-up">
+            Prêt à Lancer Votre Carrière en Informatique ?
+        </h2>
+        <p class="text-xl text-purple-100 max-w-3xl mx-auto mb-10" data-aos="fade-up" data-aos-delay="100">
+            Rejoignez notre programme d'excellence et devenez un professionnel reconnu
+        </p>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('auth.signup') }}" class="inline-block px-8 py-4 bg-white text-purple-700 font-semibold rounded-full shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 text-lg" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-graduation-cap mr-2"></i>
+            S'inscrire Maintenant
+        </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock content %}

@@ -1,34 +1,381 @@
 {% extends "base.html" %}
 
+{% block title %}Inscription - EFET{% endblock title %}
+
 {% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Sign Up</h3>
-    <div class="box">
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <div class="notification is-danger">
-            {{ messages[0] }}<br> Go to <a href="{{ url_for('auth.login') }}">login page</a>.
-        </div>
-    {% endif %}
-    {% endwith %}
-        <form method="POST" action="/signup">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
-                </div>
-            </div>
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="">
-                </div>
-            </div>
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Password">
-                </div>
-            </div>
-            <button class="button is-block is-info is-large is-fullwidth">Sign Up</button>
-        </form>
+<section class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Animated Background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50"></div>
+    
+    <!-- Floating Shapes -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute -bottom-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-40 right-40 w-60 h-60 bg-green-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 4s;"></div>
     </div>
-</div>
+    
+    <div class="max-w-md w-full space-y-8 relative z-10">
+        <!-- Header -->
+        <div class="text-center" data-aos="fade-down">
+            <div class="mx-auto h-20 w-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-2xl transform hover:scale-110 transition-transform duration-500">
+                <i class="fas fa-user-plus text-white text-2xl"></i>
+            </div>
+            <h2 class="font-poppins font-bold text-3xl text-gray-900 mb-2">
+                Inscription
+            </h2>
+            <p class="text-gray-600">
+                Rejoignez la communauté EFET
+            </p>
+        </div>
+
+        <!-- Signup Form -->
+        <div class="glass-card p-8" data-aos="fade-up" data-aos-delay="200">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-lg animate-fadeInUp">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-red-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">
+                            {{ messages[0] }}
+                            <br>
+                            <a href="{{ url_for('auth.login') }}" class="underline hover:text-red-900 transition-colors duration-200">
+                                Aller à la page de connexion
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/signup" class="space-y-6" id="signupForm">
+                <!-- Email Field -->
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Adresse Email
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input 
+                            id="email"
+                            name="email" 
+                            type="email" 
+                            required 
+                            class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                            placeholder="votre.email@efet.ma"
+                            autofocus
+                        >
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i id="emailCheck" class="fas fa-check text-green-500 hidden"></i>
+                        </div>
+                    </div>
+                    <p id="emailError" class="text-xs text-red-600 hidden"></p>
+                </div>
+
+                <!-- Name Field -->
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-medium text-gray-700">
+                        Nom Complet
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input 
+                            id="name"
+                            name="name" 
+                            type="text" 
+                            required 
+                            class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                            placeholder="Votre nom complet"
+                        >
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i id="nameCheck" class="fas fa-check text-green-500 hidden"></i>
+                        </div>
+                    </div>
+                    <p id="nameError" class="text-xs text-red-600 hidden"></p>
+                </div>
+
+                <!-- Password Field -->
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Mot de Passe
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input 
+                            id="password"
+                            name="password" 
+                            type="password" 
+                            required 
+                            class="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                            placeholder="••••••••"
+                            minlength="6"
+                        >
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword()">
+                            <i id="passwordToggle" class="fas fa-eye-slash text-gray-400 hover:text-gray-600 transition-colors duration-200"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2">
+                        <div class="flex space-x-1 mb-1">
+                            <div id="strength1" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                            <div id="strength2" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                            <div id="strength3" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                            <div id="strength4" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                        </div>
+                        <p id="passwordStrength" class="text-xs text-gray-500">Minimum 6 caractères</p>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="space-y-2">
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
+                        Confirmer le Mot de Passe
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input 
+                            id="confirmPassword"
+                            name="confirmPassword" 
+                            type="password" 
+                            required 
+                            class="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm transition-all duration-300 hover:border-purple-400"
+                            placeholder="••••••••"
+                        >
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i id="confirmCheck" class="fas fa-check text-green-500 hidden"></i>
+                        </div>
+                    </div>
+                    <p id="confirmError" class="text-xs text-red-600 hidden"></p>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input 
+                            id="terms" 
+                            name="terms" 
+                            type="checkbox" 
+                            required
+                            class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded transition-colors duration-200"
+                        >
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="terms" class="text-gray-700">
+                            J'accepte les 
+                            <a href="#" class="text-purple-600 hover:text-purple-500 transition-colors duration-200">
+                                termes et conditions
+                            </a>
+                            et la 
+                            <a href="#" class="text-purple-600 hover:text-purple-500 transition-colors duration-200">
+                                politique de confidentialité
+                            </a>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button 
+                        type="submit" 
+                        id="submitBtn"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <i class="fas fa-user-plus group-hover:text-purple-300 transition-colors duration-200"></i>
+                        </span>
+                        <span id="submitText">Créer mon Compte</span>
+                        <i id="submitSpinner" class="fas fa-spinner fa-spin hidden ml-2"></i>
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">ou</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Link -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Vous avez déjà un compte ?
+                        <a href="{{ url_for('auth.login') }}" class="font-medium text-purple-600 hover:text-purple-500 transition-colors duration-200">
+                            Se connecter
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Benefits -->
+        <div class="glass-card p-6 text-center" data-aos="fade-up" data-aos-delay="400">
+            <h3 class="font-semibold text-gray-800 mb-4">Pourquoi rejoindre EFET ?</h3>
+            <div class="grid grid-cols-3 gap-4 text-sm">
+                <div class="text-center">
+                    <i class="fas fa-graduation-cap text-blue-500 text-xl mb-2"></i>
+                    <p class="text-gray-600">Formation Excellence</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-users text-green-500 text-xl mb-2"></i>
+                    <p class="text-gray-600">Communauté Active</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-certificate text-purple-500 text-xl mb-2"></i>
+                    <p class="text-gray-600">Certifications</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Toggle password visibility
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const toggleIcon = document.getElementById('passwordToggle');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        } else {
+            passwordField.type = 'password';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        }
+    }
+
+    // Password strength checker
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        const indicators = ['strength1', 'strength2', 'strength3', 'strength4'];
+        
+        // Reset all indicators
+        indicators.forEach(id => {
+            document.getElementById(id).className = 'h-1 w-1/4 bg-gray-200 rounded';
+        });
+        
+        if (password.length >= 6) strength++;
+        if (password.match(/[a-z]/)) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
+        const labels = ['Très faible', 'Faible', 'Moyen', 'Fort', 'Très fort'];
+        
+        for (let i = 0; i < Math.min(strength, 4); i++) {
+            document.getElementById(indicators[i]).className = `h-1 w-1/4 ${colors[Math.min(strength - 1, 3)]} rounded`;
+        }
+        
+        document.getElementById('passwordStrength').textContent = labels[Math.min(strength, 4)];
+        document.getElementById('passwordStrength').className = `text-xs ${strength < 2 ? 'text-red-500' : strength < 3 ? 'text-yellow-500' : 'text-green-500'}`;
+        
+        return strength >= 2;
+    }
+
+    // Form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('signupForm');
+        const emailField = document.getElementById('email');
+        const nameField = document.getElementById('name');
+        const passwordField = document.getElementById('password');
+        const confirmPasswordField = document.getElementById('confirmPassword');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Email validation
+        emailField.addEventListener('blur', function() {
+            const email = this.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email && emailRegex.test(email)) {
+                this.classList.add('border-green-300');
+                this.classList.remove('border-red-300');
+                document.getElementById('emailCheck').classList.remove('hidden');
+                document.getElementById('emailError').classList.add('hidden');
+            } else if (email) {
+                this.classList.add('border-red-300');
+                this.classList.remove('border-green-300');
+                document.getElementById('emailCheck').classList.add('hidden');
+                document.getElementById('emailError').textContent = 'Email invalide';
+                document.getElementById('emailError').classList.remove('hidden');
+            }
+        });
+        
+        // Name validation
+        nameField.addEventListener('blur', function() {
+            const name = this.value.trim();
+            
+            if (name.length >= 2) {
+                this.classList.add('border-green-300');
+                this.classList.remove('border-red-300');
+                document.getElementById('nameCheck').classList.remove('hidden');
+                document.getElementById('nameError').classList.add('hidden');
+            } else if (name) {
+                this.classList.add('border-red-300');
+                this.classList.remove('border-green-300');
+                document.getElementById('nameCheck').classList.add('hidden');
+                document.getElementById('nameError').textContent = 'Nom trop court';
+                document.getElementById('nameError').classList.remove('hidden');
+            }
+        });
+        
+        // Password validation
+        passwordField.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            
+            // Check confirm password if it has value
+            if (confirmPasswordField.value) {
+                validateConfirmPassword();
+            }
+        });
+        
+        // Confirm password validation
+        function validateConfirmPassword() {
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+            
+            if (confirmPassword && password === confirmPassword) {
+                confirmPasswordField.classList.add('border-green-300');
+                confirmPasswordField.classList.remove('border-red-300');
+                document.getElementById('confirmCheck').classList.remove('hidden');
+                document.getElementById('confirmError').classList.add('hidden');
+                return true;
+            } else if (confirmPassword) {
+                confirmPasswordField.classList.add('border-red-300');
+                confirmPasswordField.classList.remove('border-green-300');
+                document.getElementById('confirmCheck').classList.add('hidden');
+                document.getElementById('confirmError').textContent = 'Les mots de passe ne correspondent pas';
+                document.getElementById('confirmError').classList.remove('hidden');
+                return false;
+            }
+            return false;
+        }
+        
+        confirmPasswordField.addEventListener('blur', validateConfirmPassword);
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            // Show loading state
+            submitBtn.disabled = true;
+            document.getElementById('submitText').textContent = 'Création en cours...';
+            document.getElementById('submitSpinner').classList.remove('hidden');
+        });
+    });
+</script>
 {% endblock %}

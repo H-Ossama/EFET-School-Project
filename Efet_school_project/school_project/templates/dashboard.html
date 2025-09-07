@@ -1,1252 +1,1347 @@
 {% extends "base.html" %}
 
+{% block title %}Tableau de Bord Admin - EFET{% endblock title %}
+
 {% block head %}
-<style>
-  table, th, td {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  table {
-    border-spacing: 15px;
-  }
-  p.spacing {
-    line-height: 2;
-  }
-  .parent {
-    overflow:hidden;
-    width:90%;
-  }
-  .left{
-    float:left;
-    width: 50%;
-  }
-
-  .right {
-    float: right;
-  }
-</style>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/fontawesome.min.css">
+<!-- Dashboard Specific Styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock head %}
 
 {% block content %}
-
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    <div class="notification is-danger">
-        {{ messages[0] }}
-    </div>
-{% endif %}
-{% endwith %}
-
-
-<script type="text/javascript">
-   function search() {
-     var filter = event.target.value.toUpperCase();
-     var rows = document.querySelector("#myTable tbody").rows;
-
-         for (var i = 0; i < rows.length; i++) {
-             var firstCol = rows[i].cells[0].textContent.toUpperCase();
-             var secondCol = rows[i].cells[1].textContent.toUpperCase();
-             if (firstCol.indexOf(filter) > -1 || secondCol.indexOf(filter) > -1) {
-                 rows[i].style.display = "";
-             } else {
-                 rows[i].style.display = "none";
-             }
-         }
-   }
-
-</script>
-
-Search :
-<input id="myInput" type="text" onKeyUp="return search()"/>
-
-<table style="width: 100%" id="myTable">
-    <colgroup>
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 14%;">
-       <col span="1" style="width: 10%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 4%;">
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th style="background-color: #777; text-align: center">Name</th>
-            <th style="background-color: #777; text-align: center">Email</th>
-            <th style="background-color: #777; text-align: center">Phone</th>
-            <th style="background-color: #777; text-align: center">Major</th>
-            <th style="background-color: #777; text-align: center">Registration</th>
-            <th style="background-color: #777; text-align: center">Edit</th>
-            <th style="background-color: #777; text-align: center">Delete</th>
-            <th style="background-color: #777; text-align: center">Payments</th>
-            <th style="background-color: #777; text-align: center">Absence</th>
-            <th style="background-color: #777; text-align: center">Grades</th>
-            <th style="background-color: #777; text-align: center"><b>+</b></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr style="height:35px;">
-            <td style="background-color: #FFEADD; text-align: center">{{ user.name }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ user.email }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ user.phone }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ user.major }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ user.registration }}</td>
-            <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editStudentModal{{user.id}}">Edit</button></td>
-            <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteStudentModal{{user.id}}">Delete</button></td>
-            <td style="background-color: #FFEADD; text-align: center"><a href="/consultPayments/{{ user.id }}" class="btn btn-outline-success btn-sm">Check</a></td>
-            <td style="background-color: #FFEADD; text-align: center"><a href="/consultAbsence/{{ user.id }}" class="btn btn-outline-dark btn-sm">Check</a></td>
-            <td style="background-color: #FFEADD; text-align: center"><a href="/consultGrades/{{ user.id }}" class="btn btn-outline-secondary btn-sm">Check</a></td>
-            <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#moreStudentModal{{user.id}}"><b>+</b></button></td>
-        </tr>
-
-        <!-- Modal start -->
-        <div class="modal fade" id="editStudentModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="editStudentLabel">Edit Student</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                    <div class="box">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="notification is-danger">
-                            {{ messages[0] }}
-                        </div>
-                    {% endif %}
-                    {% endwith %}
-                    <form method="POST" action="/editStudent">
-                      <div class="field">
-                        <label for="gender">Name :</label>
-                          <div class="control">
-                              <input class="input is-large" type="text" name="name" value="{{ user.name }}" placeholder="Name" autofocus="" >
-                          </div>
-                      </div>
-                        <div class="field">
-                          <label for="gender">Email :</label>
-                            <div class="control">
-                                <input class="input is-large" type="email" name="email" value="{{ user.email }}" placeholder="Email" autofocus="" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Password :</label>
-                            <div class="control">
-                                <input class="input is-large" type="password" name="password" placeholder="Password">
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Phone :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="phone" value="{{ user.phone }}" placeholder="Phone" autofocus="" >
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="gender">Age :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="age" value="{{ user.age }}" placeholder="Age" >
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="major">Major :</label>
-                              <select name="major" class="form-select" aria-label="type" >
-                                {% for major in majors %}
-                                  <option value="{{ major.major_name }}" {% if major.major_name == user.major %} selected {% endif %}>{{ major.major_name }}</option>
-                                {% endfor %}
-                              </select>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                          <label for="gender">Current year :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="current_year" value="{{ user.year }}" placeholder="Year" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Address :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="address" value="{{ user.address }}" placeholder="Address" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Registration ID :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="registration" value="{{ user.registration }}" placeholder="Registration" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Register date :</label>
-                            <div class="control">
-                              <input class="input is-large" type="date" id="register_date" name="register_date" value="{{ user.register_date }}" placeholder="Registration Date">
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Role :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="role" value="{{ user.role }}" placeholder="Role">
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="gender">Gender :</label>
-                              <select name="gender" class="form-select" aria-label="type" >
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                              </select>
-                            </div>
-                        </div>
-                        <input class="input is-large" type="hidden" name="user_id" placeholder="{{user.id}}" value="{{user.id}}" autofocus="">
-
-                        <input class="btn btn-danger" type="submit" value="Save Changes">
-                    </form>
-                  </div>
-
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal end -->
-
-        <!-- Modal start -->
-        <div class="modal fade" id="moreStudentModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="moreStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="moreStudentModalLabel">More Infos</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                    <div class="box">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="notification is-danger">
-                            {{ messages[0] }}
-                        </div>
-                    {% endif %}
-                    {% endwith %}
-                    <form method="POST">
-
-                      <div class="field">
-                        <label for="gender">Name :</label>
-                          <div class="control">
-                              <input class="input is-large" type="text" name="name" value="{{ user.name }}" placeholder="Name" autofocus="" disabled>
-                          </div>
-                      </div>
-                        <div class="field">
-                          <label for="gender">Email :</label>
-                            <div class="control">
-                                <input class="input is-large" type="email" name="email" value="{{ user.email }}" placeholder="Email" autofocus="" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Phone :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="phone" value="{{ user.phone }}" placeholder="Phone" autofocus="" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="gender">Age :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="age" value="{{ user.age }}" placeholder="Age" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Major :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="major" value="{{ user.major }}" placeholder="Major" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Current year :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="current_year" value="{{ user.year }} nd Year" placeholder="Year" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Address :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="address" value="{{ user.address }}" placeholder="Address" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Registration ID :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="registration" value="{{ user.registration }}" placeholder="Registration" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Register date :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="register_date" value="{{ user.register_date }}" placeholder="Registration Date" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Role :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="role" value="{{ user.role }}" placeholder="Role" disabled>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="gender">Gender :</label>
-                              <select name="gender" class="form-select" aria-label="type" disabled>
-                                <option value="male" selected>Male</option>
-                                <option value="female">Female</option>
-                              </select>
-                            </div>
-                        </div>
-                        <input class="input is-large" type="hidden" name="user_id" placeholder="{{user.id}}" value="{{user.id}}" autofocus="">
-
-                    </form>
-                  </div>
-
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal end -->
-
-        <!-- Modal start -->
-        <div class="modal fade" id="deleteStudentModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="deleteStudentModalLabel">Delete Student</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                Are you sure about deleting this student permanently ?
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form method="POST" action="{{ url_for('main.deleteStudent') }}">
-                  <input class="input is-large" type="hidden" name="user_id" placeholder="{{user.id}}" value="{{user.id}}" autofocus="">
-                  <input class="btn btn-danger" type="submit" value="Delete">
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal end -->
-
-        {% endfor %}
-    </tbody>
-</table>
-
-
-<p class="spacing"></p>
-
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">Add Student</button>
-
-
-<!-- Modal start -->
-<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addUserModalLabel">Add Student</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-            <h3 class="title">Add Student</h3>
-            <div class="box">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="notification is-danger">
-                    {{ messages[0] }}
+<div class="dashboard-wrapper" id="dashboard">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
                 </div>
-            {% endif %}
-            {% endwith %}
-                <form method="POST" action="/addStudent">
-                  <div class="field">
-                      <div class="control">
-                          <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="">
-                      </div>
-                  </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="password" name="password" placeholder="Password">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="age" placeholder="Age">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                          <select name="major" class="form-select" aria-label="type" >
-                            {% for major in majors %}
-                              <option value="{{ major.major_name }}">{{ major.major_name }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="address" placeholder="Address">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="registration" placeholder="EFET Registration">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                          <input class="input is-large" type="date" id="register_date" name="register_date" value="" placeholder="Registration Date">
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <div class="control">
-                          <label for="gender">Gender :</label>
-                          <select name="type" class="form-select" aria-label="type">
-                            <option value="male" selected>Male</option>
-                            <option value="female">Female</option>
-                          </select>
-                        </div>
-                    </div>
-
-                    <button class="button is-block is-info is-large is-fullwidth">Add Student</button>
-                </form>
+                <h2 class="logo-text">EFET</h2>
             </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal end -->
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3 class="menu-title">Principal</h3>
+                <ul class="menu-list">
+                    <li class="menu-item active">
+                        <a href="#dashboard-overview" onclick="showSection('dashboard-overview')" data-tooltip="Tableau de Bord">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Tableau de Bord</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#students-section" onclick="showSection('students-section')" data-tooltip="Étudiants">
+                            <i class="fas fa-users"></i>
+                            <span>Étudiants</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#teachers-section" onclick="showSection('teachers-section')" data-tooltip="Enseignants">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Enseignants</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#majors-section" onclick="showSection('majors-section')" data-tooltip="Filières">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Filières</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#subjects-section" onclick="showSection('subjects-section')" data-tooltip="Matières">
+                            <i class="fas fa-book"></i>
+                            <span>Matières</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3 class="menu-title">Communication</h3>
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="#messages-section" onclick="showSection('messages-section')" data-tooltip="Messages">
+                            <i class="fas fa-envelope"></i>
+                            <span>Messages</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#notifications-section" onclick="showSection('notifications-section')" data-tooltip="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                            {% if notifications %}
+                            <span class="notification-badge">{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                {% if current_user.is_authenticated and current_user.profile_picture %}
+                    <div class="user-avatar profile-image">
+                        <img src="{{ url_for('static', filename='uploaded_pictures/' + current_user.profile_picture) }}" onerror="this.style.display='none'; this.parentNode.innerHTML='{% if current_user.name %}{{ current_user.name[0].upper() }}{% else %}A{% endif %}';" alt="{{ current_user.name }}">
+                    </div>
+                {% else %}
+                    <div class="user-avatar">
+                        {% if current_user.is_authenticated and current_user.name %}
+                            {{ current_user.name[0].upper() }}
+                        {% else %}
+                            A
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div class="user-info">
+                    <span class="user-name">{{ current_user.name }}</span>
+                    <span class="user-role">Administrateur</span>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<p class="spacing"></p>
-<p class="spacing"></p>
-
-
-<script type="text/javascript">
-   function searchTeacher() {
-     var filter = event.target.value.toUpperCase();
-     var rows = document.querySelector("#myTableTeacher tbody").rows;
-
-         for (var i = 0; i < rows.length; i++) {
-             var firstCol = rows[i].cells[0].textContent.toUpperCase();
-             var secondCol = rows[i].cells[1].textContent.toUpperCase();
-             if (firstCol.indexOf(filter) > -1 || secondCol.indexOf(filter) > -1) {
-                 rows[i].style.display = "";
-             } else {
-                 rows[i].style.display = "none";
-             }
-         }
-   }
-
-</script>
-
-Search :
-<input id="myInput" type="text" onKeyUp="return searchTeacher()"/>
-
-<table style="width: 100%" id="myTableTeacher">
-    <colgroup>
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 10%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th style="background-color: #777; text-align: center">Name</th>
-            <th style="background-color: #777; text-align: center">Email</th>
-            <th style="background-color: #777; text-align: center">Phone</th>
-            <th style="background-color: #777; text-align: center">Registration</th>
-            <th style="background-color: #777; text-align: center">Edit</th>
-            <th style="background-color: #777; text-align: center">Delete</th>
-            <th style="background-color: #777; text-align: center">Absence</th>
-            <th style="background-color: #777; text-align: center"><b>+</b></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in all_teacher %}
-        <tr style="height:35px;">
-            <td style="background-color: #FFEADD; text-align: center">{{ user.name }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ user.email }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ user.phone }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ user.registration }}</td>
-            <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editStudentModal{{user.id}}">Edit</button></td>
-            <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteStudentModal{{user.id}}">Delete</button></td>
-            <td style="background-color: #FFEADD; text-align: center"><a href="/consultAbsence/{{ user.id }}" class="btn btn-outline-dark btn-sm">Check</a></td>
-            <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#moreStudentModal{{user.id}}"><b>+</b></button></td>
-        </tr>
-
-        <!-- Modal start -->
-        <div class="modal fade" id="editStudentModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="editStudentLabel">Edit Teacher</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
                 </button>
-              </div>
-              <div class="modal-body">
-                    <div class="box">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="notification is-danger">
-                            {{ messages[0] }}
-                        </div>
-                    {% endif %}
-                    {% endwith %}
-                    <form method="POST" action="/editStudent">
-                      <div class="field">
-                        <label for="gender">Name :</label>
-                          <div class="control">
-                              <input class="input is-large" type="text" name="name" value="{{ user.name }}" placeholder="Name" autofocus="" >
-                          </div>
-                      </div>
-                        <div class="field">
-                          <label for="gender">Email :</label>
-                            <div class="control">
-                                <input class="input is-large" type="email" name="email" value="{{ user.email }}" placeholder="Email" autofocus="" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Password :</label>
-                            <div class="control">
-                                <input class="input is-large" type="password" name="password" placeholder="Password">
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Phone :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="phone" value="{{ user.phone }}" placeholder="Phone" autofocus="" >
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="gender">Age :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="age" value="{{ user.age }}" placeholder="Age" >
-                            </div>
-                        </div>
-
-                        <div class="field">
-                          <label for="gender">Address :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="address" value="{{ user.address }}" placeholder="Address" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Registration ID :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="registration" value="{{ user.registration }}" placeholder="Registration" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Register date :</label>
-                            <div class="control">
-                              <input class="input is-large" type="date" id="register_date" name="register_date" value="{{ user.register_date }}" placeholder="Registration Date">
-                            </div>
-                        </div>
-
-                        <div class="field">
-                          <label for="gender">Role :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="role" value="{{ user.role }}" placeholder="Role">
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="gender">Gender :</label>
-                              <select name="gender" class="form-select" aria-label="type" >
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                              </select>
-                            </div>
-                        </div>
-                        <input class="input is-large" type="hidden" name="user_id" placeholder="{{user.id}}" value="{{user.id}}" autofocus="">
-                        <input class="input is-large" type="hidden" name="role" value="teacher" autofocus="">
-
-                        <input class="btn btn-danger" type="submit" value="Save Changes">
-                    </form>
-                  </div>
-
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
+                <h1 class="page-title">Tableau de Bord Administrateur</h1>
             </div>
-          </div>
-        </div>
-        <!-- Modal end -->
-
-        <!-- Modal start -->
-        <div class="modal fade" id="moreStudentModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="moreStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="moreStudentModalLabel">More Infos</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                    <div class="box">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="notification is-danger">
-                            {{ messages[0] }}
-                        </div>
-                    {% endif %}
-                    {% endwith %}
-                    <form method="POST">
-
-                      <div class="field">
-                        <label for="gender">Name :</label>
-                          <div class="control">
-                              <input class="input is-large" type="text" name="name" value="{{ user.name }}" placeholder="Name" autofocus="" disabled>
-                          </div>
-                      </div>
-                        <div class="field">
-                          <label for="gender">Email :</label>
-                            <div class="control">
-                                <input class="input is-large" type="email" name="email" value="{{ user.email }}" placeholder="Email" autofocus="" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Phone :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="phone" value="{{ user.phone }}" placeholder="Phone" autofocus="" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="gender">Age :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="age" value="{{ user.age }}" placeholder="Age" disabled>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                          <label for="gender">Address :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="address" value="{{ user.address }}" placeholder="Address" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Registration ID :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="registration" value="{{ user.registration }}" placeholder="Registration" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Register date :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="register_date" value="{{ user.register_date }}" placeholder="Registration Date" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Role :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="role" value="{{ user.role }}" placeholder="Role" disabled>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="gender">Gender :</label>
-                              <select name="gender" class="form-select" aria-label="type" disabled>
-                                <option value="male" selected>Male</option>
-                                <option value="female">Female</option>
-                              </select>
-                            </div>
-                        </div>
-                        <input class="input is-large" type="hidden" name="user_id" placeholder="{{user.id}}" value="{{user.id}}" autofocus="">
-
-                    </form>
-                  </div>
-
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal end -->
-
-        <!-- Modal start -->
-        <div class="modal fade" id="deleteStudentModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="deleteStudentModalLabel">Delete Teacher</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                Are you sure about deleting this teacher permanently ?
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form method="POST" action="{{ url_for('main.deleteStudent') }}">
-                  <input class="input is-large" type="hidden" name="user_id" placeholder="{{user.id}}" value="{{user.id}}" autofocus="">
-                  <input class="btn btn-danger" type="submit" value="Delete">
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal end -->
-
-        {% endfor %}
-    </tbody>
-</table>
-
-
-<p class="spacing"></p>
-
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addTeacherModal">Add Teacher</button>
-
-
-<!-- Modal start -->
-<div class="modal fade" id="addTeacherModal" tabindex="-1" role="dialog" aria-labelledby="addTeacherModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addTeacherModalLabel">Add Teacher</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-            <h3 class="title">Add Teacher</h3>
-            <div class="box">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="notification is-danger">
-                    {{ messages[0] }}
-                </div>
-            {% endif %}
-            {% endwith %}
-                <form method="POST" action="/addStudent">
-                  <div class="field">
-                      <div class="control">
-                          <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="">
-                      </div>
-                  </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="password" name="password" placeholder="Password">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="age" placeholder="Age">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="address" placeholder="Address">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="registration" placeholder="EFET Registration">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                          <input class="input is-large" type="date" id="register_date" name="register_date" value="" placeholder="Registration Date">
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <div class="control">
-                          <label for="gender">Gender :</label>
-                          <select name="type" class="form-select" aria-label="type">
-                            <option value="male" selected>Male</option>
-                            <option value="female">Female</option>
-                          </select>
-                        </div>
-                    </div>
-
-                    <input class="input is-large" type="hidden" name="role" value="teacher" autofocus="">
-                    <button class="button is-block is-info is-large is-fullwidth">Add Teacher</button>
-                </form>
-            </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal end -->
-
-<p class="spacing"></p>
-<p class="spacing"></p>
-
-<!-- ------------------------- MAJORS AND MESSAGERIE -->
-
-<div class="container">
-    <div class="row my-2">
-
-      <div class="col-lg-6 order-lg-1" >
-        <div class="tab-content py-4">
-
-          <!-- ------------------------- MAJORS -->
-
-          <table style="width: 100%">
-              <colgroup>
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 20%;">
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 10%;">
-              </colgroup>
-
-              <thead>
-                  <tr>
-                      <th style="background-color: #777; text-align: center">ID</th>
-                      <th style="background-color: #777; text-align: center">Major Name</th>
-                      <th style="background-color: #777; text-align: center">Duration (years)</th>
-                      <th style="background-color: #777; text-align: center">N of Students</th>
-                      <th style="background-color: #777; text-align: center">Edit</th>
-                      <th style="background-color: #777; text-align: center">Delete</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {% for major in majors %}
-                  <tr style="height:35px;">
-                      <td style="background-color: #FFEADD; text-align: center">{{ major.id }}</td>
-                      <td style="background-color: #FFEADD; text-align: center">{{ major.major_name }}</td>
-                      <td style="background-color: #FFEADD; text-align: center">{{ major.duration }}</td>
-                      <td style="background-color: #FFEADD; text-align: center">{{ major.number_students }}</td>
-                      <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editMajorModal{{major.id}}">Edit</button></td>
-                      <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteMajorModal{{major.id}}">Delete</button></td>
-                  </tr>
-
-                  <!-- Modal start -->
-                  <div class="modal fade" id="editMajorModal{{major.id}}" tabindex="-1" role="dialog" aria-labelledby="editMajorModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="editMajorModalLabel">Edit Major</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                              <div class="box">
-                              {% with messages = get_flashed_messages() %}
-                              {% if messages %}
-                                  <div class="notification is-danger">
-                                      {{ messages[0] }}
-                                  </div>
-                              {% endif %}
-                              {% endwith %}
-                              <form method="POST" action="/editMajor">
-                                  <div class="field">
-                                      <div class="control">
-                                          <input class="input is-large" type="text" name="major_name" value="{{ major.major_name }}" placeholder="Major Name" autofocus="">
-                                      </div>
-                                  </div>
-                                  <div class="field">
-                                      <div class="control">
-                                          <input class="input is-large" type="text" name="duration" value="{{ major.duration }}" placeholder="Duration" autofocus="">
-                                      </div>
-                                  </div>
-                                  <input class="input is-large" type="hidden" name="major_id" placeholder="{{major.id}}" value="{{major.id}}" autofocus="">
-                                  <input class="btn btn-danger" type="submit" value="Save Changes">
-                              </form>
-                            </div>
-
-
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Modal end -->
-
-                  <!-- Modal start -->
-                  <div class="modal fade" id="deleteMajorModal{{major.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteMajorModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="deleteMajorModalLabel">Delete Major</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          Are you sure about deleting this major permanently ?
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <form method="POST" action="{{ url_for('main.deleteMajor') }}">
-                            <input class="input is-large" type="hidden" name="major_id" placeholder="{{major.id}}" value="{{major.id}}" autofocus="">
-                            <input class="btn btn-danger" type="submit" value="Delete">
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Modal end -->
-
-                  {% endfor %}
-              </tbody>
-          </table>
-
-
-          <p class="spacing"></p>
-
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMajorModal">Add Major</button>
-
-          <!-- Modal start -->
-          <div class="modal fade" id="addMajorModal" tabindex="-1" role="dialog" aria-labelledby="addMajorModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="addMajorModalLabel">Add Major</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                      <h3 class="title">Add Major</h3>
-                      <div class="box">
-                      {% with messages = get_flashed_messages() %}
-                      {% if messages %}
-                          <div class="notification is-danger">
-                              {{ messages[0] }}
-                          </div>
-                      {% endif %}
-                      {% endwith %}
-                          <form method="POST" action="/addMajor">
-                              <div class="field">
-                                  <div class="control">
-                                      <input class="input is-large" type="text" name="major_name" placeholder="Major Name" autofocus="">
-                                  </div>
-                              </div>
-                              <div class="field">
-                                  <div class="control">
-                                      <input class="input is-large" type="text" name="duration" placeholder="Duration" autofocus="">
-                                  </div>
-                              </div>
-                              <button class="button is-block is-info is-large is-fullwidth">Add Major</button>
-                          </form>
-                      </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Modal end -->
-
-          <!-- ------------------------- MAJORS END -->
-
-        </div>
-      </div>
-
-
-      <div class="col-lg-6 order-lg-2" >
-          <div class="tab-content py-4">
-
-
-            <table style="width: 100%">
-                <colgroup>
-                   <col span="1" style="width: 10%;">
-                   <col span="1" style="width: 20%;">
-                   <col span="1" style="width: 10%;">
-                   <col span="1" style="width: 10%;">
-                   <col span="1" style="width: 10%;">
-                </colgroup>
-
-                <thead>
-                    <tr>
-                        <th style="background-color: #777; text-align: center">ID</th>
-                        <th style="background-color: #777; text-align: center">Subject Name</th>
-                        <th style="background-color: #777; text-align: center">Teacher Name</th>
-                        <th style="background-color: #777; text-align: center">Edit</th>
-                        <th style="background-color: #777; text-align: center">Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for subject in all_subject %}
-                    <tr style="height:35px;">
-                        <td style="background-color: #FFEADD; text-align: center">{{ subject.id }}</td>
-                        <td style="background-color: #FFEADD; text-align: center">{{ subject.name }}</td>
-                        <td style="background-color: #FFEADD; text-align: center">{{ subject.teacher_name }}</td>
-                        <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editSubjectModal{{subject.id}}">Edit</button></td>
-                        <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteSubjectModal{{subject.id}}">Delete</button></td>
-                    </tr>
-
-                    <!-- Modal start -->
-                    <div class="modal fade" id="editSubjectModal{{subject.id}}" tabindex="-1" role="dialog" aria-labelledby="editSubjectModalLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="editSubjectModalLabel">Edit Subject</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                                <div class="box">
-
-                                <form method="POST" action="/editSubject">
-                                    <div class="field">
-                                        <div class="control">
-                                            <input class="input is-large" type="text" name="subject_name" value="{{ subject.name }}" placeholder="Subject Name" autofocus="">
-                                        </div>
-                                    </div>
-
-                                    <div class="field">
-                                        <div class="control">
-                                          <label for="prof_id">Teachers :</label>
-                                          <select name="prof_id" class="form-select" aria-label="type" >
-                                            {% for teacher in all_teacher %}
-                                              <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                                            {% endfor %}
-                                          </select>
-                                        </div>
-                                    </div>
-
-                                    <input class="input is-large" type="hidden" name="subject_id" value="{{subject.id}}" autofocus="">
-                                    <input class="btn btn-danger" type="submit" value="Save Changes">
-                                </form>
-                              </div>
-
-
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Modal end -->
-
-                    <!-- Modal start -->
-                    <div class="modal fade" id="deleteSubjectModal{{subject.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteSubjectModalLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="deleteSubjectModalLabel">Delete Subject</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            Are you sure about deleting this subject permanently ?
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                            <form method="POST" action="/deleteSubject">
-                              <input class="input is-large" type="hidden" name="subject_id" value="{{subject.id}}" autofocus="">
-                              <input class="btn btn-danger" type="submit" value="Delete">
-                            </form>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Modal end -->
-
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <p class="spacing"></p>
-
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSubjectModal">Add Subject</button>
-
-            <!-- Modal start -->
-            <div class="modal fade" id="addSubjectModal" tabindex="-1" role="dialog" aria-labelledby="addSubjectModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="addSubjectModalLabel">Add Subject</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="action-btn" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        {% if notifications %}
+                        <span class="notification-dot">{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</span>
+                        {% endif %}
                     </button>
-                  </div>
-                  <div class="modal-body">
-                        <h3 class="title">Add Subject</h3>
-                        <div class="box">
-                            <form method="POST" action="/addSubject">
-                                <div class="field">
-                                    <div class="control">
-                                        <input class="input is-large" type="text" name="subject_name" placeholder="Subject Name" autofocus="">
-                                    </div>
-                                </div>
-
-                                <div class="field">
-                                    <div class="control">
-                                      <label for="prof_id">Teachers :</label>
-                                      <select name="prof_id" class="form-select" aria-label="type" >
-                                        {% for teacher in all_teacher %}
-                                          <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                                        {% endfor %}
-                                      </select>
-                                    </div>
-                                </div>
-
-                                <button class="button is-block is-info is-large is-fullwidth">Add Subject</button>
-                            </form>
-                        </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  </div>
+                    <button class="action-btn" onclick="toggleUserMenu()">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
                 </div>
-              </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{ messages[0] }}</span>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Dashboard Overview Section -->
+        <section id="dashboard-overview" class="content-section active">
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon students">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ users|length }}</h3>
+                        <p>Étudiants</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon teachers">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ all_teacher|length }}</h3>
+                        <p>Enseignants</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon majors">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ majors|length }}</h3>
+                        <p>Filières</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon subjects">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ all_subject|length }}</h3>
+                        <p>Matières</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Recent Activity Dashboard -->
+            <div class="dashboard-grid">
+                <!-- Recent Students -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Étudiants Récents</h3>
+                        <button class="btn-icon" onclick="showSection('students-section')">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        {% for user in users[:5] %}
+                        <div class="user-item">
+                            {% if user.profile_picture %}
+                                <div class="user-avatar profile-image">
+                                    <img src="{{ url_for('static', filename='uploaded_pictures/' + user.profile_picture) }}" onerror="this.style.display='none'; this.parentNode.innerHTML='{{ user.name[0].upper() }}';" alt="{{ user.name }}">
+                                </div>
+                            {% else %}
+                                <div class="user-avatar">{{ user.name[0].upper() }}</div>
+                            {% endif %}
+                            <span class="student-name">{{ user.name }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
 
-          </div>
-      </div>
-
-
-        <div class="col-lg-12 order-lg-2" style="background-color:#361e19;">
-            <div class="tab-content py-4">
-
-              <table style="width: 100%">
-                  <colgroup>
-                     <col span="1" style="width: 20%;">
-                     <col span="1" style="width: 10%;">
-                     <col span="1" style="width: 10%;">
-                     <col span="1" style="width: 60%;">
-                  </colgroup>
-
-                  <thead>
-                      <tr>
-                          <th style="background-color: #777; text-align: center">Date</th>
-                          <th style="background-color: #777; text-align: center">From</th>
-                          <th style="background-color: #777; text-align: center">To</th>
-                          <th style="background-color: #777; text-align: center">Message</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {% for message in messages %}
-                      <tr style="height:35px;">
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.date_sent }}</td>
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.msg_from }}</td>
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.msg_to }}</td>
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.content }}</td>
-                      </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-              <form method="POST" action="/sendMessage">
-
-                <div class="row my-2">
-                  <div class="col-lg-3 order-lg-1">
-                    <div class="tab-content py-4">
-
-                        <div class="field">
-                          <label for="recipient_id" style="color: white;">Send to :</label>
-                            <div class="control">
-                              <select name="recipient_id" class="form-select" aria-label="type" >
-                                {% for recipient in users %}
-                                  <option value="{{ recipient.id }}">{{ recipient.name }}</option>
-                                {% endfor %}
-                              </select>
+                <!-- Recent Messages -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Messages Récents</h3>
+                        <button class="btn-icon" onclick="showSection('messages-section')">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        {% for message in messages[:5] %}
+                        <div class="message-item">
+                            <div class="message-info">
+                                <h4>{{ message.msg_from }}</h4>
+                                <p>{{ message.content[:50] }}...</p>
+                                <span class="message-date">{{ message.date_sent }}</span>
                             </div>
                         </div>
-
+                        {% endfor %}
                     </div>
-                  </div>
+                </div>
 
-                    <div class="col-lg-9 order-lg-2" style="background-color:#361e19;">
-                        <div class="tab-content py-4">
-
-                          <div class="field">
-                            <label for="recipient_id" style="color: white;">Message :</label>
-                              <div class="control">
-                                  <textarea class="input" id="message" name="message" rows="4" cols="50" placeholder="Your message here .."></textarea>
-                              </div>
-                          </div>
-
+                <!-- Notifications -->
+                {% if notifications %}
+                <div class="dashboard-card notifications-card">
+                    <div class="card-header">
+                        <h3>Notifications</h3>
+                        <span class="notification-count">{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="notification-alert">
+                            <i class="fas fa-bell"></i>
+                            <div>
+                                <p><strong>{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</strong> nouvelles notifications</p>
+                                <a href="{{ url_for('main.admin_notifications') }}">Voir toutes →</a>
+                            </div>
                         </div>
                     </div>
-
                 </div>
-                <button class="button is-primary">Send Message</button>
-              </form>
-
+                {% endif %}
             </div>
+        </section>
+
+        <!-- Students Management Section -->
+        <section id="students-section" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des Étudiants</h2>
+                <button class="btn-primary" onclick="toggleModal('addStudentModal')">
+                    <i class="fas fa-plus"></i>
+                    Ajouter Étudiant
+                </button>
+            </div>
+            
+            <div class="data-table-container">
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="studentSearch" onkeyup="searchStudents()" placeholder="Rechercher un étudiant...">
+                    </div>
+                    <div class="table-actions">
+                        <button class="btn-secondary" onclick="exportData('students')">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modern-table">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>Étudiant</th>
+                                <th>Email</th>
+                                <th>Filière</th>
+                                <th>Inscription</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        {% if user.profile_picture %}
+                                            <div class="user-avatar profile-image">
+                                                <img src="{{ url_for('static', filename='uploaded_pictures/' + user.profile_picture) }}" onerror="this.style.display='none'; this.parentNode.innerHTML='{{ user.name[0].upper() }}';" alt="{{ user.name }}">
+                                            </div>
+                                        {% else %}
+                                            <div class="user-avatar">{{ user.name[0].upper() }}</div>
+                                        {% endif %}
+                                        <div class="user-details">
+                                            <span class="user-name">{{ user.name }}</span>
+                                            <span class="user-id">ID: {{ user.id }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="badge major-badge">{{ user.major or 'Non définie' }}</span>
+                                </td>
+                                <td>{{ user.register_date or 'N/A' }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon edit" onclick="editStudent({{ user.id }})" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <a href="{{ url_for('main.consultGrades', user_id=user.id) }}" class="btn-icon view" title="Notes">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </a>
+                                        <a href="{{ url_for('main.consultPayments', user_id=user.id) }}" class="btn-icon payment" title="Paiements">
+                                            <i class="fas fa-credit-card"></i>
+                                        </a>
+                                        <button class="btn-icon delete" onclick="deleteStudent({{ user.id }})" title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Teachers Management Section -->
+        <section id="teachers-section" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des Enseignants</h2>
+                <button class="btn-primary" onclick="toggleModal('addTeacherModal')">
+                    <i class="fas fa-plus"></i>
+                    Ajouter Enseignant
+                </button>
+            </div>
+            
+            <div class="data-table-container">
+                <div class="modern-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Enseignant</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Inscription</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for teacher in all_teacher %}
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        {% if teacher.profile_picture %}
+                                            <div class="user-avatar teacher profile-image">
+                                                <img src="{{ url_for('static', filename='uploaded_pictures/' + teacher.profile_picture) }}" onerror="this.style.display='none'; this.parentNode.innerHTML='{{ teacher.name[0].upper() }}';" alt="{{ teacher.name }}">
+                                            </div>
+                                        {% else %}
+                                            <div class="user-avatar teacher">{{ teacher.name[0].upper() }}</div>
+                                        {% endif %}
+                                        <div class="user-details">
+                                            <span class="user-name">{{ teacher.name }}</span>
+                                            <span class="user-id">ID: {{ teacher.id }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ teacher.email }}</td>
+                                <td>{{ teacher.phone or 'N/A' }}</td>
+                                <td>{{ teacher.registration or 'N/A' }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon edit" onclick="editTeacher({{ teacher.id }})" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <a href="/consultAbsence/{{ teacher.id }}" class="btn-icon view" title="Absences">
+                                            <i class="fas fa-calendar-times"></i>
+                                        </a>
+                                        <button class="btn-icon delete" onclick="deleteTeacher({{ teacher.id }})" title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Majors Management Section -->
+        <section id="majors-section" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des Filières</h2>
+                <button class="btn-primary" onclick="toggleModal('addMajorModal')">
+                    <i class="fas fa-plus"></i>
+                    Ajouter Filière
+                </button>
+            </div>
+            
+            <div class="majors-grid">
+                {% for major in majors %}
+                <div class="major-card">
+                    <div class="major-header">
+                        <div class="major-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>{{ major.major_name }}</h3>
+                    </div>
+                    <div class="major-details">
+                        <div class="detail-item">
+                            <span class="label">Durée:</span>
+                            <span class="value">{{ major.duration }} ans</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Étudiants:</span>
+                            <span class="value">{{ major.number_students or 0 }}</span>
+                        </div>
+                    </div>
+                    <div class="major-actions">
+                        <button class="btn-icon edit" onclick="editMajor({{ major.id }})" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon delete" onclick="deleteMajor({{ major.id }})" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Subjects Management Section -->
+        <section id="subjects-section" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des Matières</h2>
+                <button class="btn-primary" onclick="toggleModal('addSubjectModal')">
+                    <i class="fas fa-plus"></i>
+                    Ajouter Matière
+                </button>
+            </div>
+            
+            <div class="subjects-grid">
+                {% for subject in all_subject %}
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>{{ subject.name }}</h3>
+                    </div>
+                    <div class="subject-details">
+                        <div class="teacher-info">
+                            <span class="label">Enseignant:</span>
+                            <span class="teacher-name">
+                                {% for teacher in all_teacher %}
+                                    {% if teacher.id == subject.id_prof %}
+                                        {{ teacher.name }}
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="subject-actions">
+                        <button class="btn-icon edit" onclick="editSubject({{ subject.id }})" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon delete" onclick="deleteSubject({{ subject.id }})" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Messages Section -->
+        <section id="messages-section" class="content-section">
+            <div class="section-header">
+                <h2>Messages</h2>
+                <button class="btn-primary" onclick="toggleModal('sendMessageModal')">
+                    <i class="fas fa-paper-plane"></i>
+                    Envoyer Message
+                </button>
+            </div>
+            
+            <div class="messages-container">
+                <div class="messages-list">
+                    {% for message in messages %}
+                    <div class="message-card">
+                        <div class="message-header">
+                            <div class="sender-info">
+                                <div class="sender-avatar">
+                                {% set found_image = false %}
+                                {% for user in users %}
+                                    {% if user.name == message.msg_from and user.profile_picture %}
+                                        {% set found_image = true %}
+                                        <img src="{{ url_for('static', filename='uploaded_pictures/' + user.profile_picture) }}" onerror="this.style.display='none'; this.parentNode.innerHTML='{{ message.msg_from[0].upper() }}';" alt="{{ message.msg_from }}">
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not found_image %}
+                                    {{ message.msg_from[0].upper() }}
+                                {% endif %}
+                                </div>
+                                <div class="sender-details">
+                                    <span class="sender-name">{{ message.msg_from }}</span>
+                                    <span class="recipient">vers {{ message.msg_to }}</span>
+                                </div>
+                            </div>
+                            <span class="message-date">{{ message.date_sent }}</span>
+                        </div>
+                        <div class="message-content">
+                            {{ message.content }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section id="notifications-section" class="content-section">
+            <div class="section-header">
+                <h2>Notifications</h2>
+                {% if notifications %}
+                <span class="notification-count">{{ notifications|selectattr("is_read", "equalto", false)|list|length }} nouvelles</span>
+                {% endif %}
+            </div>
+            
+            {% if notifications %}
+            <div class="notifications-container">
+                {% for notification in notifications %}
+                <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>{{ notification.title or 'Notification' }}</h4>
+                        <p>{{ notification.content or notification.message }}</p>
+                        <span class="notification-time">{{ notification.created_at or 'Maintenant' }}</span>
+                    </div>
+                    {% if not notification.is_read %}
+                    <button class="mark-read-btn" onclick="markAsRead({{ notification.id }})">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h3>Aucune notification</h3>
+                <p>Vous n'avez aucune notification pour le moment.</p>
+            </div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+
+<!-- Modern Modals -->
+
+<!-- Add Student Modal -->
+<div id="addStudentModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Ajouter un Étudiant</h3>
+            <button class="modal-close" onclick="toggleModal('addStudentModal')">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-
-
-
-
+        
+        <form method="POST" action="/addStudent" class="modal-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" name="name" required placeholder="Nom complet">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required placeholder="email@exemple.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" required placeholder="Mot de passe">
+                </div>
+                <div class="form-group">
+                    <label>Âge</label>
+                    <input type="number" name="age" placeholder="Âge">
+                </div>
+                <div class="form-group">
+                    <label>Adresse</label>
+                    <input type="text" name="address" placeholder="Adresse complète">
+                </div>
+                <div class="form-group">
+                    <label>N° d'inscription</label>
+                    <input type="text" name="registration" placeholder="Numéro d'inscription">
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select name="gender">
+                        <option value="male">Masculin</option>
+                        <option value="female">Féminin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rôle</label>
+                    <select name="role">
+                        <option value="student">Étudiant</option>
+                        <option value="teacher">Enseignant</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Filière</label>
+                    <select name="major">
+                        {% for major in majors %}
+                        <option value="{{ major.major_name }}">{{ major.major_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date d'inscription</label>
+                    <input type="date" name="register_date">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('addStudentModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Ajouter</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- ------------------------- END MAJORS AND MESSAGERIE -->
+<!-- Add Teacher Modal -->
+<div id="addTeacherModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Ajouter un Enseignant</h3>
+            <button class="modal-close" onclick="toggleModal('addTeacherModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="/addStudent" class="modal-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" name="name" required placeholder="Nom complet">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required placeholder="email@exemple.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" required placeholder="Mot de passe">
+                </div>
+                <div class="form-group">
+                    <label>Âge</label>
+                    <input type="number" name="age" placeholder="Âge">
+                </div>
+                <div class="form-group">
+                    <label>Adresse</label>
+                    <input type="text" name="address" placeholder="Adresse complète">
+                </div>
+                <div class="form-group">
+                    <label>N° d'inscription</label>
+                    <input type="text" name="registration" placeholder="Numéro d'inscription">
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select name="type">
+                        <option value="male">Masculin</option>
+                        <option value="female">Féminin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date d'inscription</label>
+                    <input type="date" name="register_date">
+                </div>
+            </div>
+            <input type="hidden" name="role" value="teacher">
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('addTeacherModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
 
+<!-- Add Major Modal -->
+<div id="addMajorModal" class="modal-overlay">
+    <div class="modal-container small">
+        <div class="modal-header">
+            <h3>Ajouter une Filière</h3>
+            <button class="modal-close" onclick="toggleModal('addMajorModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="/addMajor" class="modal-form">
+            <div class="form-group">
+                <label>Nom de la filière</label>
+                <input type="text" name="major_name" required placeholder="Nom de la filière">
+            </div>
+            <div class="form-group">
+                <label>Durée (en années)</label>
+                <input type="number" name="duration" required placeholder="Durée en années">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('addMajorModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
 
+<!-- Add Subject Modal -->
+<div id="addSubjectModal" class="modal-overlay">
+    <div class="modal-container small">
+        <div class="modal-header">
+            <h3>Ajouter une Matière</h3>
+            <button class="modal-close" onclick="toggleModal('addSubjectModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="/addSubject" class="modal-form">
+            <div class="form-group">
+                <label>Nom de la matière</label>
+                <input type="text" name="subject_name" required placeholder="Nom de la matière">
+            </div>
+            <div class="form-group">
+                <label>Enseignant</label>
+                <select name="prof_id" required>
+                    <option value="">Sélectionner un enseignant</option>
+                    {% for teacher in all_teacher %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('addSubjectModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+<!-- Send Message Modal -->
+<div id="sendMessageModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Envoyer un Message</h3>
+            <button class="modal-close" onclick="toggleModal('sendMessageModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="/sendMessage" class="modal-form">
+            <div class="form-group">
+                <label>Destinataire</label>
+                <select name="recipient_id" required>
+                    <option value="">Sélectionner un destinataire</option>
+                    {% for recipient in users %}
+                    <option value="{{ recipient.id }}">{{ recipient.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea name="message" required placeholder="Votre message ici..." rows="5"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('sendMessageModal')">Annuler</button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Envoyer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
+<!-- Edit Student Modal -->
+<div id="editStudentModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Modifier un Étudiant</h3>
+            <button class="modal-close" onclick="toggleModal('editStudentModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="/editStudent" class="modal-form">
+            <input type="hidden" name="user_id" id="edit_user_id">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" name="name" id="edit_name" required placeholder="Nom complet">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" id="edit_email" required placeholder="email@exemple.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" id="edit_password" placeholder="Laisser vide pour ne pas modifier">
+                </div>
+                <div class="form-group">
+                    <label>Âge</label>
+                    <input type="number" name="age" id="edit_age" placeholder="Âge">
+                </div>
+                <div class="form-group">
+                    <label>Adresse</label>
+                    <input type="text" name="address" id="edit_address" placeholder="Adresse complète">
+                </div>
+                <div class="form-group">
+                    <label>N° d'inscription</label>
+                    <input type="text" name="registration" id="edit_registration" placeholder="Numéro d'inscription">
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select name="gender" id="edit_gender">
+                        <option value="male">Masculin</option>
+                        <option value="female">Féminin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rôle</label>
+                    <select name="role" id="edit_role">
+                        <option value="student">Étudiant</option>
+                        <option value="teacher">Enseignant</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Filière</label>
+                    <select name="major" id="edit_major">
+                        {% for major in majors %}
+                        <option value="{{ major.major_name }}">{{ major.major_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Année actuelle</label>
+                    <input type="text" name="current_year" id="edit_current_year" placeholder="Année actuelle">
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" name="phone" id="edit_phone" placeholder="Numéro de téléphone">
+                </div>
+                <div class="form-group">
+                    <label>Date d'inscription</label>
+                    <input type="date" name="register_date" id="edit_register_date">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('editStudentModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Sauvegarder</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Teacher Edit Modal -->
+<div id="editTeacherModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Modifier l'enseignant</h3>
+            <button class="modal-close" onclick="toggleModal('editTeacherModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form method="POST" action="/editTeacher" class="modal-form">
+            <input type="hidden" id="edit_teacher_id" name="user_id">
+            
+            <div class="form-group">
+                <label for="edit_teacher_name">Nom</label>
+                <input type="text" id="edit_teacher_name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_teacher_email">Email</label>
+                <input type="email" id="edit_teacher_email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_teacher_password">Mot de passe (laisser vide pour ne pas changer)</label>
+                <input type="password" id="edit_teacher_password" name="password">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_teacher_phone">Téléphone</label>
+                <input type="text" id="edit_teacher_phone" name="phone">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_teacher_address">Adresse</label>
+                <input type="text" id="edit_teacher_address" name="address">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_teacher_speciality">Spécialité</label>
+                <input type="text" id="edit_teacher_speciality" name="speciality">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_teacher_role">Rôle</label>
+                <select id="edit_teacher_role" name="role" class="form-control">
+                    <option value="teacher">Enseignant</option>
+                    <option value="student">Étudiant</option>
+                    <option value="admin">Administrateur</option>
+                </select>
+            </div>
+            
+            <!-- Additional fields that appear when changing to student -->
+            <div id="student_fields" style="display: none;">
+                <div class="form-group">
+                    <label for="edit_teacher_registration">N° d'inscription</label>
+                    <input type="text" id="edit_teacher_registration" name="registration">
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit_teacher_major">Filière</label>
+                    <select id="edit_teacher_major" name="major" class="form-control">
+                        {% for major in majors %}
+                        <option value="{{ major.major_name }}">{{ major.major_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit_teacher_year">Année</label>
+                    <select id="edit_teacher_year" name="current_year" class="form-control">
+                        <option value="1">1ère année</option>
+                        <option value="2">2ème année</option>
+                        <option value="3">3ème année</option>
+                        <option value="4">4ème année</option>
+                        <option value="5">5ème année</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="toggleModal('editTeacherModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Sauvegarder</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Dashboard Navigation
+let sidebarCollapsed = false;
+let currentSection = 'dashboard-overview';
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const dashboard = document.getElementById('dashboard');
+    
+    sidebarCollapsed = !sidebarCollapsed;
+    
+    if (sidebarCollapsed) {
+        sidebar.classList.add('collapsed');
+        dashboard.classList.add('sidebar-collapsed');
+    } else {
+        sidebar.classList.remove('collapsed');
+        dashboard.classList.remove('sidebar-collapsed');
+    }
+}
+
+function showSection(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Remove active class from all menu items
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Show selected section
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // Add active class to corresponding menu item
+    const menuLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+    if (menuLink) {
+        menuLink.closest('.menu-item').classList.add('active');
+    }
+    
+    currentSection = sectionId;
+    
+    // Update page title
+    const pageTitles = {
+        'dashboard-overview': 'Tableau de Bord',
+        'students-section': 'Gestion des Étudiants',
+        'teachers-section': 'Gestion des Enseignants',
+        'majors-section': 'Gestion des Filières',
+        'subjects-section': 'Gestion des Matières',
+        'messages-section': 'Messages',
+        'notifications-section': 'Notifications'
+    };
+    
+    document.querySelector('.page-title').textContent = pageTitles[sectionId] || 'Tableau de Bord';
+}
+
+// Modal Functions
+function toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.toggle('active');
+        
+        // Prevent body scroll when modal is open
+        if (modal.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+// Search Functions
+function searchStudents() {
+    const input = document.getElementById('studentSearch');
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById('studentsTable');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows.length; i++) {
+        let found = false;
+        const cells = rows[i].getElementsByTagName('td');
+        
+        for (let j = 0; j < cells.length - 1; j++) {
+            const txtValue = cells[j].textContent || cells[j].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                found = true;
+                break;
+            }
+        }
+        
+        rows[i].style.display = found ? '' : 'none';
+    }
+}
+
+// Save original function and CRUD Functions
+window.originalEditStudent = function(studentId) {
+    // Fetch student data for the modal
+    fetch(`/get_student_data/${studentId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const student = data.student;
+                
+                // Populate the form fields
+                document.getElementById('edit_user_id').value = student.id;
+                document.getElementById('edit_name').value = student.name || '';
+                document.getElementById('edit_email').value = student.email || '';
+                document.getElementById('edit_password').value = ''; // Clear password field for security
+                document.getElementById('edit_age').value = student.age || '';
+                document.getElementById('edit_address').value = student.address || '';
+                document.getElementById('edit_registration').value = student.registration || '';
+                document.getElementById('edit_gender').value = student.gender || 'male';
+                document.getElementById('edit_role').value = student.role || 'student';
+                document.getElementById('edit_major').value = student.major || '';
+                document.getElementById('edit_current_year').value = student.year || '';
+                document.getElementById('edit_phone').value = student.phone || '';
+                
+                // Format date for input if it exists
+                if (student.register_date) {
+                    // Expected format: yyyy-mm-dd
+                    const registerDate = new Date(student.register_date);
+                    const formattedDate = registerDate.toISOString().split('T')[0];
+                    document.getElementById('edit_register_date').value = formattedDate;
+                } else {
+                    document.getElementById('edit_register_date').value = '';
+                }
+                
+                // Show the modal
+                toggleModal('editStudentModal');
+            } else {
+                console.error('Failed to fetch student data');
+                alert('Impossible de récupérer les données de l\'étudiant.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching student data:', error);
+            alert('Une erreur s\'est produite lors de la récupération des données.');
+        });
+}
+
+function deleteStudent(studentId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet étudiant ?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/deleteStudent';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'user_id';
+        input.value = studentId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function editTeacher(teacherId) {
+    if (window.originalEditTeacher) {
+        window.originalEditTeacher(teacherId);
+    } else {
+        // Create a basic implementation for teacher editing
+        alert('La fonctionnalité d\'édition des enseignants est en cours d\'implémentation.');
+    }
+}
+
+// Save original function
+window.originalEditTeacher = function(teacherId) {
+    console.log('Edit teacher:', teacherId);
+    
+    // Fetch teacher data for the modal
+    fetch(`/get_student_data/${teacherId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const teacher = data.student; // The API returns "student" even for teachers
+                
+                // Populate the form fields
+                document.getElementById('edit_teacher_id').value = teacher.id;
+                document.getElementById('edit_teacher_name').value = teacher.name || '';
+                document.getElementById('edit_teacher_email').value = teacher.email || '';
+                document.getElementById('edit_teacher_password').value = ''; // Clear password field for security
+                document.getElementById('edit_teacher_phone').value = teacher.phone || '';
+                document.getElementById('edit_teacher_address').value = teacher.address || '';
+                // Speciality is not in the API, we might need to add it later
+                
+                // Set role
+                const roleSelect = document.getElementById('edit_teacher_role');
+                if (roleSelect) {
+                    roleSelect.value = teacher.role || 'teacher';
+                }
+                
+                // Show the modal
+                toggleModal('editTeacherModal');
+                
+                // Initialize role change handler
+                handleTeacherRoleChange();
+            } else {
+                console.error('Failed to fetch teacher data');
+                alert('Impossible de récupérer les données de l\'enseignant.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching teacher data:', error);
+            alert('Erreur lors de la récupération des données de l\'enseignant.');
+        });
+}
+
+function deleteTeacher(teacherId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet enseignant ?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/deleteStudent';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'user_id';
+        input.value = teacherId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function editMajor(majorId) {
+    console.log('Edit major:', majorId);
+    // Implement major edit functionality
+}
+
+function deleteMajor(majorId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette filière ?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/deleteMajor';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'major_id';
+        input.value = majorId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function editSubject(subjectId) {
+    console.log('Edit subject:', subjectId);
+    // Implement subject edit functionality
+}
+
+function deleteSubject(subjectId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette matière ?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/deleteSubject';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'subject_id';
+        input.value = subjectId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Handle role change in teacher edit form
+function handleTeacherRoleChange() {
+    const roleSelect = document.getElementById('edit_teacher_role');
+    const studentFields = document.getElementById('student_fields');
+    
+    if (roleSelect && studentFields) {
+        // Initial setup
+        if (roleSelect.value === 'student') {
+            studentFields.style.display = 'block';
+        } else {
+            studentFields.style.display = 'none';
+        }
+        
+        // Event listener
+        roleSelect.addEventListener('change', function() {
+            if (this.value === 'student') {
+                studentFields.style.display = 'block';
+            } else {
+                studentFields.style.display = 'none';
+            }
+        });
+    }
+}
+
+// Utility Functions
+function exportData(type) {
+    console.log('Export data:', type);
+    // Implement data export functionality
+}
+
+function toggleNotifications() {
+    showSection('notifications-section');
+}
+
+function toggleUserMenu() {
+    // Implement user menu dropdown
+    console.log('Toggle user menu');
+}
+
+function markAsRead(notificationId) {
+    // Implement mark notification as read
+    console.log('Mark as read:', notificationId);
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Initialize responsive behavior
+    function handleResize() {
+        if (window.innerWidth <= 768) {
+            if (!sidebarCollapsed) {
+                toggleSidebar();
+            }
+        }
+    }
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Call on load
+    
+    // Add animation classes
+    const cards = document.querySelectorAll('.stat-card, .dashboard-card, .major-card, .subject-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in');
+    });
+});
+
+// Animation on scroll
+function animateOnScroll() {
+    const elements = document.querySelectorAll('.fade-in-up');
+    elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+            element.classList.add('active');
+        }
+    });
+}
+
+window.addEventListener('scroll', animateOnScroll);
+
+// Function to handle profile image errors
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle profile image errors
+    const profileImages = document.querySelectorAll('.profile-image img');
+    profileImages.forEach(img => {
+        img.addEventListener('error', function() {
+            const parent = this.parentNode;
+            const userName = this.getAttribute('alt') || 'U';
+            this.style.display = 'none';
+            parent.innerHTML = userName.charAt(0).toUpperCase();
+        });
+    });
+});
+
+// Define the global editStudent function to call the original
+function editStudent(studentId) {
+    if (window.originalEditStudent) {
+        window.originalEditStudent(studentId);
+    }
+}
+
+</script>
+
+<!-- Dashboard JavaScript -->
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 {% endblock %}

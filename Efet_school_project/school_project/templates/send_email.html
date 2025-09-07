@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Envoyer un Email - EFET{% endblock title %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="bg-white shadow rounded-lg mb-6">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-gray-900 font-poppins">
+                    <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                    Envoyer un Email
+                </h1>
+                {% if user %}
+                <p class="text-gray-600 mt-1">À : {{ user.name }} ({{ user.email }})</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Email Form -->
+        <div class="bg-white shadow rounded-lg">
+            <form method="POST" class="px-6 py-6">
+                <!-- Recipient Selection -->
+                {% if not user %}
+                <div class="mb-6">
+                    <label for="recipient_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Destinataire
+                    </label>
+                    <select name="recipient_id" id="recipient_id" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">Sélectionner un utilisateur...</option>
+                        {% for pending_user in users %}
+                        <option value="{{ pending_user.id }}">{{ pending_user.name }} ({{ pending_user.email }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% else %}
+                <input type="hidden" name="recipient_id" value="{{ user.id }}">
+                {% endif %}
+
+                <!-- Subject -->
+                <div class="mb-6">
+                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
+                        Sujet
+                    </label>
+                    <input type="text" name="subject" id="subject" required 
+                           placeholder="Objet de l'email" 
+                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                </div>
+
+                <!-- Message -->
+                <div class="mb-6">
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
+                        Message
+                    </label>
+                    <textarea name="message" id="message" rows="8" required 
+                              placeholder="Votre message..."
+                              class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+                </div>
+
+                <!-- Email Templates -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Modèles d'email
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button type="button" onclick="useTemplate('approval')" 
+                                class="text-left p-4 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <h4 class="font-medium text-gray-900">Approbation de compte</h4>
+                            <p class="text-sm text-gray-600">Confirmer l'approbation et donner les instructions d'accès</p>
+                        </button>
+                        
+                        <button type="button" onclick="useTemplate('rejection')" 
+                                class="text-left p-4 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <h4 class="font-medium text-gray-900">Refus de compte</h4>
+                            <p class="text-sm text-gray-600">Expliquer le refus et les étapes suivantes</p>
+                        </button>
+                        
+                        <button type="button" onclick="useTemplate('information')" 
+                                class="text-left p-4 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <h4 class="font-medium text-gray-900">Demande d'informations</h4>
+                            <p class="text-sm text-gray-600">Demander des informations supplémentaires</p>
+                        </button>
+                        
+                        <button type="button" onclick="useTemplate('welcome')" 
+                                class="text-left p-4 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <h4 class="font-medium text-gray-900">Message de bienvenue</h4>
+                            <p class="text-sm text-gray-600">Accueillir le nouvel utilisateur</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between">
+                    <a href="{{ url_for('main.admin_notifications') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Retour
+                    </a>
+                    
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Envoyer Email
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function useTemplate(type) {
+    const subjectInput = document.getElementById('subject');
+    const messageInput = document.getElementById('message');
+    
+    const templates = {
+        approval: {
+            subject: 'Confirmation d\'approbation de votre compte EFET',
+            message: `Bonjour,
+
+Nous avons le plaisir de vous informer que votre compte EFET a été approuvé.
+
+Vous pouvez maintenant accéder à votre tableau de bord et utiliser toutes les fonctionnalités de la plateforme.
+
+Pour vous connecter :
+1. Rendez-vous sur la page de connexion
+2. Utilisez vos identifiants de connexion
+3. Accédez à votre tableau de bord
+
+Si vous avez des questions, n'hésitez pas à nous contacter.
+
+Cordialement,
+L'équipe administrative EFET`
+        },
+        rejection: {
+            subject: 'Concernant votre demande d\'inscription EFET',
+            message: `Bonjour,
+
+Nous vous remercions pour votre intérêt pour l'École Française d'Enseignement Technique.
+
+Après examen de votre dossier, nous ne pouvons pas donner suite à votre demande d'inscription pour les raisons suivantes :
+[Préciser les raisons]
+
+Vous pouvez toutefois :
+- Nous contacter pour plus d'informations
+- Renouveler votre demande ultérieurement
+
+Cordialement,
+L'équipe administrative EFET`
+        },
+        information: {
+            subject: 'Informations supplémentaires requises - EFET',
+            message: `Bonjour,
+
+Nous avons bien reçu votre demande d'inscription à l'EFET.
+
+Pour traiter votre dossier, nous aurions besoin des informations supplémentaires suivantes :
+- [Information 1]
+- [Information 2]
+- [Information 3]
+
+Merci de nous transmettre ces éléments dans les plus brefs délais.
+
+Cordialement,
+L'équipe administrative EFET`
+        },
+        welcome: {
+            subject: 'Bienvenue à l\'EFET !',
+            message: `Bonjour et bienvenue à l'École Française d'Enseignement Technique !
+
+Nous sommes ravis de vous compter parmi nos membres.
+
+Voici quelques informations utiles pour bien commencer :
+- Consultez régulièrement votre tableau de bord
+- Mettez à jour votre profil avec vos informations personnelles
+- N'hésitez pas à nous contacter en cas de question
+
+Nous vous souhaitons une excellente expérience au sein de notre établissement.
+
+Cordialement,
+L'équipe administrative EFET`
+        }
+    };
+    
+    if (templates[type]) {
+        subjectInput.value = templates[type].subject;
+        messageInput.value = templates[type].message;
+    }
+}
+</script>
+{% endblock content %}

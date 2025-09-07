@@ -1,0 +1,76 @@
+/* Navbar Fix CSS - Comprehensive solution for navbar overlap issues */
+
+/* Ensure body has proper spacing to account for fixed navbar */
+body {
+    padding-top: 90px; /* Base padding for navbar height */
+}
+
+/* Main content container adjustments */
+main {
+    padding-top: 1rem !important; /* Override any conflicting padding */
+    position: relative;
+    z-index: 1;
+}
+
+/* Dashboard specific fixes */
+.dashboard-container,
+.teacher-dashboard,
+.student-dashboard,
+.admin-dashboard {
+    margin-top: 1rem !important;
+    padding-top: 1rem !important;
+}
+
+/* Container adjustments for different screen sizes */
+.container,
+.container-fluid {
+    margin-top: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding-top: 100px; /* Slightly more space on mobile */
+    }
+    
+    .navbar {
+        min-height: 85px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 110px; /* Even more space on small mobile screens */
+    }
+    
+    .navbar {
+        min-height: 90px !important;
+    }
+}
+
+/* Additional safety margins for dashboard content */
+.dashboard-header,
+.page-header,
+.content-header {
+    margin-top: 1rem !important;
+}
+
+/* Fix for any modals or overlays that might be affected */
+.modal {
+    margin-top: 90px;
+}
+
+/* Ensure tables and content don't get hidden */
+.table-responsive,
+.card,
+.glass-card {
+    position: relative;
+    z-index: 2;
+}
+
+/* Fix for flash messages */
+.alert {
+    margin-top: 1rem;
+    position: relative;
+    z-index: 10;
+}

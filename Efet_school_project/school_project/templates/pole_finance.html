@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block title %}Pôle Finance & Comptabilité | EFET - École Française d'Enseignement Technique{% endblock title %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 bg-gradient-to-r from-green-700 to-emerald-700 text-white">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <div class="w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-calculator text-green-600 text-3xl"></i>
+            </div>
+            <h1 class="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight shadow-text">
+                Pôle Finance & Comptabilité
+            </h1>
+            <p class="text-xl text-gray-200 max-w-3xl mx-auto shadow-text">
+                Formez-vous aux métiers de la finance, de la comptabilité et du contrôle de gestion avec nos programmes d'excellence
+            </p>
+        </div>
+    </div>
+    
+    <!-- Wave Separator -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full">
+            <path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,202.7C960,181,1056,139,1152,138.7C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Overview Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-6">
+                    Présentation du Pôle
+                </h2>
+                <div class="space-y-4 text-gray-600">
+                    <p>
+                        Le <strong>Pôle Finance & Comptabilité</strong> de l'EFET vous propose des formations complètes et adaptées aux exigences du marché financier actuel. Nos programmes couvrent tous les aspects essentiels de la finance, de la comptabilité et du contrôle de gestion.
+                    </p>
+                    <p>
+                        Que vous soyez intéressé par la finance d'entreprise, l'audit, la comptabilité ou la gestion financière, nos formations vous offrent un équilibre parfait entre théorie et pratique, vous permettant d'acquérir les compétences recherchées par les employeurs.
+                    </p>
+                </div>
+                
+                <div class="mt-8 space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold text-gray-800">Formation technique rigoureuse</h4>
+                            <p class="text-gray-600">Approche pédagogique basée sur la maîtrise des outils financiers et comptables modernes.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold text-gray-800">Experts du secteur financier</h4>
+                            <p class="text-gray-600">Enseignements assurés par des professionnels de la finance qui partagent leur expérience et leur expertise du terrain.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold text-gray-800">Employabilité maximale</h4>
+                            <p class="text-gray-600">Accompagnement personnalisé pour faciliter votre intégration dans le secteur financier et réseau d'entreprises partenaires.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative" data-aos="fade-left">
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Finance et Comptabilité" class="rounded-lg shadow-2xl w-full h-auto">
+                <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-xl max-w-xs transform -rotate-3">
+                    <div class="text-gray-800 font-semibold">Maîtrisez les outils financiers</div>
+                    <div class="text-gray-600 text-sm">Pour une carrière dans un secteur en pleine évolution</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Programmes Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Nos Programmes de Formation
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Des formations adaptées aux besoins du marché financier
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
+                <div class="text-green-500 text-sm font-semibold uppercase tracking-wider mb-2">Technicien</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Assistant en gestion administrative et comptable</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Comptabilité générale</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Gestion administrative</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Fiscalité de base</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Outils bureautiques et logiciels comptables</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>2 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
+                <div class="text-green-500 text-sm font-semibold uppercase tracking-wider mb-2">Technicien Spécialisé</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Financier & Comptable</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Comptabilité approfondie</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Analyse financière</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Fiscalité des entreprises</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Logiciels comptables professionnels</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>2 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
+                <div class="text-green-500 text-sm font-semibold uppercase tracking-wider mb-2">Bachelor</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Finance</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Finance d'entreprise</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Marchés financiers</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Gestion de portefeuille</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Contrôle de gestion</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>3 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
+                <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
+                <div class="text-green-500 text-sm font-semibold uppercase tracking-wider mb-2">Master</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Finance, Audit & Contrôle de gestion</h3>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Audit financier et opérationnel</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Contrôle de gestion avancé</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Finance internationale</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">Management des risques</span>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>2 ans</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                                Formation initiale
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Advantages Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Pourquoi Choisir Notre Pôle Finance & Comptabilité
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Les avantages qui font la différence
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-chart-line text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-4">Expertise Technique</h3>
+                <p class="text-gray-600 text-center">
+                    Des programmes conçus pour maîtriser les outils et techniques financières les plus récents et recherchés par les employeurs.
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-university text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-4">Partenariats Bancaires</h3>
+                <p class="text-gray-600 text-center">
+                    Des collaborations avec des institutions financières et cabinets comptables pour des stages pratiques et des opportunités d'emploi.
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-medal text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-4">Accréditation Professionnelle</h3>
+                <p class="text-gray-600 text-center">
+                    Des formations alignées sur les standards internationaux de la comptabilité et de la finance, facilitant les certifications professionnelles.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Career Opportunities Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Débouchés et Carrières
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Les métiers auxquels vous prépare notre formation
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden" data-aos="fade-right">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-briefcase text-green-600 mr-3"></i>
+                    Secteurs d'Emploi
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-800">Banques et Institutions financières</h4>
+                            <p class="text-gray-600">Services de gestion financière, d'analyse et de contrôle des établissements bancaires et financiers.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-800">Cabinets d'Audit et Expertise Comptable</h4>
+                            <p class="text-gray-600">Cabinets spécialisés dans l'audit, le conseil et l'expertise comptable pour entreprises.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-800">Départements Financiers des Entreprises</h4>
+                            <p class="text-gray-600">Services comptables, financiers et de contrôle de gestion au sein des PME et grandes entreprises.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden" data-aos="fade-left">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-user-tie text-green-600 mr-3"></i>
+                    Métiers Possibles
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Comptable</div>
+                        <div class="text-sm text-green-600">8000 - 15000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Contrôleur de gestion</div>
+                        <div class="text-sm text-green-600">12000 - 20000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Auditeur financier</div>
+                        <div class="text-sm text-green-600">15000 - 25000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Analyste financier</div>
+                        <div class="text-sm text-green-600">12000 - 22000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Trésorier</div>
+                        <div class="text-sm text-green-600">10000 - 18000 MAD</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">Fiscaliste</div>
+                        <div class="text-sm text-green-600">15000 - 25000 MAD</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-green-600 to-teal-700 text-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="font-poppins font-bold text-3xl md:text-4xl mb-6" data-aos="fade-up">
+            Prêt à Lancer Votre Carrière en Finance & Comptabilité ?
+        </h2>
+        <p class="text-xl text-green-100 max-w-3xl mx-auto mb-10" data-aos="fade-up" data-aos-delay="100">
+            Rejoignez notre programme d'excellence et devenez un professionnel reconnu
+        </p>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('auth.signup') }}" class="inline-block px-8 py-4 bg-white text-green-700 font-semibold rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 text-lg" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-graduation-cap mr-2"></i>
+            S'inscrire Maintenant
+        </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock content %}

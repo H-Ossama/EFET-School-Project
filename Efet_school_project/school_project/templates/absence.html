@@ -1,36 +1,148 @@
-{% extends "base.html" %}
-
-{% block head %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EFET - Gestion des Absences</title>
+    
+    <!-- Modern CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
 <style>
-  table, th, td {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  table {
-    border-spacing: 15px;
-  }
-  p.spacing {
-    line-height: 2;
-  }
-  .parent {
-    overflow:hidden;
-    width:90%;
-  }
-  .left{
-    float:left;
-    width: 50%;
-  }
+    /* Base Styles */
+    :root {
+        --primary-color: #1e40af;
+        --primary-dark: #1e3a8a;
+        --secondary-color: #0ea5e9;
+        --accent-color: #f59e0b;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
 
-  .right {
-    float: right;
-  }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+        padding: 0;
+    }
+
+    /* Header with Go Back Button */
+    .back-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .back-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .header-title img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .header-title h1 {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    /* Table styles */
+    table, th, td {
+        border: 2px solid black;
+        padding: 5px;
+    }
+    table {
+        border-spacing: 15px;
+    }
+    p.spacing {
+        line-height: 2;
+    }
+    .parent {
+        overflow:hidden;
+        width:90%;
+    }
+    .left{
+        float:left;
+        width: 50%;
+    }
+
+    .right {
+        float: right;
+    }
+    
+    /* Container styling */
+    .absence-container {
+        padding: 0 2rem 2rem;
+    }
 </style>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/fontawesome.min.css">
-{% endblock head %}
-
-{% block content %}
+</head>
+<body>
+    <!-- Custom Header with Go Back Button -->
+    <div class="back-header">
+        <a href="javascript:history.back()" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour</span>
+        </a>
+        <div class="header-title">
+            <img src="/static/images/efet_logo_modern.svg" alt="EFET Logo">
+            <h1>EFET - Gestion des Absences</h1>
+        </div>
+        <div style="width: 100px;"></div><!-- Spacer for balance -->
+    </div>
+    
+    <div class="absence-container">
 
 <script type="text/javascript">
   function int(value) {
@@ -256,5 +368,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
 
-
-{% endblock %}
+    </div><!-- End of absence-container -->
+</body>
+</html>

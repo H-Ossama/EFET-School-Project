@@ -1,17 +1,29 @@
 ####################################################################
 ###############          Import packages         ###################
 ####################################################################
-from flask import Blueprint, render_template, flash, g, request, redirect, url_for
+from flask import Blueprint, render_template, flash, g, request, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from __init__ import create_app
-from models import User, Payment, Grade, Major, Message, Absence, Subject
+from models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
 from tools import get_all_payments, get_student_infos, get_all_grades, get_all_majors, get_all_students, get_user_messages, get_all_users, get_student_absence, get_grades_mean, get_all_subjects, get_all_teachers, get_all_teachers, get_all_absence, get_one_payment
 import sqlite3
 from __init__ import db
 from datetime import datetime
 from fpdf import FPDF
 from pathlib import Path
+from functools import wraps
+
+def require_approved_user(f):
+    """Decorator to require that user has been approved by admin"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            if current_user.role == 'visiteur' or current_user.status == 'pending':
+                flash('Votre compte est en attente d\'approbation. L\'administration vous contactera dans les 72 heures pour confirmer votre situation.', 'warning')
+                return render_template('pending_approval.html')
+        return f(*args, **kwargs)
+    return decorated_function
 
 ####################################################################
 # our main blueprint
@@ -27,22 +39,109 @@ def forbidden():
 def index():
     return render_template('index.html')
 
+@main.route('/about_us') # about us page
+def about_us():
+    return render_template('about_us.html')
+
+@main.route('/poles/commerce') # Pôle Commerce page
+def pole_commerce():
+    return render_template('pole_commerce.html')
+
+@main.route('/poles/sante') # Pôle Santé page
+def pole_sante():
+    return render_template('pole_sante.html')
+
+@main.route('/poles/finance') # Pôle Finance page
+def pole_finance():
+    return render_template('pole_finance.html')
+
+@main.route('/poles/informatique') # Pôle Informatique page
+def pole_informatique():
+    return render_template('pole_informatique.html')
+
+@main.route('/poles/logistique') # Pôle Logistique page
+def pole_logistique():
+    return render_template('pole_logistique.html')
+
+@main.route('/poles/management') # Pôle Management page
+def pole_management():
+    return render_template('pole_management.html')
+
 @main.route('/test') # home page
 def test():
     return render_template('test.html')
 
 ####################################################################
 @main.route('/sendMessage', methods = ['GET', 'POST'])
+@login_required
+@require_approved_user
 def sendMessage():
     sender_id = current_user.id
     recipient_id = request.form.get('recipient_id')
-    message = request.form.get('message')
+    message_content = request.form.get('message')
+    priority = request.form.get('priority', 'normal')  # Get priority, default to normal
     date_sent = datetime.now()
 
-    message = Message(msg_from=sender_id, msg_to=recipient_id, content=message, date_sent=date_sent)
-    db.session.add(message)
-    db.session.commit()
-    return redirect('dashboard')
+    # Validate inputs
+    if not recipient_id or not message_content:
+        flash('Destinataire et message sont requis.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    # Validate priority
+    valid_priorities = ['normal', 'important', 'urgent']
+    if priority not in valid_priorities:
+        priority = 'normal'
+
+    try:
+        # Create message with backward compatibility
+        message = Message(
+            msg_from=sender_id, 
+            msg_to=recipient_id, 
+            content=message_content, 
+            date_sent=date_sent
+        )
+        
+        # Set priority and is_read if the model supports it
+        if hasattr(message, 'priority'):
+            message.priority = priority
+        if hasattr(message, 'is_read'):
+            message.is_read = False
+        
+        db.session.add(message)
+        db.session.commit()
+        flash('Message envoyé avec succès!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Erreur lors de l\'envoi du message.', 'error')
+        print(f"Error sending message: {e}")
+    
+    return redirect(url_for('main.dashboard'))
+
+@main.route('/markMessageRead', methods=['POST'])
+@login_required
+@require_approved_user
+def markMessageRead():
+    message_id = request.form.get('message_id')
+    
+    if not message_id:
+        return jsonify({'success': False, 'message': 'Message ID required'}), 400
+    
+    try:
+        message = Message.query.get(message_id)
+        if not message:
+            return jsonify({'success': False, 'message': 'Message not found'}), 404
+        
+        # Only allow the recipient to mark as read
+        if message.msg_to != current_user.id:
+            return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+        
+        message.is_read = True
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Message marked as read'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Error updating message'}), 500
 
 ####################################################################
 @main.route('/profile') # profile page that return 'profile'
@@ -82,7 +181,7 @@ def updateProfile():
     user.year = year
 
     db.session.commit()
-    return redirect('profile')
+    return redirect(url_for('main.profile'))
 
 @main.route('/uploadPicture', methods = ['GET', 'POST'])
 @login_required
@@ -95,12 +194,13 @@ def upload_file():
             user = User.query.filter_by(id=current_user.id).first()
             user.profile_picture = path_to_picture
             db.session.commit()
-        return redirect('profile')
+        return redirect(url_for('main.profile'))
 
 ####################################################################
 
 @main.route('/dashboard')
 @login_required
+@require_approved_user
 def dashboard():
     messages = get_user_messages(current_user.id)
     # if you are an admin: go to admin dashboard (manage students, grades, payments, majors ..)
@@ -109,19 +209,26 @@ def dashboard():
         majors = get_all_majors()
         all_subject = get_all_subjects()
         all_teacher = get_all_teachers()
-        return render_template('dashboard.html', users=students, majors=majors, messages=messages, all_subject=all_subject, all_teacher=all_teacher)
-    if current_user.role == 'teacher':
+        # Get pending notifications for admin
+        pending_notifications = AdminNotification.query.filter_by(is_read=False).order_by(AdminNotification.created_at.desc()).all()
+        return render_template('dashboard.html', users=students, majors=majors, messages=messages, all_subject=all_subject, all_teacher=all_teacher, notifications=pending_notifications)
+    elif current_user.role == 'teacher':
         all_users = get_all_users()
         students = get_all_students()
+        majors = get_all_majors()
         all_absence = get_all_absence()
         student_infos = get_student_infos(current_user.id)
-        return render_template('dashboard_teacher.html', student_infos=student_infos, messages=messages, students=students, absences=all_absence, users=all_users)
+        return render_template('dashboard_teacher.html', student_infos=student_infos, messages=messages, students=students, absences=all_absence, users=all_users, majors=majors)
     # if you are a student: go to student dashboard (see grades, messages, ..)
-    if current_user.role == 'student':
+    elif current_user.role == 'student':
         all_users = get_all_students()
         student_absence = get_student_absence(current_user.id)
         student_infos = get_student_infos(current_user.id)
         return render_template('dashboard_student.html', student_infos=student_infos, messages=messages, users=all_users, absences=student_absence)
+    else:
+        # Fallback for users with undefined roles
+        flash('Role utilisateur non reconnu. Veuillez contacter l\'administrateur.', 'error')
+        return redirect(url_for('main.index'))
 
 ####################################################################
 
@@ -147,7 +254,7 @@ def addAbsence():
         new_absence = Absence(student_id=student_id, date_absence=date_absence_obj, justified=justified, details=details)
         db.session.add(new_absence)
         db.session.commit()
-        return redirect('dashboard')
+        return redirect(url_for('main.dashboard'))
     else:
         user_id = request.form.get('user_id')
         date_absence = request.form.get('date_absence')
@@ -487,7 +594,7 @@ def addStudent():
             flash('Email address already exists')
             results = get_all_students()
             return render_template('dashboard.html', users=results)
-        new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'), role=role, age=age, address=address, registration=registration, gender=gender)
+        new_user = User(email=email, name=name, password=generate_password_hash(password, method='pbkdf2:sha256'), role=role, age=age, address=address, registration=registration, gender=gender)
         db.session.add(new_user)
         db.session.commit()
 
@@ -546,11 +653,187 @@ def editStudent():
             user.register_date = register_date_obj
 
         if password != '' and password != None:
-            user.password = generate_password_hash(password, method='sha256')
+            user.password = generate_password_hash(password, method='pbkdf2:sha256')
 
         db.session.commit()
         return redirect(url_for('main.dashboard'))
-    # return render_template('dashboard.html', users=results)
+        # return render_template('dashboard.html', users=results)
+
+@main.route('/editTeacher', methods=['GET', 'POST'])
+@login_required
+def editTeacher():
+    if current_user.role not in ['admin', 'teacher']:
+        return redirect('/forbidden')
+    else:
+        user_id = request.form.get('user_id')
+        email = request.form.get('email')
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+        password = request.form.get('password')
+        address = request.form.get('address')
+        speciality = request.form.get('speciality')
+        role = request.form.get('role')
+        
+        # Fields for student conversion
+        registration = request.form.get('registration')
+        major = request.form.get('major')
+        current_year = request.form.get('current_year')
+        
+        user = User.query.filter_by(id=user_id).first()
+        if user:
+            user.email = email
+            user.name = name
+            user.address = address
+            user.phone = phone
+            
+            # Update role and related fields
+            if role:
+                user.role = role
+                
+                # If converting to student, update student-specific fields
+                if role == 'student':
+                    user.registration = registration
+                    user.major = major
+                    user.year = current_year
+                
+            if password and password.strip():
+                user.password = generate_password_hash(password, method='pbkdf2:sha256')
+                
+            db.session.commit()
+            
+            if role == 'student':
+                flash('Enseignant converti en étudiant avec succès', 'success')
+            else:
+                flash('Enseignant mis à jour avec succès', 'success')
+        
+        return redirect(url_for('main.dashboard'))
+
+@main.route('/get_student_data/<int:student_id>', methods=['GET'])
+@login_required
+def get_student_data(student_id):
+    if current_user.role not in ['admin', 'teacher']:
+        return jsonify({"success": False, "message": "Unauthorized"}), 403
+    
+    student = User.query.get(student_id)
+    if not student:
+        return jsonify({"success": False, "message": "Student not found"}), 404
+    
+    # Convert student to JSON-friendly format
+    student_data = {
+        "id": student.id,
+        "name": student.name,
+        "email": student.email,
+        "age": student.age,
+        "address": student.address,
+        "registration": student.registration,
+        "gender": student.gender,
+        "role": student.role,
+        "major": student.major,
+        "year": student.year,
+        "phone": student.phone,
+        "register_date": student.register_date.strftime('%Y-%m-%d') if student.register_date else None
+    }
+    
+    return jsonify({"success": True, "student": student_data})
+
+# Admin routes for user management
+@main.route('/admin/notifications')
+@login_required
+def admin_notifications():
+    if current_user.role != 'admin':
+        return redirect('/forbidden')
+    
+    notifications = AdminNotification.query.order_by(AdminNotification.created_at.desc()).all()
+    return render_template('admin_notifications.html', notifications=notifications)
+
+@main.route('/admin/approve_user', methods=['POST'])
+@login_required
+def approve_user():
+    if current_user.role != 'admin':
+        return redirect('/forbidden')
+    
+    user_id = request.form.get('user_id')
+    new_role = request.form.get('role')  # student or teacher
+    
+    user = User.query.get(user_id)
+    if user:
+        user.role = new_role
+        user.status = 'approved'
+        
+        # Mark notification as resolved
+        notification = AdminNotification.query.filter_by(user_id=user_id, is_read=False).first()
+        if notification:
+            notification.is_read = True
+            notification.resolved_at = datetime.now()
+            notification.resolved_by = current_user.id
+        
+        db.session.commit()
+        flash(f'Utilisateur {user.name} approuvé avec le rôle {new_role}', 'success')
+    
+    return redirect(url_for('main.admin_notifications'))
+
+@main.route('/admin/reject_user', methods=['POST'])
+@login_required
+def reject_user():
+    if current_user.role != 'admin':
+        return redirect('/forbidden')
+    
+    user_id = request.form.get('user_id')
+    
+    user = User.query.get(user_id)
+    if user:
+        user.status = 'rejected'
+        
+        # Mark notification as resolved
+        notification = AdminNotification.query.filter_by(user_id=user_id, is_read=False).first()
+        if notification:
+            notification.is_read = True
+            notification.resolved_at = datetime.now()
+            notification.resolved_by = current_user.id
+        
+        db.session.commit()
+        flash(f'Utilisateur {user.name} rejeté', 'warning')
+    
+    return redirect(url_for('main.admin_notifications'))
+
+@main.route('/admin/send_email', methods=['GET', 'POST'])
+@login_required
+def send_email():
+    if current_user.role != 'admin':
+        return redirect('/forbidden')
+    
+    if request.method == 'GET':
+        user_id = request.args.get('user_id')
+        user = User.query.get(user_id) if user_id else None
+        return render_template('send_email.html', user=user)
+    
+    else:
+        recipient_id = request.form.get('recipient_id')
+        subject = request.form.get('subject')
+        message = request.form.get('message')
+        
+        # Log the email (in a real application, you would send an actual email)
+        email_log = EmailLog(
+            recipient_id=recipient_id,
+            sender_id=current_user.id,
+            subject=subject,
+            message=message,
+            status='sent'
+        )
+        db.session.add(email_log)
+        db.session.commit()
+        
+        flash('Email envoyé avec succès', 'success')
+        return redirect(url_for('main.admin_notifications'))
+
+@main.route('/admin/pending_users')
+@login_required
+def pending_users():
+    if current_user.role != 'admin':
+        return redirect('/forbidden')
+    
+    pending_users = User.query.filter_by(status='pending').all()
+    return render_template('pending_users.html', users=pending_users)
 
 ####################################################################
 app = create_app() # we initialize our flask app using the
@@ -558,3 +841,4 @@ app = create_app() # we initialize our flask app using the
 
 if __name__ == '__main__':
     app.run(debug=True) # run the flask app on debug mode
+

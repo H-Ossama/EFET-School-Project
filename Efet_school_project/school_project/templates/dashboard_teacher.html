@@ -1,545 +1,2769 @@
-{% extends "base.html" %}
-
-{% block head %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EFET - Tableau de Bord Enseignant</title>
+    
+    <!-- Modern CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
 <style>
-  table, th, td {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  table {
-    border-spacing: 15px;
-  }
-  p.spacing {
-    line-height: 2;
-  }
-  .parent {
-    overflow:hidden;
-    width:90%;
-  }
-  .left{
-    float:left;
-    width: 50%;
+    /* Base Styles */
+    :root {
+        --primary-color: #1e40af;
+        --primary-dark: #1e3a8a;
+        --secondary-color: #0ea5e9;
+        --accent-color: #f59e0b;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+        padding: 0;
+    }
+
+    /* Header with Go Back Button */
+    .back-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .back-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: white;
+    }
+
+    .header-title img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .header-title h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Teacher Dashboard Styles */
+    .teacher-dashboard {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 2rem 0;
+    }
+
+    /* Additional CSS Variables for Dashboard */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --glass-bg: rgba(255, 255, 255, 0.15);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+        --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+  .dashboard-header {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
   }
 
-  .right {
-    float: right;
+  .dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+  }
+
+  .search-container {
+    position: relative;
+    max-width: 500px;
+    margin-bottom: 2rem;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid transparent;
+    border-radius: 50px;
+    background: white;
+    box-shadow: var(--shadow-soft);
+    font-size: 1rem;
+    transition: var(--transition);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 1.1rem;
+  }
+
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    transition: var(--transition);
+    overflow: hidden;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  }
+
+  .students-table-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .table-header {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .table-header h3 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+
+  .modern-table {
+    margin: 0;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .modern-table thead th {
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    border: none;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .modern-table tbody td {
+    padding: 1.25rem 1.5rem;
+    border: none;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+    transition: var(--transition);
+  }
+
+  .modern-table tbody tr {
+    transition: var(--transition);
+  }
+
+  .modern-table tbody tr:hover {
+    background: #f8fafc;
+    transform: scale(1.01);
+  }
+
+  .student-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .student-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--primary-gradient);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .student-details h6 {
+    margin: 0;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .student-details small {
+    color: #6b7280;
+  }
+
+  .action-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    color: #6b7280;
+    transition: var(--transition);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+  }
+
+  .action-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+    transform: scale(1.1);
+  }
+
+  .action-btn.view {
+    color: #059669;
+  }
+
+  .action-btn.view:hover {
+    background: #ecfdf5;
+    color: #047857;
+  }
+
+  .action-btn.edit {
+    color: #2563eb;
+  }
+
+  .action-btn.edit:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  .action-btn.more {
+    color: #7c3aed;
+  }
+
+  .action-btn.more:hover {
+    background: #f3e8ff;
+    color: #6d28d9;
+  }
+
+  .badge-major {
+    background: var(--info-gradient);
+    color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+  }
+
+  .add-student-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: var(--transition);
+    box-shadow: var(--shadow-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .add-student-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(67, 233, 123, 0.4);
+    color: white;
+  }
+
+  .messaging-section {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+
+  .messaging-header {
+    background: var(--secondary-gradient);
+    color: white;
+    padding: 1.5rem;
+  }
+
+  .messaging-header h4 {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .messages-table {
+    margin: 0;
+  }
+
+  .message-form {
+    background: #f8fafc;
+    padding: 2rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .form-control-modern {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+    background: white;
+  }
+
+  .form-control-modern:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    outline: none;
+  }
+
+  .send-btn {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    color: white;
+  }
+
+  /* Modal Improvements */
+  .modal-content {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .modal-header {
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    border: none;
+  }
+
+  .modal-title {
+    font-weight: 600;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.8;
+    font-size: 1.2rem;
+  }
+
+  .btn-close:hover {
+    opacity: 1;
+    color: white;
+  }
+
+  /* Responsive Improvements */
+  @media (max-width: 768px) {
+    .teacher-dashboard {
+      padding: 1rem 0;
+    }
+
+    .dashboard-header {
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modern-table thead {
+      display: none;
+    }
+
+    .modern-table tbody tr {
+      display: block;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-soft);
+      padding: 1rem;
+    }
+
+    .modern-table tbody td {
+      display: block;
+      border: none;
+      padding: 0.5rem 0;
+      text-align: left !important;
+    }
+
+    .modern-table tbody td:before {
+      content: attr(data-label) ": ";
+      font-weight: 600;
+      color: #374151;
+      display: inline-block;
+      width: 120px;
+    }
+
+    .message-form .row {
+      flex-direction: column;
+    }
+
+    .message-form .col-lg-3,
+    .message-form .col-lg-9 {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* Enhanced Messaging Center Styles */
+  .messaging-center-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    overflow: hidden;
+    margin-top: 3rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .messaging-center-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  .messaging-center-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .messaging-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .header-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+
+  .header-content p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1rem;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .btn-action {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-action:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .messaging-content {
+    background: #f8fafc;
+  }
+
+  .messaging-nav {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0;
+  }
+
+  .nav-tabs {
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-tab {
+    background: none;
+    border: none;
+    padding: 1.25rem 2rem;
+    cursor: pointer;
+    color: #6b7280;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    border-bottom: 3px solid transparent;
+    font-size: 0.95rem;
+  }
+
+  .nav-tab:hover {
+    color: #374151;
+    background: #f9fafb;
+  }
+
+  .nav-tab.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: white;
+  }
+
+  .nav-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: white;
+  }
+
+  .message-count,
+  .contact-count {
+    background: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .tab-content {
+    min-height: 600px;
+  }
+
+  .tab-pane {
+    display: none;
+    padding: 0;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+
+  /* Conversations Tab */
+  .conversations-container {
+    background: white;
+    height: 100%;
+  }
+
+  .conversations-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: #f9fafb;
+  }
+
+  .search-messages {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .search-messages i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.9rem;
+  }
+
+  .search-messages input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .search-messages input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .filter-select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: white;
+    color: #374151;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .messages-list {
+    padding: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+    background: white;
+  }
+
+  .message-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .message-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+  }
+
+  .message-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .sender-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .sender-avatar {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    flex-shrink: 0;
+  }
+
+  .sender-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sender-name {
+    font-weight: 600;
+    color: #111827;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .message-direction {
+    display: flex;
+    align-items: center;
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
+
+  .message-direction i {
+    font-size: 0.75rem;
+  }
+
+  .message-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+
+  .message-time {
+    color: #6b7280;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .message-actions {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .btn-message-action {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+  }
+
+  .btn-message-action:hover {
+    background: #f3f4f6;
+    color: #374151;
+    transform: scale(1.1);
+  }
+
+  .btn-message-action.text-danger:hover {
+    background: #fee;
+    color: #dc2626;
+  }
+
+  .message-content {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    margin-top: 0.5rem;
+  }
+
+  .message-content p {
+    margin: 0;
+    color: #374151;
+    line-height: 1.6;
+  }
+
+  .empty-messages {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6b7280;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #d1d5db;
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-messages h4 {
+    color: #374151;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+  }
+
+  .empty-messages p {
+    margin-bottom: 2rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Compose Tab */
+  .compose-container {
+    background: white;
+    padding: 2rem;
+  }
+
+  .compose-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .compose-header h4 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .compose-header p {
+    color: #6b7280;
+    margin: 0;
+  }
+
+  .compose-form {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .recipient-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .recipient-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .recipient-select {
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .recipient-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .quick-filters {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-btn:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+  }
+
+  .filter-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+  }
+
+  .message-composition {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .message-editor {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .message-editor:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .editor-toolbar {
+    background: #f9fafb;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .toolbar-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .toolbar-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .toolbar-btn.active {
+    background: #667eea;
+    color: white;
+  }
+
+  .toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: #d1d5db;
+    margin: 0 0.5rem;
+  }
+
+  .message-textarea {
+    width: 100%;
+    padding: 1.25rem;
+    border: none;
+    outline: none;
+    resize: vertical;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-family: inherit;
+    background: white;
+  }
+
+  .character-count {
+    padding: 0.5rem 1rem;
+    text-align: right;
+    font-size: 0.8rem;
+    color: #6b7280;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .message-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .priority-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .priority-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .priority-buttons input[type="radio"] {
+    display: none;
+  }
+
+  .priority-btn {
+    padding: 0.75rem 1.25rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    background: white;
+  }
+
+  .priority-btn.normal {
+    color: #374151;
+  }
+
+  .priority-btn.important {
+    color: #f59e0b;
+  }
+
+  .priority-btn.urgent {
+    color: #ef4444;
+  }
+
+  .priority-buttons input:checked + .priority-btn {
+    border-color: currentColor;
+    background: currentColor;
+    color: white;
+  }
+
+  .compose-actions {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 2rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .btn-secondary:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    color: #374151;
+    text-decoration: none;
+  }
+
+  .btn-outline {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-outline:hover {
+    background: #667eea;
+    color: white;
+  }
+
+  .btn-send {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-send:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-send.loading .btn-loading {
+    display: block;
+  }
+
+  .btn-send.loading span {
+    opacity: 0;
+  }
+
+  .btn-loading {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Contacts Tab */
+  .contacts-container {
+    background: white;
+    height: 100%;
+  }
+
+  .contacts-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: #f9fafb;
+  }
+
+  .search-contacts {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .search-contacts i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.9rem;
+  }
+
+  .search-contacts input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .search-contacts input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .contacts-list {
+    padding: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+    background: white;
+  }
+
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .contact-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+  }
+
+  .contact-avatar {
+    position: relative;
+  }
+
+  .avatar-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .avatar-circle.student {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .avatar-circle.teacher {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+
+  .avatar-circle.admin {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+
+  .status-indicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  .status-indicator.online {
+    background: #10b981;
+  }
+
+  .contact-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .contact-name {
+    font-weight: 600;
+    color: #111827;
+    font-size: 1rem;
+  }
+
+  .contact-role {
+    color: #6b7280;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .contact-email {
+    color: #9ca3af;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .contact-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-contact-action {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-contact-action:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: scale(1.1);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .messaging-center-header {
+      padding: 1.5rem;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .header-left {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .nav-tabs {
+      flex-direction: column;
+    }
+
+    .nav-tab {
+      padding: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      border-radius: 0;
+    }
+
+    .nav-tab.active {
+      border-bottom-color: #e5e7eb;
+      border-left: 3px solid #667eea;
+    }
+
+    .conversations-header,
+    .contacts-header {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .search-messages,
+    .search-contacts {
+      max-width: none;
+    }
+
+    .message-card-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .message-meta {
+      align-items: flex-start;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-send,
+    .btn-secondary,
+    .btn-outline {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .priority-buttons {
+      flex-direction: column;
+    }
+
+    .priority-btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .contact-card {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.75rem;
+    }
+
+    .contact-info {
+      text-align: center;
+    }
+
+    .contact-actions {
+      justify-content: center;
+    }
+  }
+
+  /* Animation Classes */
+  .fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .slide-in-up {
+    animation: slideInUp 0.5s ease-out forwards;
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/fontawesome.min.css">
-{% endblock head %}
-
-{% block content %}
-
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    <div class="notification is-danger">
-        {{ messages[0] }}
+</head>
+<body>
+    <!-- Custom Header with Go Back Button -->
+    <div class="back-header">
+        <a href="javascript:history.back()" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour</span>
+        </a>
+        <div class="header-title">
+            <img src="/static/images/efet_logo_modern.svg" alt="EFET Logo">
+            <h1>EFET - Tableau de Bord Enseignant</h1>
+        </div>
+        <div style="width: 100px;"></div><!-- Spacer for balance -->
     </div>
-{% endif %}
-{% endwith %}
 
-<script type="text/javascript">
-   function search() {
-     var filter = event.target.value.toUpperCase();
-     var rows = document.querySelector("#myTable tbody").rows;
+<!-- Modern Teacher Dashboard -->
+<div class="teacher-dashboard">
+  <div class="container-fluid">
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ messages[0] }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endif %}
+    {% endwith %}
 
-         for (var i = 0; i < rows.length; i++) {
-             var firstCol = rows[i].cells[0].textContent.toUpperCase();
-             var secondCol = rows[i].cells[1].textContent.toUpperCase();
-             if (firstCol.indexOf(filter) > -1 || secondCol.indexOf(filter) > -1) {
-                 rows[i].style.display = "";
-             } else {
-                 rows[i].style.display = "none";
-             }
-         }
-   }
+    <!-- Dashboard Header -->
+    <div class="dashboard-header fade-in">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="mb-2">
+            <i class="fas fa-chalkboard-teacher text-primary me-3"></i>
+            Tableau de Bord Enseignant
+          </h1>
+          <p class="text-muted mb-0">Gérez vos étudiants et communications</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <div class="d-flex align-items-center justify-content-md-end gap-2">
+            <span class="badge badge-major">{{ students|length }} Étudiants</span>
+            <button class="add-student-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
+              <i class="fas fa-user-plus"></i>
+              Ajouter Étudiant
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-</script>
+    <!-- Search Section -->
+    <div class="search-container slide-in-up">
+      <div class="position-relative">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="myInput" onkeyup="searchStudents()" 
+               placeholder="Rechercher un étudiant par nom, email ou filière...">
+      </div>
+    </div>
 
-Search :
-<input id="myInput" type="text" onKeyUp="return search()"/>
+    <!-- Students Table -->
+    <div class="students-table-container slide-in-up">
+      <div class="table-header">
+        <h3><i class="fas fa-users me-2"></i>Liste des Étudiants</h3>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="modern-table" id="myTable">
+          <thead>
+            <tr>
+              <th><i class="fas fa-user me-2"></i>Étudiant</th>
+              <th><i class="fas fa-envelope me-2"></i>Contact</th>
+              <th><i class="fas fa-graduation-cap me-2"></i>Filière</th>
+              <th><i class="fas fa-calendar me-2"></i>Inscription</th>
+              <th><i class="fas fa-calendar-times me-2"></i>Absences</th>
+              <th><i class="fas fa-chart-line me-2"></i>Notes</th>
+              <th><i class="fas fa-cog me-2"></i>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+            <tr>
+              <td data-label="Étudiant">
+                <div class="student-info">
+                  <div class="student-avatar">
+                    {{ student.name[0].upper() if student.name else 'E' }}
+                  </div>
+                  <div class="student-details">
+                    <h6>{{ student.name }}</h6>
+                    <small>ID: {{ student.registration }}</small>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Contact">
+                <div>
+                  <div class="fw-medium">{{ student.email }}</div>
+                  <small class="text-muted">{{ student.phone }}</small>
+                </div>
+              </td>
+              <td data-label="Filière">
+                <span class="badge-major">{{ student.major }}</span>
+              </td>
+              <td data-label="Inscription">
+                <span class="fw-medium">{{ student.registration }}</span>
+              </td>
+              <td data-label="Absences">
+                <a href="/consultAbsence/{{ student.id }}" class="action-btn view" title="Consulter absences">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </td>
+              <td data-label="Notes">
+                <a href="/consultGrades/{{ student.id }}" class="action-btn edit" title="Consulter notes">
+                  <i class="fas fa-chart-line"></i>
+                </a>
+              </td>
+              <td data-label="Actions">
+                <div class="d-flex gap-1">
+                  <button class="action-btn more" data-bs-toggle="modal" data-bs-target="#moreStudentModal{{student.id}}" title="Plus d'infos">
+                    <i class="fas fa-info-circle"></i>
+                  </button>
+                  <button class="action-btn edit" data-bs-toggle="modal" data-bs-target="#editStudentModal{{student.id}}" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="action-btn" style="color: #dc3545;" data-bs-toggle="modal" data-bs-target="#deleteStudentModal{{student.id}}" title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
 
-<table style="width: 100%" id="myTable">
-    <colgroup>
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 12%;">
-       <col span="1" style="width: 14%;">
-       <col span="1" style="width: 10%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 7%;">
-       <col span="1" style="width: 4%;">
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th style="background-color: #777; text-align: center">Name</th>
-            <th style="background-color: #777; text-align: center">Email</th>
-            <th style="background-color: #777; text-align: center">Phone</th>
-            <th style="background-color: #777; text-align: center">Major</th>
-            <th style="background-color: #777; text-align: center">Registration</th>
-            <th style="background-color: #777; text-align: center">Absence</th>
-            <th style="background-color: #777; text-align: center">Grades</th>
-            <th style="background-color: #777; text-align: center"><b>+</b></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for student in students %}
-        <tr style="height:35px;">
-            <td style="background-color: #FFEADD; text-align: center">{{ student.name }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ student.email }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ student.phone }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ student.major }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ student.registration }}</td>
-            <td style="background-color: #FFEADD; text-align: center"><a href="/consultAbsence/{{ student.id }}" class="btn btn-outline-dark btn-sm">Check</a></td>
-            <td style="background-color: #FFEADD; text-align: center"><a href="/consultGrades/{{ student.id }}" class="btn btn-outline-secondary btn-sm">Check</a></td>
-            <td style="background-color: #FFEADD; text-align: center"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#moreStudentModal{{student.id}}"><b>+</b></button></td>
-        </tr>
-
-        <!-- Modal start -->
-        <div class="modal fade" id="editStudentModal{{student.id}}" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
+        <!-- Modern Modals for each student -->
+        
+        <!-- More Info Modal -->
+        <div class="modal fade" id="moreStudentModal{{student.id}}" tabindex="-1" aria-labelledby="moreStudentModalLabel{{student.id}}" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="editStudentLabel">Edit Student</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="moreStudentModalLabel{{student.id}}">
+                  <i class="fas fa-user-circle me-2"></i>Informations Étudiant
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                    <div class="box">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="notification is-danger">
-                            {{ messages[0] }}
-                        </div>
-                    {% endif %}
-                    {% endwith %}
-                    <form method="POST" action="/editStudent">
-                      <div class="field">
-                        <label for="gender">Name :</label>
-                          <div class="control">
-                              <input class="input is-large" type="text" name="name" value="{{ student.name }}" placeholder="Name" autofocus="" >
-                          </div>
-                      </div>
-                        <div class="field">
-                          <label for="gender">Email :</label>
-                            <div class="control">
-                                <input class="input is-large" type="email" name="email" value="{{ student.email }}" placeholder="Email" autofocus="" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Password :</label>
-                            <div class="control">
-                                <input class="input is-large" type="password" name="password" placeholder="Password">
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Phone :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="phone" value="{{ student.phone }}" placeholder="Phone" autofocus="" >
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="gender">Age :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="age" value="{{ student.age }}" placeholder="Age" >
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="major">Major :</label>
-                              <select name="major" class="form-select" aria-label="type" >
-                                {% for major in majors %}
-                                  <option value="{{ major.major_name }}" {% if major.major_name == student.major %} selected {% endif %}>{{ major.major_name }}</option>
-                                {% endfor %}
-                              </select>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                          <label for="gender">Current year :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="current_year" value="{{ student.year }}" placeholder="Year" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Address :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="address" value="{{ student.address }}" placeholder="Address" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Registration ID :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="registration" value="{{ student.registration }}" placeholder="Registration" >
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Register date :</label>
-                            <div class="control">
-                              <input class="input is-large" type="date" id="register_date" name="register_date" value="{{ student.register_date }}" placeholder="Registration Date">
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Role :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="role" value="{{ student.role }}" placeholder="Role">
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="gender">Gender :</label>
-                              <select name="gender" class="form-select" aria-label="type" >
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                              </select>
-                            </div>
-                        </div>
-                        <input class="input is-large" type="hidden" name="student_id" placeholder="{{student.id}}" value="{{student.id}}" autofocus="">
-
-                        <input class="btn btn-danger" type="submit" value="Save Changes">
-                    </form>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Nom complet</label>
+                    <input class="form-control-modern" type="text" value="{{ student.name }}" readonly>
                   </div>
-
-
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Email</label>
+                    <input class="form-control-modern" type="email" value="{{ student.email }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Téléphone</label>
+                    <input class="form-control-modern" type="text" value="{{ student.phone }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Âge</label>
+                    <input class="form-control-modern" type="text" value="{{ student.age }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Filière</label>
+                    <input class="form-control-modern" type="text" value="{{ student.major }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Année d'étude</label>
+                    <input class="form-control-modern" type="text" value="{{ student.year }}ème Année" readonly>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label fw-bold">Adresse</label>
+                    <input class="form-control-modern" type="text" value="{{ student.address }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">ID d'inscription</label>
+                    <input class="form-control-modern" type="text" value="{{ student.registration }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Date d'inscription</label>
+                    <input class="form-control-modern" type="text" value="{{ student.register_date }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Rôle</label>
+                    <input class="form-control-modern" type="text" value="{{ student.role }}" readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Genre</label>
+                    <select class="form-control-modern" disabled>
+                      <option value="male" {% if student.gender == 'male' %}selected{% endif %}>Masculin</option>
+                      <option value="female" {% if student.gender == 'female' %}selected{% endif %}>Féminin</option>
+                    </select>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
               </div>
             </div>
           </div>
         </div>
-        <!-- Modal end -->
 
-        <!-- Modal start -->
-        <div class="modal fade" id="moreStudentModal{{student.id}}" tabindex="-1" role="dialog" aria-labelledby="moreStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
+        <!-- Edit Student Modal -->
+        <div class="modal fade" id="editStudentModal{{student.id}}" tabindex="-1" aria-labelledby="editStudentModalLabel{{student.id}}" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="moreStudentModalLabel">More Infos</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="editStudentModalLabel{{student.id}}">
+                  <i class="fas fa-edit me-2"></i>Modifier Étudiant
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                    <div class="box">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="notification is-danger">
-                            {{ messages[0] }}
-                        </div>
-                    {% endif %}
-                    {% endwith %}
-                    <form method="POST">
-
-                      <div class="field">
-                        <label for="gender">Name :</label>
-                          <div class="control">
-                              <input class="input is-large" type="text" name="name" value="{{ student.name }}" placeholder="Name" autofocus="" disabled>
-                          </div>
-                      </div>
-                        <div class="field">
-                          <label for="gender">Email :</label>
-                            <div class="control">
-                                <input class="input is-large" type="email" name="email" value="{{ student.email }}" placeholder="Email" autofocus="" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Phone :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="phone" value="{{ student.phone }}" placeholder="Phone" autofocus="" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="gender">Age :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="age" value="{{ student.age }}" placeholder="Age" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Major :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="major" value="{{ student.major }}" placeholder="Major" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Current year :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="current_year" value="{{ student.year }} nd Year" placeholder="Year" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Address :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="address" value="{{ student.address }}" placeholder="Address" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Registration ID :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="registration" value="{{ student.registration }}" placeholder="Registration" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Register date :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="register_date" value="{{ student.register_date }}" placeholder="Registration Date" disabled>
-                            </div>
-                        </div>
-                        <div class="field">
-                          <label for="gender">Role :</label>
-                            <div class="control">
-                                <input class="input is-large" type="text" name="role" value="{{ student.role }}" placeholder="Role" disabled>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label for="gender">Gender :</label>
-                              <select name="gender" class="form-select" aria-label="type" disabled>
-                                <option value="male" selected>Male</option>
-                                <option value="female">Female</option>
-                              </select>
-                            </div>
-                        </div>
-                        <input class="input is-large" type="hidden" name="student_id" placeholder="{{student.id}}" value="{{student.id}}" autofocus="">
-
-                    </form>
+                <form method="POST" action="/editStudent">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Nom complet</label>
+                      <input class="form-control-modern" type="text" name="name" value="{{ student.name }}" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Email</label>
+                      <input class="form-control-modern" type="email" name="email" value="{{ student.email }}" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Mot de passe (optionnel)</label>
+                      <input class="form-control-modern" type="password" name="password" placeholder="Laisser vide pour ne pas changer">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Téléphone</label>
+                      <input class="form-control-modern" type="text" name="phone" value="{{ student.phone }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Âge</label>
+                      <input class="form-control-modern" type="number" name="age" value="{{ student.age }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Filière</label>
+                      <select name="major" class="form-control-modern" required>
+                        {% for major in majors %}
+                          <option value="{{ major.major_name }}" {% if major.major_name == student.major %}selected{% endif %}>
+                            {{ major.major_name }}
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Année d'étude</label>
+                      <input class="form-control-modern" type="number" name="current_year" value="{{ student.year }}" min="1" max="5">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Adresse</label>
+                      <input class="form-control-modern" type="text" name="address" value="{{ student.address }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">ID d'inscription</label>
+                      <input class="form-control-modern" type="text" name="registration" value="{{ student.registration }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Date d'inscription</label>
+                      <input class="form-control-modern" type="date" name="register_date" value="{{ student.register_date }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Rôle</label>
+                      <input class="form-control-modern" type="text" name="role" value="{{ student.role }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Genre</label>
+                      <select name="gender" class="form-control-modern">
+                        <option value="male" {% if student.gender == 'male' %}selected{% endif %}>Masculin</option>
+                        <option value="female" {% if student.gender == 'female' %}selected{% endif %}>Féminin</option>
+                      </select>
+                    </div>
                   </div>
-
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal end -->
-
-        <!-- Modal start -->
-        <div class="modal fade" id="deleteStudentModal{{student.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="deleteStudentModalLabel">Delete Student</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                Are you sure about deleting this student permanently ?
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form method="POST" action="{{ url_for('main.deleteStudent') }}">
-                  <input class="input is-large" type="hidden" name="student_id" placeholder="{{student.id}}" value="{{student.id}}" autofocus="">
-                  <input class="btn btn-danger" type="submit" value="Delete">
+                  <input type="hidden" name="user_id" value="{{student.id}}">
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save me-2"></i>Sauvegarder
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>
           </div>
         </div>
-        <!-- Modal end -->
+
+        <!-- Delete Student Modal -->
+        <div class="modal fade" id="deleteStudentModal{{student.id}}" tabindex="-1" aria-labelledby="deleteStudentModalLabel{{student.id}}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                <h5 class="modal-title" id="deleteStudentModalLabel{{student.id}}">
+                  <i class="fas fa-exclamation-triangle me-2"></i>Supprimer Étudiant
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                  <i class="fas fa-user-times text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h6 class="mb-3">Êtes-vous sûr de vouloir supprimer cet étudiant ?</h6>
+                <p class="text-muted">Cette action est irréversible et supprimera définitivement:</p>
+                <ul class="text-start text-muted">
+                  <li>Toutes les informations de l'étudiant</li>
+                  <li>Ses notes et évaluations</li>
+                  <li>Son historique d'absences</li>
+                </ul>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="POST" action="{{ url_for('main.deleteStudent') }}" class="d-inline">
+                  <input type="hidden" name="user_id" value="{{student.id}}">
+                  <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash me-2"></i>Supprimer définitivement
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {% endfor %}
-    </tbody>
-</table>
-
-
-<p class="spacing"></p>
-
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">Add Student</button>
-
-
-<!-- Modal start -->
-<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addUserModalLabel">Add Student</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-            <h3 class="title">Add Student</h3>
-            <div class="box">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="notification is-danger">
-                    {{ messages[0] }}
-                </div>
-            {% endif %}
-            {% endwith %}
-                <form method="POST" action="/addStudent">
-                  <div class="field">
-                      <div class="control">
-                          <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="">
-                      </div>
-                  </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="password" name="password" placeholder="Password">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="age" placeholder="Age">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                          <select name="major" class="form-select" aria-label="type" >
-                            {% for major in majors %}
-                              <option value="{{ major.major_name }}">{{ major.major_name }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="address" placeholder="Address">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-large" type="text" name="registration" placeholder="EFET Registration">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                          <input class="input is-large" type="date" id="register_date" name="register_date" value="" placeholder="Registration Date">
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <div class="control">
-                          <label for="gender">Gender :</label>
-                          <select name="type" class="form-select" aria-label="type">
-                            <option value="male" selected>Male</option>
-                            <option value="female">Female</option>
-                          </select>
-                        </div>
-                    </div>
-
-                    <button class="button is-block is-info is-large is-fullwidth">Add Student</button>
-                </form>
-            </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
-</div>
-<!-- Modal end -->
 
-<p class="spacing"></p>
-<p class="spacing"></p>
-
-
-<!-- ------------------------- MAJORS AND MESSAGERIE -->
-
-<div class="container">
-    <div class="row my-2">
-
-
-
-        <div class="col-lg-12 order-lg-2" style="background-color:#361e19;">
-            <div class="tab-content py-4">
-
-              <table style="width: 100%">
-                  <colgroup>
-                     <col span="1" style="width: 20%;">
-                     <col span="1" style="width: 10%;">
-                     <col span="1" style="width: 10%;">
-                     <col span="1" style="width: 60%;">
-                  </colgroup>
-
-                  <thead>
-                      <tr>
-                          <th style="background-color: #777; text-align: center">Date</th>
-                          <th style="background-color: #777; text-align: center">From</th>
-                          <th style="background-color: #777; text-align: center">To</th>
-                          <th style="background-color: #777; text-align: center">Message</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {% for message in messages %}
-                      <tr style="height:35px;">
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.date_sent }}</td>
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.msg_from }}</td>
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.msg_to }}</td>
-                          <td style="background-color: #FFEADD; text-align: center">{{ message.content }}</td>
-                      </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-              <form method="POST" action="/sendMessage">
-
-                <div class="row my-2">
-                  <div class="col-lg-3 order-lg-1">
-                    <div class="tab-content py-4">
-
-                        <div class="field">
-                          <label for="recipient_id" style="color: white;">Send to :</label>
-                            <div class="control">
-                              <select name="recipient_id" class="form-select" aria-label="type" >
-                                {% for recipient in users %}
-                                  <option value="{{ recipient.id }}">{{ recipient.name }}</option>
-                                {% endfor %}
-                              </select>
-                            </div>
-                        </div>
-
-                    </div>
-                  </div>
-
-                    <div class="col-lg-9 order-lg-2" style="background-color:#361e19;">
-                        <div class="tab-content py-4">
-
-                          <div class="field">
-                            <label for="recipient_id" style="color: white;">Message :</label>
-                              <div class="control">
-                                  <textarea class="input" id="message" name="message" rows="4" cols="50" placeholder="Your message here .."></textarea>
-                              </div>
-                          </div>
-
-                        </div>
-                    </div>
-
+    <!-- Add Student Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addUserModalLabel">
+              <i class="fas fa-user-plus me-2"></i>Ajouter un Étudiant
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/addStudent">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Nom complet</label>
+                  <input class="form-control-modern" type="text" name="name" placeholder="Nom complet" required>
                 </div>
-                <button class="button is-primary">Send Message</button>
-              </form>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Email</label>
+                  <input class="form-control-modern" type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Mot de passe</label>
+                  <input class="form-control-modern" type="password" name="password" placeholder="Mot de passe" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Âge</label>
+                  <input class="form-control-modern" type="number" name="age" placeholder="Âge" min="16" max="65">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Filière</label>
+                  <select name="major" class="form-control-modern" required>
+                    <option value="">Sélectionner une filière</option>
+                    {% for major in majors %}
+                      <option value="{{ major.major_name }}">{{ major.major_name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Adresse</label>
+                  <input class="form-control-modern" type="text" name="address" placeholder="Adresse">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">ID d'inscription EFET</label>
+                  <input class="form-control-modern" type="text" name="registration" placeholder="ID d'inscription" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Date d'inscription</label>
+                  <input class="form-control-modern" type="date" name="register_date" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Genre</label>
+                  <select name="gender" class="form-control-modern" required>
+                    <option value="">Sélectionner le genre</option>
+                    <option value="male">Masculin</option>
+                    <option value="female">Féminin</option>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn btn-success">
+                  <i class="fas fa-plus me-2"></i>Ajouter Étudiant
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            </div>
+    <!-- Enhanced Messaging Center -->
+    <div class="messaging-center-container slide-in-up">
+      <div class="messaging-center-header">
+        <div class="header-left">
+          <div class="messaging-icon">
+            <i class="fas fa-comments"></i>
+          </div>
+          <div class="header-content">
+            <h3>Centre de Messagerie</h3>
+            <p>Communiquez en temps réel avec vos étudiants et collègues</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn-action" id="refreshMessages" title="Actualiser">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+          <button class="btn-action" id="toggleMessagingView" title="Vue compacte">
+            <i class="fas fa-compress-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="messaging-content">
+        <!-- Messaging Navigation -->
+        <div class="messaging-nav">
+          <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="conversations">
+              <i class="fas fa-comment-alt me-2"></i>
+              <span>Conversations</span>
+              <span class="message-count">{{ messages|length }}</span>
+            </button>
+            <button class="nav-tab" data-tab="compose">
+              <i class="fas fa-pen me-2"></i>
+              <span>Composer</span>
+            </button>
+            <button class="nav-tab" data-tab="contacts">
+              <i class="fas fa-address-book me-2"></i>
+              <span>Contacts</span>
+              <span class="contact-count">{{ users|length }}</span>
+            </button>
+          </div>
         </div>
 
+        <!-- Tab Content -->
+        <div class="tab-content">
+          <!-- Conversations Tab -->
+          <div class="tab-pane active" id="conversations">
+            <div class="conversations-container">
+              <div class="conversations-header">
+                <div class="search-messages">
+                  <i class="fas fa-search"></i>
+                  <input type="text" placeholder="Rechercher dans les messages..." id="messageSearch">
+                </div>
+                <div class="filter-options">
+                  <select class="filter-select" id="filterByRole">
+                    <option value="">Tous les rôles</option>
+                    <option value="student">Étudiants</option>
+                    <option value="teacher">Enseignants</option>
+                    <option value="admin">Administration</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="messages-list" id="messagesList">
+                {% if messages %}
+                  {% for message in messages %}
+                  <div class="message-card" data-role="{{ message.role if message.role else 'unknown' }}">
+                    <div class="message-card-header">
+                      <div class="sender-info">
+                        <div class="sender-avatar">
+                          {{ message.msg_from[0].upper() if message.msg_from else 'U' }}
+                        </div>
+                        <div class="sender-details">
+                          <div class="sender-name">{{ message.msg_from }}</div>
+                          <div class="message-direction">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            <span>{{ message.msg_to }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="message-meta">
+                        <div class="message-time">
+                          <i class="fas fa-clock me-1"></i>
+                          {{ message.date_sent }}
+                        </div>
+                        <div class="message-actions">
+                          <button class="btn-message-action" title="Répondre">
+                            <i class="fas fa-reply"></i>
+                          </button>
+                          <button class="btn-message-action" title="Transférer">
+                            <i class="fas fa-share"></i>
+                          </button>
+                          <button class="btn-message-action text-danger" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="message-content">
+                      <p>{{ message.content }}</p>
+                    </div>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="empty-messages">
+                    <div class="empty-icon">
+                      <i class="fas fa-inbox"></i>
+                    </div>
+                    <h4>Aucun message</h4>
+                    <p>Vous n'avez pas encore de conversations. Commencez par composer un nouveau message.</p>
+                    <button class="btn-primary" onclick="switchTab('compose')">
+                      <i class="fas fa-pen me-2"></i>Composer un message
+                    </button>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
 
+          <!-- Compose Tab -->
+          <div class="tab-pane" id="compose">
+            <div class="compose-container">
+              <div class="compose-header">
+                <h4><i class="fas fa-pen-fancy me-2"></i>Nouveau Message</h4>
+                <p>Rédigez un message à destination de vos étudiants ou collègues</p>
+              </div>
+              
+              <form method="POST" action="/sendMessage" class="compose-form" id="composeForm">
+                <div class="form-section">
+                  <div class="recipient-selection">
+                    <label class="form-label">
+                      <i class="fas fa-users me-2"></i>Destinataire(s)
+                    </label>
+                    <div class="recipient-input-container">
+                      <select name="recipient_id" class="recipient-select" required id="recipientSelect">
+                        <option value="">Choisir un destinataire...</option>
+                        <optgroup label="👥 Étudiants">
+                          {% for recipient in users %}
+                            {% if recipient.role == 'student' %}
+                            <option value="{{ recipient.id }}" data-role="student" data-major="{{ recipient.major }}">
+                              {{ recipient.name }} - {{ recipient.major }}
+                            </option>
+                            {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                        <optgroup label="👨‍🏫 Enseignants">
+                          {% for recipient in users %}
+                            {% if recipient.role == 'teacher' %}
+                            <option value="{{ recipient.id }}" data-role="teacher">
+                              {{ recipient.name }} (Enseignant)
+                            </option>
+                            {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                        <optgroup label="👨‍💼 Administration">
+                          {% for recipient in users %}
+                            {% if recipient.role == 'admin' %}
+                            <option value="{{ recipient.id }}" data-role="admin">
+                              {{ recipient.name }} (Administration)
+                            </option>
+                            {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      </select>
+                      <div class="quick-filters">
+                        <button type="button" class="filter-btn" data-filter="student">
+                          <i class="fas fa-graduation-cap me-1"></i>Étudiants
+                        </button>
+                        <button type="button" class="filter-btn" data-filter="teacher">
+                          <i class="fas fa-chalkboard-teacher me-1"></i>Enseignants
+                        </button>
+                      </div>
+                    </div>
+                  </div>
 
+                  <div class="message-composition">
+                    <label class="form-label">
+                      <i class="fas fa-edit me-2"></i>Votre message
+                    </label>
+                    <div class="message-editor">
+                      <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" data-action="bold" title="Gras">
+                          <i class="fas fa-bold"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-action="italic" title="Italique">
+                          <i class="fas fa-italic"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-action="list" title="Liste">
+                          <i class="fas fa-list"></i>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button type="button" class="toolbar-btn" data-action="emoji" title="Émojis">
+                          <i class="fas fa-smile"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-action="template" title="Modèles">
+                          <i class="fas fa-file-alt"></i>
+                        </button>
+                      </div>
+                      <textarea name="message" class="message-textarea" rows="6" 
+                                placeholder="Tapez votre message ici... 
 
+Conseils :
+• Soyez clair et précis
+• Utilisez un ton professionnel
+• N'hésitez pas à structurer votre message" 
+                                required></textarea>
+                      <div class="character-count">
+                        <span id="charCount">0</span> / 1000 caractères
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="message-options">
+                    <div class="priority-selection">
+                      <label class="form-label">
+                        <i class="fas fa-flag me-2"></i>Priorité
+                      </label>
+                      <div class="priority-buttons">
+                        <input type="radio" name="priority" value="normal" id="priority-normal" checked>
+                        <label for="priority-normal" class="priority-btn normal">
+                          <i class="fas fa-flag"></i>
+                          Normal
+                        </label>
+                        <input type="radio" name="priority" value="important" id="priority-important">
+                        <label for="priority-important" class="priority-btn important">
+                          <i class="fas fa-exclamation"></i>
+                          Important
+                        </label>
+                        <input type="radio" name="priority" value="urgent" id="priority-urgent">
+                        <label for="priority-urgent" class="priority-btn urgent">
+                          <i class="fas fa-exclamation-triangle"></i>
+                          Urgent
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="compose-actions">
+                  <div class="action-buttons">
+                    <button type="button" class="btn-secondary" onclick="clearForm()">
+                      <i class="fas fa-times me-2"></i>Annuler
+                    </button>
+                    <button type="button" class="btn-outline" id="saveDraft">
+                      <i class="fas fa-save me-2"></i>Sauvegarder brouillon
+                    </button>
+                    <button type="submit" class="btn-send" id="sendMessage">
+                      <i class="fas fa-paper-plane me-2"></i>
+                      <span>Envoyer le message</span>
+                      <div class="btn-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Contacts Tab -->
+          <div class="tab-pane" id="contacts">
+            <div class="contacts-container">
+              <div class="contacts-header">
+                <div class="search-contacts">
+                  <i class="fas fa-search"></i>
+                  <input type="text" placeholder="Rechercher un contact..." id="contactSearch">
+                </div>
+                <div class="contacts-filter">
+                  <select class="filter-select" id="contactFilter">
+                    <option value="">Tous les contacts</option>
+                    <option value="student">Étudiants</option>
+                    <option value="teacher">Enseignants</option>
+                    <option value="admin">Administration</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="contacts-list" id="contactsList">
+                {% for user in users %}
+                <div class="contact-card" data-role="{{ user.role }}" data-id="{{ user.id }}">
+                  <div class="contact-avatar">
+                    <div class="avatar-circle {{ user.role }}">
+                      {{ user.name[0].upper() if user.name else 'U' }}
+                    </div>
+                    <div class="status-indicator online"></div>
+                  </div>
+                  <div class="contact-info">
+                    <div class="contact-name">{{ user.name }}</div>
+                    <div class="contact-role">
+                      {% if user.role == 'student' %}
+                        <i class="fas fa-graduation-cap me-1"></i>Étudiant
+                        {% if user.major %} - {{ user.major }}{% endif %}
+                      {% elif user.role == 'teacher' %}
+                        <i class="fas fa-chalkboard-teacher me-1"></i>Enseignant
+                      {% elif user.role == 'admin' %}
+                        <i class="fas fa-user-shield me-1"></i>Administration
+                      {% endif %}
+                    </div>
+                    {% if user.email %}
+                    <div class="contact-email">
+                      <i class="fas fa-envelope me-1"></i>{{ user.email }}
+                    </div>
+                    {% endif %}
+                  </div>
+                  <div class="contact-actions">
+                    <button class="btn-contact-action" onclick="composeToUser('{{ user.id }}', '{{ user.name }}')" title="Envoyer un message">
+                      <i class="fas fa-comment"></i>
+                    </button>
+                    <button class="btn-contact-action" onclick="viewUserProfile('{{ user.id }}')" title="Voir le profil">
+                      <i class="fas fa-user"></i>
+                    </button>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+  </div>
 </div>
 
-<!-- ------------------------- END MAJORS AND MESSAGERIE -->
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Enhanced Messaging Center JavaScript
+  
+  // Tab switching functionality
+  function switchTab(tabName) {
+    // Remove active class from all tabs and panes
+    document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    
+    // Add active class to selected tab and pane
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(tabName).classList.add('active');
+  }
 
+  // Tab event listeners
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabName = this.dataset.tab;
+      switchTab(tabName);
+    });
+  });
 
+  // Message search functionality
+  document.getElementById('messageSearch')?.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const messageCards = document.querySelectorAll('.message-card');
+    
+    messageCards.forEach(card => {
+      const content = card.textContent.toLowerCase();
+      if (content.includes(searchTerm)) {
+        card.style.display = 'block';
+        card.style.opacity = '1';
+      } else {
+        card.style.opacity = '0';
+        setTimeout(() => {
+          if (!content.includes(searchTerm)) {
+            card.style.display = 'none';
+          }
+        }, 200);
+      }
+    });
+  });
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  // Message filter by role
+  document.getElementById('filterByRole')?.addEventListener('change', function() {
+    const selectedRole = this.value;
+    const messageCards = document.querySelectorAll('.message-card');
+    
+    messageCards.forEach(card => {
+      const cardRole = card.dataset.role;
+      if (!selectedRole || cardRole === selectedRole) {
+        card.style.display = 'block';
+        card.style.opacity = '1';
+      } else {
+        card.style.opacity = '0';
+        setTimeout(() => {
+          if (card.dataset.role !== selectedRole && selectedRole) {
+            card.style.display = 'none';
+          }
+        }, 200);
+      }
+    });
+  });
 
+  // Contact search functionality
+  document.getElementById('contactSearch')?.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const contactCards = document.querySelectorAll('.contact-card');
+    
+    contactCards.forEach(card => {
+      const content = card.textContent.toLowerCase();
+      if (content.includes(searchTerm)) {
+        card.style.display = 'flex';
+        card.style.opacity = '1';
+      } else {
+        card.style.opacity = '0';
+        setTimeout(() => {
+          if (!content.includes(searchTerm)) {
+            card.style.display = 'none';
+          }
+        }, 200);
+      }
+    });
+  });
 
-{% endblock %}
+  // Contact filter by role
+  document.getElementById('contactFilter')?.addEventListener('change', function() {
+    const selectedRole = this.value;
+    const contactCards = document.querySelectorAll('.contact-card');
+    
+    contactCards.forEach(card => {
+      const cardRole = card.dataset.role;
+      if (!selectedRole || cardRole === selectedRole) {
+        card.style.display = 'flex';
+        card.style.opacity = '1';
+      } else {
+        card.style.opacity = '0';
+        setTimeout(() => {
+          if (card.dataset.role !== selectedRole && selectedRole) {
+            card.style.display = 'none';
+          }
+        }, 200);
+      }
+    });
+  });
+
+  // Character count for message textarea
+  const messageTextarea = document.querySelector('.message-textarea');
+  const charCount = document.getElementById('charCount');
+  
+  if (messageTextarea && charCount) {
+    messageTextarea.addEventListener('input', function() {
+      const currentLength = this.value.length;
+      charCount.textContent = currentLength;
+      
+      // Color coding based on character count
+      if (currentLength > 900) {
+        charCount.style.color = '#ef4444';
+      } else if (currentLength > 700) {
+        charCount.style.color = '#f59e0b';
+      } else {
+        charCount.style.color = '#6b7280';
+      }
+    });
+  }
+
+  // Quick filter functionality for recipient selection
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Remove active class from all filter buttons
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      
+      // Add active class to clicked button
+      this.classList.add('active');
+      
+      const filterRole = this.dataset.filter;
+      const recipientSelect = document.getElementById('recipientSelect');
+      const options = recipientSelect.querySelectorAll('option');
+      
+      // Hide all options first
+      options.forEach(option => {
+        if (option.value) {
+          option.style.display = 'none';
+        }
+      });
+      
+      // Show options that match the filter
+      options.forEach(option => {
+        if (!option.value) return; // Skip the empty option
+        
+        const optionRole = option.dataset.role;
+        if (optionRole === filterRole) {
+          option.style.display = 'block';
+        }
+      });
+      
+      // Reset select to show placeholder
+      recipientSelect.value = '';
+    });
+  });
+
+  // Compose to specific user function
+  function composeToUser(userId, userName) {
+    // Switch to compose tab
+    switchTab('compose');
+    
+    // Set the recipient
+    const recipientSelect = document.getElementById('recipientSelect');
+    recipientSelect.value = userId;
+    
+    // Focus on message textarea
+    const messageTextarea = document.querySelector('.message-textarea');
+    messageTextarea.focus();
+    
+    // Show success feedback
+    showNotification('Destinataire sélectionné: ' + userName, 'success');
+  }
+
+  // View user profile function
+  function viewUserProfile(userId) {
+    // This could open a modal or navigate to user profile
+    showNotification('Fonctionnalité de profil à implémenter', 'info');
+  }
+
+  // Form submission with loading state
+  const composeForm = document.getElementById('composeForm');
+  const sendButton = document.getElementById('sendMessage');
+
+  if (composeForm && sendButton) {
+    composeForm.addEventListener('submit', function(e) {
+      // Add loading state
+      sendButton.classList.add('loading');
+      sendButton.disabled = true;
+      
+      // The form will submit normally, but we show loading state
+      setTimeout(() => {
+        if (sendButton) {
+          sendButton.classList.remove('loading');
+          sendButton.disabled = false;
+        }
+      }, 3000);
+    });
+  }
+
+  // Clear form function
+  function clearForm() {
+    const form = document.getElementById('composeForm');
+    if (form) {
+      form.reset();
+      
+      // Reset character count
+      const charCount = document.getElementById('charCount');
+      if (charCount) {
+        charCount.textContent = '0';
+        charCount.style.color = '#6b7280';
+      }
+      
+      // Remove active class from filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Show all recipient options
+      const recipientSelect = document.getElementById('recipientSelect');
+      if (recipientSelect) {
+        recipientSelect.querySelectorAll('option').forEach(option => {
+          option.style.display = 'block';
+        });
+      }
+      
+      showNotification('Formulaire effacé', 'info');
+    }
+  }
+
+  // Save draft functionality
+  document.getElementById('saveDraft')?.addEventListener('click', function() {
+    const formData = new FormData(document.getElementById('composeForm'));
+    const draftData = {
+      recipient_id: formData.get('recipient_id'),
+      message: formData.get('message'),
+      priority: formData.get('priority'),
+      timestamp: new Date().toISOString()
+    };
+    
+    // Save to localStorage
+    localStorage.setItem('messageDraft', JSON.stringify(draftData));
+    showNotification('Brouillon sauvegardé', 'success');
+  });
+
+  // Load draft on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    const savedDraft = localStorage.getItem('messageDraft');
+    if (savedDraft) {
+      try {
+        const draftData = JSON.parse(savedDraft);
+        
+        // Ask user if they want to restore the draft
+        if (confirm('Un brouillon de message a été trouvé. Voulez-vous le restaurer ?')) {
+          const recipientSelect = document.getElementById('recipientSelect');
+          const messageTextarea = document.querySelector('.message-textarea');
+          const priorityInput = document.querySelector(`input[name="priority"][value="${draftData.priority}"]`);
+          
+          if (recipientSelect && draftData.recipient_id) {
+            recipientSelect.value = draftData.recipient_id;
+          }
+          
+          if (messageTextarea && draftData.message) {
+            messageTextarea.value = draftData.message;
+            // Trigger character count update
+            messageTextarea.dispatchEvent(new Event('input'));
+          }
+          
+          if (priorityInput) {
+            priorityInput.checked = true;
+          }
+          
+          showNotification('Brouillon restauré', 'success');
+        }
+      } catch (e) {
+        console.error('Error loading draft:', e);
+      }
+    }
+  });
+
+  // Refresh messages functionality
+  document.getElementById('refreshMessages')?.addEventListener('click', function() {
+    const icon = this.querySelector('i');
+    icon.classList.add('fa-spin');
+    
+    // Simulate refresh - in real implementation, this would make an AJAX call
+    setTimeout(() => {
+      icon.classList.remove('fa-spin');
+      showNotification('Messages actualisés', 'success');
+    }, 1000);
+  });
+
+  // Toggle messaging view
+  let isCompactView = false;
+  document.getElementById('toggleMessagingView')?.addEventListener('click', function() {
+    const icon = this.querySelector('i');
+    const messageCards = document.querySelectorAll('.message-card');
+    
+    isCompactView = !isCompactView;
+    
+    if (isCompactView) {
+      icon.className = 'fas fa-expand-alt';
+      this.title = 'Vue normale';
+      messageCards.forEach(card => {
+        card.style.padding = '1rem';
+        const content = card.querySelector('.message-content');
+        if (content) {
+          content.style.display = 'none';
+        }
+      });
+    } else {
+      icon.className = 'fas fa-compress-alt';
+      this.title = 'Vue compacte';
+      messageCards.forEach(card => {
+        card.style.padding = '1.5rem';
+        const content = card.querySelector('.message-content');
+        if (content) {
+          content.style.display = 'block';
+        }
+      });
+    }
+  });
+
+  // Notification system
+  function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification-toast');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification-toast notification-${type}`;
+    
+    const icon = type === 'success' ? 'check-circle' : 
+                 type === 'error' ? 'exclamation-circle' : 
+                 type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+    
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fas fa-${icon}"></i>
+        <span>${message}</span>
+      </div>
+      <button class="notification-close" onclick="this.parentElement.remove()">
+        <i class="fas fa-times"></i>
+      </button>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 10000;
+      max-width: 400px;
+      animation: slideInRight 0.3s ease-out;
+    `;
+    
+    if (type === 'success') {
+      notification.style.borderLeftColor = '#10b981';
+      notification.querySelector('i').style.color = '#10b981';
+    } else if (type === 'error') {
+      notification.style.borderLeftColor = '#ef4444';
+      notification.querySelector('i').style.color = '#ef4444';
+    } else if (type === 'warning') {
+      notification.style.borderLeftColor = '#f59e0b';
+      notification.querySelector('i').style.color = '#f59e0b';
+    } else {
+      notification.style.borderLeftColor = '#3b82f6';
+      notification.querySelector('i').style.color = '#3b82f6';
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentElement) {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+      }
+    }, 5000);
+  }
+
+  // Add CSS for notifications
+  const notificationStyles = document.createElement('style');
+  notificationStyles.textContent = `
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+    
+    .notification-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+    }
+    
+    .notification-close {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    .notification-close:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+  `;
+  document.head.appendChild(notificationStyles);
+
+  // Enhanced search functionality
+  function searchStudents() {
+    const filter = document.getElementById('myInput').value.toUpperCase();
+    const rows = document.querySelectorAll("#myTable tbody tr");
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      let found = false;
+      
+      // Search in name, email, phone, and major
+      for (let i = 0; i < 4; i++) {
+        const text = cells[i]?.textContent || cells[i]?.innerText || '';
+        if (text.toUpperCase().includes(filter)) {
+          found = true;
+          break;
+        }
+      }
+      
+      if (found) {
+        row.style.display = '';
+        row.style.opacity = '1';
+        visibleCount++;
+      } else {
+        row.style.opacity = '0';
+        setTimeout(() => {
+          row.style.display = 'none';
+        }, 200);
+      }
+    });
+
+    // Show no results message
+    showNoResults(visibleCount === 0 && filter.length > 0);
+  }
+
+  function showNoResults(show) {
+    let noResultsRow = document.getElementById('noResultsRow');
+    
+    if (show && !noResultsRow) {
+      const tbody = document.querySelector('#myTable tbody');
+      noResultsRow = document.createElement('tr');
+      noResultsRow.id = 'noResultsRow';
+      noResultsRow.innerHTML = `
+        <td colspan="7" class="text-center py-5">
+          <div class="text-muted">
+            <i class="fas fa-search fa-3x mb-3" style="opacity: 0.3;"></i>
+            <h5>Aucun étudiant trouvé</h5>
+            <p>Essayez de modifier votre recherche</p>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(noResultsRow);
+    } else if (!show && noResultsRow) {
+      noResultsRow.remove();
+    }
+  }
+
+  // Animation on load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add staggered animation to table rows
+    const rows = document.querySelectorAll('#myTable tbody tr');
+    rows.forEach((row, index) => {
+      row.style.opacity = '0';
+      row.style.transform = 'translateY(20px)';
+      
+      setTimeout(() => {
+        row.style.transition = 'all 0.4s ease';
+        row.style.opacity = '1';
+        row.style.transform = 'translateY(0)';
+      }, index * 50);
+    });
+
+    // Auto-close alerts
+    setTimeout(() => {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      });
+    }, 5000);
+  });
+
+  // Form validation enhancement
+  document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        const originalHTML = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Traitement...';
+        submitBtn.disabled = true;
+        
+        // Re-enable after 5 seconds in case of error
+        setTimeout(() => {
+          submitBtn.innerHTML = originalHTML;
+          submitBtn.disabled = false;
+        }, 5000);
+      }
+    });
+  });
+
+  // Enhanced modal animations
+  document.addEventListener('shown.bs.modal', function (e) {
+    const firstInput = e.target.querySelector('input, select, textarea');
+    if (firstInput && !firstInput.disabled && !firstInput.readOnly) {
+      firstInput.focus();
+    }
+  });
+</script>
+
+</body>
+</html>

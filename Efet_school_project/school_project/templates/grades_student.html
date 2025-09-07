@@ -1,142 +1,672 @@
-{% extends "base.html" %}
-
-{% block head %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EFET - Mes Notes</title>
+    
+    <!-- Modern CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  table, th, td {
-    border: 2px solid black;
-    padding: 5px;
-  }
-  table {
-    border-spacing: 15px;
-  }
-  p.spacing {
-    line-height: 2;
-  }
-  .parent {
-    overflow:hidden;
-    width:90%;
-  }
-  .left{
-    float:left;
-    width: 50%;
-  }
+    /* Base Styles */
+    :root {
+        --primary-color: #1e40af;
+        --primary-dark: #1e3a8a;
+        --secondary-color: #0ea5e9;
+        --accent-color: #f59e0b;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
 
-  .right {
-    float: right;
-  }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+        padding: 0;
+    }
+
+    /* Header with Go Back Button */
+    .back-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .back-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .header-title img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .header-title h1 {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Student Grades Page Styles */
+    .grades-container {
+        padding: 1.5rem;
+        margin-top: 0;
+    }
+    
+    .grades-header {
+        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 25px rgba(139, 92, 246, 0.2);
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+    
+    .grades-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(45deg);
+        z-index: 0;
+    }
+    
+    .grades-header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .grades-header p {
+        opacity: 0.9;
+        font-size: 1rem;
+        max-width: 600px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .student-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        flex: 1;
+        min-width: 250px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .student-icon {
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    }
+    
+    .registration-icon {
+        background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    }
+    
+    .major-icon {
+        background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+    }
+    
+    .year-icon {
+        background: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%);
+    }
+    
+    .info-content h3 {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6b7280;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-content p {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+    
+    .grades-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .grades-section:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #f9fafb;
+    }
+    
+    .section-header i {
+        font-size: 1.25rem;
+        color: #8b5cf6;
+    }
+    
+    .section-header h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0;
+    }
+    
+    .section-body {
+        padding: 1.5rem;
+        overflow-x: auto;
+    }
+    
+    .grades-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    
+    .grades-table th {
+        background: #f3f4f6;
+        color: #4b5563;
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .grades-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1f2937;
+    }
+    
+    .grades-table tr:hover {
+        background: #f9fafb;
+    }
+    
+    .subject-column {
+        min-width: 200px;
+    }
+    
+    .grade-column {
+        text-align: center;
+        font-weight: 600;
+    }
+    
+    .grade-chip {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 600;
+    }
+    
+    .grade-excellent {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .grade-good {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+    
+    .grade-average {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .grade-poor {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .summary-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .summary-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .summary-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .summary-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: white;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    }
+    
+    .summary-header h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0;
+    }
+    
+    .summary-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .mean-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 12px;
+        background: #f9fafb;
+        transition: all 0.2s ease;
+    }
+    
+    .mean-item:hover {
+        background: #f3f4f6;
+    }
+    
+    .mean-subject {
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .mean-grade {
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+        color: white;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        margin-top: 1rem;
+        display: inline-block;
+    }
+    
+    .back-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .empty-grades {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1.5rem;
+        text-align: center;
+    }
+    
+    .empty-grades i {
+        font-size: 3rem;
+        color: #d1d5db;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-grades h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-grades p {
+        max-width: 450px;
+        color: #6b7280;
+    }
+    
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .grades-container {
+            padding: 1rem;
+        }
+        
+        .grades-header {
+            padding: 1.5rem;
+        }
+        
+        .grades-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .section-header {
+            padding: 1rem;
+        }
+        
+        .section-body {
+            padding: 1rem;
+        }
+        
+        .grades-table th,
+        .grades-table td {
+            padding: 0.75rem;
+        }
+    }
+    
+    /* Grade Progress Bar */
+    .grade-progress {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        border-radius: 4px;
+    }
+    
+    .flash-message {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: white;
+        background: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .flash-message i {
+        font-size: 1.25rem;
+    }
 </style>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/fontawesome.min.css">
-{% endblock head %}
-
-{% block content %}
-
-<script type="text/javascript">
-  function int(value) {
-      return parseInt(value);
-  }
-
-  // this checks the value and updates it on the control, if needed
-  function checkValue(sender) {
-      let min = sender.min;
-      let max = sender.max;
-      let value = int(sender.value);
-      if (value>max) {
-          sender.value = min;
-      } else if (value<min) {
-          sender.value = max;
-      }
-  }
-</script>
-
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    <div class="notification is-danger">
-        {{ messages[0] }}
+</head>
+<body>
+    <!-- Custom Header with Go Back Button -->
+    <div class="back-header">
+        <a href="javascript:history.back()" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour</span>
+        </a>
+        <div class="header-title">
+            <img src="/static/images/efet_logo_modern.svg" alt="EFET Logo">
+            <h1>EFET - Mes Notes</h1>
+        </div>
+        <div style="width: 100px;"></div><!-- Spacer for balance -->
     </div>
-{% endif %}
-{% endwith %}
-
-<p class="font-weight-normal" style="text-align:left;">
-    Here you can manage grades for student : <b>{{ student_infos.name }}</b><br>
-    Registered as : <b>{{ student_infos.registration }}</b><br>
-    Major : <b>{{ student_infos.major }}</b><br>
-    Year : <b>{{ student_infos.year }}</b>
-</p>
-
-
-<table style="width: 100%">
-    <colgroup>
-       <col span="1" style="width: 8%;">
-       <col span="1" style="width: 8%;">
-       <col span="1" style="width: 21%;">
-       <col span="1" style="width: 21%;">
-       <col span="1" style="width: 21%;">
-
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th style="background-color: #777; text-align: center">ID</th>
-            <th style="background-color: #777; text-align: center">Student Id</th>
-            <th style="background-color: #777; text-align: center">Grade</th>
-            <th style="background-color: #777; text-align: center">Subject</th>
-            <th style="background-color: #777; text-align: center">Grade Date</th>
-
-        </tr>
-    </thead>
-    <tbody>
-        {% for grade in all_grades %}
-        <tr style="height:35px;">
-            <td style="background-color: #FFEADD; text-align: center">{{ grade.id }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ grade.student_id }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ grade.grade }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ grade.subject }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ grade.grade_date }}</td>
-        </tr>
-
-        {% endfor %}
-    </tbody>
-</table>
-
-<p class="spacing"></p>
-
-
-<table style="width: 100%">
-    <colgroup>
-       <col span="1" style="width: 8%;">
-       <col span="1" style="width: 8%;">
-
-
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th style="background-color: #777; text-align: center">Subject</th>
-            <th style="background-color: #777; text-align: center">Mean Grade /20</th>
-
-
-        </tr>
-    </thead>
-    <tbody>
-        {% for grade_mean_row in grades_mean %}
-        <tr style="height:35px;">
-            <td style="background-color: #FFEADD; text-align: center">{{ grade_mean_row.subject }}</td>
-            <td style="background-color: #FFEADD; text-align: center">{{ grade_mean_row.mean }}</td>
-
-        </tr>
-
-        {% endfor %}
-    </tbody>
-</table>
-
-<p class="spacing"></p>
-
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
-
-
-{% endblock %}
+    
+<div class="grades-container">
+    <!-- Grades Header -->
+    <div class="grades-header">
+        <h1>Mes Notes</h1>
+        <p>Consulter vos résultats académiques et moyennes par matière.</p>
+    </div>
+    
+    <!-- Student Information -->
+    <div class="student-info">
+        <div class="info-card">
+            <div class="info-icon student-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="info-content">
+                <h3>Étudiant</h3>
+                <p>{{ student_infos.name }}</p>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <div class="info-icon registration-icon">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <div class="info-content">
+                <h3>Numéro d'inscription</h3>
+                <p>{{ student_infos.registration }}</p>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <div class="info-icon major-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="info-content">
+                <h3>Filière</h3>
+                <p>{{ student_infos.major }}</p>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <div class="info-icon year-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="info-content">
+                <h3>Année</h3>
+                <p>{{ student_infos.year }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Detailed Grades Section -->
+    <div class="grades-section">
+        <div class="section-header">
+            <i class="fas fa-list-ul"></i>
+            <h2>Détail des notes</h2>
+        </div>
+        <div class="section-body">
+            {% if all_grades %}
+                <div class="table-responsive">
+                    <table class="grades-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Étudiant</th>
+                                <th>Note</th>
+                                <th class="subject-column">Matière</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for grade in all_grades %}
+                                <tr>
+                                    <td>{{ grade.id }}</td>
+                                    <td>{{ grade.student_id }}</td>
+                                    <td class="grade-column">
+                                        <span class="grade-chip 
+                                            {% if grade.grade >= 16 %}grade-excellent
+                                            {% elif grade.grade >= 14 %}grade-good
+                                            {% elif grade.grade >= 10 %}grade-average
+                                            {% else %}grade-poor
+                                            {% endif %}">
+                                            {{ grade.grade }}/20
+                                        </span>
+                                    </td>
+                                    <td>{{ grade.subject }}</td>
+                                    <td>{{ grade.grade_date.strftime('%d/%m/%Y') if grade.grade_date else 'N/A' }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-grades">
+                    <i class="far fa-clipboard"></i>
+                    <h3>Aucune note disponible</h3>
+                    <p>Vous n'avez pas encore de notes enregistrées dans le système.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Means By Subject Section -->
+    <div class="summary-section">
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Moyennes par matière</h3>
+            </div>
+            <div class="summary-body">
+                {% if grades_mean %}
+                    {% for grade_mean_row in grades_mean %}
+                        <div class="mean-item">
+                            <span class="mean-subject">{{ grade_mean_row.subject }}</span>
+                            <span class="mean-grade 
+                                {% if grade_mean_row.mean >= 16 %}grade-excellent
+                                {% elif grade_mean_row.mean >= 14 %}grade-good
+                                {% elif grade_mean_row.mean >= 10 %}grade-average
+                                {% else %}grade-poor
+                                {% endif %}">
+                                {{ grade_mean_row.mean }}/20
+                            </span>
+                        </div>
+                        <div class="grade-progress">
+                            {% if grade_mean_row.mean >= 16 %}
+                                <div class="progress-bar" style="width: {{ grade_mean_row.mean * 5 }}%; background: #10b981;"></div>
+                            {% elif grade_mean_row.mean >= 14 %}
+                                <div class="progress-bar" style="width: {{ grade_mean_row.mean * 5 }}%; background: #3b82f6;"></div>
+                            {% elif grade_mean_row.mean >= 10 %}
+                                <div class="progress-bar" style="width: {{ grade_mean_row.mean * 5 }}%; background: #f59e0b;"></div>
+                            {% else %}
+                                <div class="progress-bar" style="width: {{ grade_mean_row.mean * 5 }}%; background: #ef4444;"></div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-grades">
+                        <i class="far fa-chart-bar"></i>
+                        <h3>Aucune moyenne disponible</h3>
+                        <p>Vous n'avez pas encore de moyennes calculées.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Back to Dashboard Button -->
+    <a href="{{ url_for('main.dashboard') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Retour au tableau de bord
+    </a>
+</div>
+</body>
+</html>

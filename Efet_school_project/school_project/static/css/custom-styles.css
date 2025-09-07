@@ -1,0 +1,35 @@
+/* Custom styles for additional fixes */
+
+/* Text Shadow for better visibility */
+.shadow-text {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7), 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Increase icon size and add glow */
+.feature-icon {
+    font-size: 2rem !important;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6));
+}
+
+/* Floating Element Animation */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.float-animation {
+    animation: float 5s ease-in-out infinite;
+}
+
+.float-animation-delay-1 {
+    animation: float 5s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+.float-animation-delay-2 {
+    animation: float 5s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+/* Add any additional custom styles here */

@@ -1,9 +1,704 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h1 class="title">
-    EFET School - Management System
-</h1>
-<img src="/static/logo.png" alt="Picture">
+{% block title %}EFET - École Française d'Enseignement Technique | Excellence en Formation Technique{% endblock title %}
 
+{% block content %}
+<!-- Professional Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Professional Background with Overlay -->
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="EFET Background" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-indigo-900/90"></div>
+    </div>
+    
+    <!-- Hero Content -->
+    <div class="relative z-20 container mx-auto px-6 py-12 md:py-20">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <!-- Logo and Text Content -->
+            <div class="text-left" data-aos="fade-right">
+                <div class="flex items-center mb-8">
+                    <img src="/static/logo_ecole.png" alt="EFET Logo" class="h-24 md:h-32 mr-4">
+                </div>
+                
+                <h1 class="font-poppins font-extrabold text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight shadow-text">
+                    L'excellence académique au Maroc depuis 50 ans
+                </h1>
+                
+                <p class="text-lg md:text-xl text-white mb-8 leading-relaxed shadow-text font-medium">
+                    EFET est un établissement d'enseignement supérieur privé marocain formant des professionnels dans des domaines variés : Commerce, Finance, Informatique, Management, Santé et Logistique.
+                </p>
+                
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-8" data-aos="fade-up" data-aos-delay="200">
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.signup') }}" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        <span>S'inscrire</span>
+                    </a>
+                    
+                    <a href="{{ url_for('auth.login') }}" class="inline-flex items-center px-6 py-3 border-2 border-white text-white font-medium rounded hover:bg-white hover:text-blue-900 transition-colors">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        <span>Se Connecter</span>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('main.dashboard') }}" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-tachometer-alt mr-2"></i>
+                        <span>Accéder au Tableau de Bord</span>
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Accreditation Badge -->
+                <div class="flex flex-col sm:flex-row gap-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-lg shadow-lg transform transition-transform hover:scale-105">
+                        <img src="https://www.efetmaroc.com/wp-content/uploads/2018/08/accredite-1-1.png" alt="Reconnu par l'État" class="h-8 mr-3">
+                        <span class="text-white font-semibold text-lg shadow-text">Bien reconnu par l'État</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-2 gap-4" data-aos="fade-left">
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg text-white border border-white/20 transform transition-transform hover:scale-105">
+                    <div class="text-4xl font-bold mb-2">5</div>
+                    <div class="text-sm font-medium uppercase tracking-wide">Campus au Maroc</div>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg text-white border border-white/20 transform transition-transform hover:scale-105">
+                    <div class="text-4xl font-bold mb-2">50</div>
+                    <div class="text-sm font-medium uppercase tracking-wide">Années d'expérience</div>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg text-white border border-white/20 transform transition-transform hover:scale-105">
+                    <div class="text-4xl font-bold mb-2">23</div>
+                    <div class="text-sm font-medium uppercase tracking-wide">Filières accréditées</div>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg text-white border border-white/20 transform transition-transform hover:scale-105">
+                    <div class="text-4xl font-bold mb-2">35K+</div>
+                    <div class="text-sm font-medium uppercase tracking-wide">Lauréats diplômés</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2" data-aos="fade-up" data-aos-delay="800">
+            <div class="animate-bounce">
+                <i class="fas fa-chevron-down text-2xl text-white opacity-70"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EFET Maroc Features Section -->
+<section class="py-20 bg-white relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%234F46E5" fill-opacity="0.4"><circle cx="30" cy="30" r="4"/></g></svg>');"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-4xl md:text-5xl text-gray-800 mb-4">
+                Le groupe EFET
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Acteur du changement depuis 50 ans
+            </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-4 gap-8 mb-16">
+            <!-- Feature 1 -->
+            <div class="group glass-card p-8 text-center card-3d" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <i class="fas fa-certificate text-white text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl text-gray-800 mb-4">Un groupe certifié</h3>
+                <p class="text-gray-600">EFET est accrédité par l'état pour toutes les filières de formation.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="group glass-card p-8 text-center card-3d" data-aos="fade-up" data-aos-delay="400">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <i class="fas fa-book text-white text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl text-gray-800 mb-4">Un cursus inédit</h3>
+                <p class="text-gray-600">Des programmes de formation innovants adaptés aux besoins du marché.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="group glass-card p-8 text-center card-3d" data-aos="fade-up" data-aos-delay="600">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg">
+                    <i class="fas fa-graduation-cap text-white text-2xl feature-icon"></i>
+                </div>
+                <h3 class="font-semibold text-xl text-gray-800 mb-4">Un apprentissage approuvé</h3>
+                <p class="text-gray-600">Une méthodologie d'enseignement qui a fait ses preuves depuis 50 ans.</p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="group glass-card p-8 text-center card-3d" data-aos="fade-up" data-aos-delay="800">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <i class="fas fa-thumbs-up text-white text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl text-gray-800 mb-4">Une satisfaction garantie</h3>
+                <p class="text-gray-600">Des milliers de lauréats satisfaits et une excellente réputation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EFET Pôles de Formation Section -->
+<section class="py-20 bg-gray-50 relative overflow-hidden" id="poles-formation">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-4xl md:text-5xl text-gray-800 mb-4">
+                Nos Pôles de Formation
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Découvrez nos différentes filières d'excellence
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Pôle Commerce & Gestion -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100" id="pole-commerce">
+                <div class="h-2 bg-blue-600"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-chart-line text-blue-600 mr-3"></i>
+                        Pôle Commerce & Gestion
+                    </h3>
+                    <ul class="text-gray-600 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien en Action commerciale & Marketing</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Spécialisé en Commerce international</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Bachelor en Marketing digital</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Master en Marketing stratégique & E-communication</span>
+                        </li>
+                    </ul>
+                    <div class="text-right">
+                        <a href="{{ url_for('main.pole_commerce') }}" class="text-blue-600 font-medium hover:text-blue-800 transition-colors inline-flex items-center">
+                            En savoir plus <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pôle Finance & Comptabilité -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200" id="pole-finance">
+                <div class="h-2 bg-green-600"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-calculator text-green-600 mr-3"></i>
+                        Pôle Finance & Comptabilité
+                    </h3>
+                    <ul class="text-gray-600 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Assistant en gestion administrative et comptable</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Spécialisé Financier & Comptable</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Bachelor en Finance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Master en Finance, Audit & Contrôle de gestion</span>
+                        </li>
+                    </ul>
+                    <div class="text-right">
+                        <a href="{{ url_for('main.pole_finance') }}" class="text-green-600 font-medium hover:text-green-800 transition-colors inline-flex items-center">
+                            En savoir plus <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pôle Informatique -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300" id="pole-informatique">
+                <div class="h-2 bg-purple-600"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-laptop-code text-purple-600 mr-3"></i>
+                        Pôle Informatique
+                    </h3>
+                    <ul class="text-gray-600 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien en Gestion informatisée</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Spécialisé en Developpement informatique</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Bachelor en Developpement web</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Master en Cybersécurité & Haute disponibilité</span>
+                        </li>
+                    </ul>
+                    <div class="text-right">
+                        <a href="{{ url_for('main.pole_informatique') }}" class="text-purple-600 font-medium hover:text-purple-800 transition-colors inline-flex items-center">
+                            En savoir plus <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pôle Logistique -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400" id="pole-logistique">
+                <div class="h-2 bg-yellow-600"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-truck text-yellow-600 mr-3"></i>
+                        Pôle Logistique
+                    </h3>
+                    <ul class="text-gray-600 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien en Accueil dans les Transports Aériens et Maritimes</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Spécialisé en Gestion en transport & logistique</span>
+                        </li>
+                    </ul>
+                    <div class="text-right">
+                        <a href="{{ url_for('main.pole_logistique') }}" class="text-yellow-600 font-medium hover:text-yellow-800 transition-colors inline-flex items-center">
+                            En savoir plus <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pôle Management -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="500" id="pole-management">
+                <div class="h-2 bg-red-600"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-briefcase text-red-600 mr-3"></i>
+                        Pôle Management
+                    </h3>
+                    <ul class="text-gray-600 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Bachelor en Management & Stratégie d'entreprise</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Bachelor en Management & Gestion des PME</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Master en Management & Stratégie d'entreprise</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Master en Management digital</span>
+                        </li>
+                    </ul>
+                    <div class="text-right">
+                        <a href="{{ url_for('main.pole_management') }}" class="text-red-600 font-medium hover:text-red-800 transition-colors inline-flex items-center">
+                            En savoir plus <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pôle Santé -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="600" id="pole-sante">
+                <div class="h-2 bg-teal-600"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-heartbeat text-teal-600 mr-3"></i>
+                        Pôle Santé
+                    </h3>
+                    <ul class="text-gray-600 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Qualification Aide-soignant</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Infirmier auxiliaire</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Spécialisé Infirmier polyvalent</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Technicien Spécialisé Sage femme</span>
+                        </li>
+                    </ul>
+                    <div class="text-right">
+                        <a href="{{ url_for('main.pole_sante') }}" class="text-teal-600 font-medium hover:text-teal-800 transition-colors inline-flex items-center">
+                            En savoir plus <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EFET Statistics Section -->
+<section class="py-20 bg-gradient-to-br from-gray-900 to-blue-900 text-white relative overflow-hidden counter-section">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-4xl md:text-5xl mb-4">
+                EFET en Chiffres
+            </h2>
+            <p class="text-xl text-gray-300">
+                Des résultats qui parlent d'eux-mêmes
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-5 gap-8">
+            <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2" id="counter1">0</div>
+                <p class="text-gray-300">Campus au Maroc</p>
+            </div>
+            <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                <div class="text-4xl md:text-5xl font-bold text-green-400 mb-2" id="counter2">0</div>
+                <p class="text-gray-300">Ans d'expérience</p>
+            </div>
+            <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2" id="counter3">0</div>
+                <p class="text-gray-300">Lauréats</p>
+            </div>
+            <div class="text-center" data-aos="fade-up" data-aos-delay="400">
+                <div class="text-4xl md:text-5xl font-bold text-purple-400 mb-2" id="counter4">0</div>
+                <p class="text-gray-300">Filières accréditées</p>
+            </div>
+            <div class="text-center" data-aos="fade-up" data-aos-delay="500">
+                <div class="text-4xl md:text-5xl font-bold text-pink-400 mb-2" id="counter5">0</div>
+                <p class="text-gray-300">Nationalités</p>
+            </div>
+        </div>
+        
+        <div class="text-center mt-16" data-aos="fade-up" data-aos-delay="600">
+            <p class="text-2xl md:text-3xl font-bold text-white mb-8">
+                + 2000 étudiants ont choisi EFET cette année! Rejoignez les
+            </p>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.signup') }}" class="inline-block px-10 py-4 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold rounded-full shadow-2xl hover:shadow-orange-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 text-lg">
+                <i class="fas fa-graduation-cap mr-2"></i>
+                Rejoindre EFET
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Partners Section -->
+<section class="py-16 bg-white relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute inset-0 bg-pattern"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                NOS PARTENAIRES
+            </h2>
+            <p class="text-xl text-gray-600">
+                Des partenaires de confiance pour une formation d'excellence
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8" data-aos="fade-up">
+            <!-- Cisco Logo -->
+            <div class="partner-logo-container bg-white rounded-lg shadow-md p-4 flex items-center justify-center h-24 transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
+                <img src="/static/images/partners/cisco.png" alt="Cisco" class="partner-logo h-12 object-contain">
+            </div>
+            
+            <!-- Microsoft Logo -->
+            <div class="partner-logo-container bg-white rounded-lg shadow-md p-4 flex items-center justify-center h-24 transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                <img src="/static/images/partners/microsoft.png" alt="Microsoft" class="partner-logo h-12 object-contain">
+            </div>
+            
+            <!-- Oracle Logo -->
+            <div class="partner-logo-container bg-white rounded-lg shadow-md p-4 flex items-center justify-center h-24 transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                <img src="/static/images/partners/oracle.png" alt="Oracle" class="partner-logo h-12 object-contain">
+            </div>
+            
+            <!-- IBM Logo -->
+            <div class="partner-logo-container bg-white rounded-lg shadow-md p-4 flex items-center justify-center h-24 transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
+                <img src="/static/images/partners/ibm.png" alt="IBM" class="partner-logo h-12 object-contain">
+            </div>
+            
+            <!-- Amazon Logo -->
+            <div class="partner-logo-container bg-white rounded-lg shadow-md p-4 flex items-center justify-center h-24 transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="500">
+                <img src="/static/images/partners/amazon.png" alt="Amazon" class="partner-logo h-12 object-contain">
+            </div>
+            
+            <!-- Google Logo -->
+            <div class="partner-logo-container bg-white rounded-lg shadow-md p-4 flex items-center justify-center h-24 transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="600">
+                <img src="/static/images/partners/google.png" alt="Google" class="partner-logo h-12 object-contain">
+            </div>
+        </div>
+        
+        <div class="mt-12 text-center" data-aos="fade-up">
+            <p class="text-gray-600">
+                Nos partenaires mondiaux nous permettent d'offrir une formation de qualité reconnue internationalement et d'accéder aux dernières technologies dans tous nos domaines d'enseignement.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- 50 Years Section -->
+<section class="py-20 bg-gray-50 relative overflow-hidden">
+    <!-- Animated Background Dots -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0 bg-pattern"></div>
+    </div>
+    
+    <!-- Floating Elements -->
+    <div class="absolute top-1/4 left-20 w-12 h-12 bg-blue-500 rounded-full opacity-20 float-animation"></div>
+    <div class="absolute bottom-1/3 right-24 w-16 h-16 bg-purple-500 rounded-full opacity-10 float-animation-delay-1"></div>
+    <div class="absolute top-1/2 right-20 w-8 h-8 bg-green-500 rounded-full opacity-20 float-animation-delay-2"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <h2 class="font-poppins font-bold text-4xl md:text-5xl text-gray-800 mb-6">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">50 Ans</span> au service de la formation !
+                </h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    Depuis un demi-siècle, EFET forme les leaders de demain et s'engage à offrir une éducation d'excellence, adaptée aux besoins du marché du travail.
+                </p>
+                <div class="space-y-4 mb-8">
+                    <div class="benefit-item">Formation adaptée au marché du travail</div>
+                    <div class="benefit-item">Corps professoral expérimenté</div>
+                    <div class="benefit-item">Infrastructures modernes et technologiques</div>
+                </div>
+                <a href="{{ url_for('main.about_us') }}" class="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full shadow-xl hover:shadow-blue-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    En savoir plus
+                </a>
+            </div>
+            <div class="rounded-xl overflow-hidden shadow-2xl transform-3d card-3d" data-aos="fade-left">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80" alt="EFET 50 ans" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-tr from-blue-900/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+                    <div class="text-white font-bold text-xl">1973 - 2023</div>
+                    <div class="text-white/80">Un demi-siècle d'excellence</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-4xl md:text-5xl text-gray-800 mb-4">
+                Rejoignez l'Excellence
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Prêt à commencer votre parcours vers l'excellence technique ?
+            </p>
+        </div>
+
+        <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.signup') }}" class="inline-block px-12 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 text-lg">
+                <i class="fas fa-rocket mr-2"></i>
+                S'inscrire Maintenant
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<script>
+    // Three.js 3D Background
+    let scene, camera, renderer, particles = [];
+
+    function initThreeJS() {
+        // Create scene
+        scene = new THREE.Scene();
+        
+        // Create camera
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+        
+        // Create renderer
+        renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        
+        const container = document.getElementById('threejs-container');
+        container.appendChild(renderer.domElement);
+        
+        // Create particles
+        createParticles();
+        
+        // Animation loop
+        animate();
+    }
+
+    function createParticles() {
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        const colors = [];
+        
+        for (let i = 0; i < 2000; i++) {
+            vertices.push(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20
+            );
+            
+            colors.push(
+                Math.random(),
+                Math.random(),
+                Math.random()
+            );
+        }
+        
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        
+        const material = new THREE.PointsMaterial({
+            size: 0.05,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+        particles.push(points);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // Rotate particles
+        particles.forEach(particle => {
+            particle.rotation.x += 0.001;
+            particle.rotation.y += 0.002;
+        });
+        
+        renderer.render(scene, camera);
+    }
+
+    // Handle window resize
+    function handleResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    window.addEventListener('resize', handleResize);
+    
+    // Separate counter animation function that will work reliably
+    function animateCounter(element, target, duration = 1500) {
+        if (!element) return;
+        
+        // Set initial value
+        element.textContent = "0";
+        
+        // Simple implementation without requestAnimationFrame to ensure it works
+        const startTime = Date.now();
+        const endTime = startTime + duration;
+        const startValue = 0;
+        
+        function updateCounter() {
+            const now = Date.now();
+            const remaining = Math.max(0, endTime - now);
+            const progress = 1 - (remaining / duration);
+            
+            const currentValue = Math.floor(progress * (target - startValue) + startValue);
+            element.textContent = currentValue.toLocaleString();
+            
+            if (progress < 1) {
+                setTimeout(updateCounter, 16); // roughly 60fps
+            } else {
+                element.textContent = target.toLocaleString();
+            }
+        }
+        
+        updateCounter();
+    }
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Try to initialize ThreeJS but don't let it block counter animations
+        try {
+            initThreeJS();
+        } catch (error) {
+            console.error("Error initializing ThreeJS:", error);
+        }
+        
+        // Always run counter animations, independent of Three.js
+        function startCounterAnimations() {
+            const counter1 = document.getElementById('counter1');
+            const counter2 = document.getElementById('counter2');
+            const counter3 = document.getElementById('counter3');
+            const counter4 = document.getElementById('counter4');
+            const counter5 = document.getElementById('counter5');
+            
+            if (counter1) animateCounter(counter1, 5);
+            if (counter2) animateCounter(counter2, 50);
+            if (counter3) animateCounter(counter3, 35000);
+            if (counter4) animateCounter(counter4, 23);
+            if (counter5) animateCounter(counter5, 20);
+        }
+        
+        // Start animations immediately
+        startCounterAnimations();
+        
+        // Also set up observer for when scrolling to the section
+        const counterSection = document.querySelector('.counter-section');
+        if (counterSection) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Re-run counter animations when section becomes visible
+                        startCounterAnimations();
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            observer.observe(counterSection);
+        }
+    });
+
+    // Scale X animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes scaleX {
+            0%, 100% { transform: scaleX(0); }
+            50% { transform: scaleX(1); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
 {% endblock %}

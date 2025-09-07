@@ -1,112 +1,1316 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     {% block head %}{% endblock head %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>EFET School Management</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <title>{% block title %}EFET - École Française d'Enseignement Technique{% endblock title %}</title>
+    
+    <!-- Modern CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Three.js for 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Custom CSS -->
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+    <link href="/static/css/home.css" rel="stylesheet">
+    <link href="/static/css/custom-styles.css" rel="stylesheet">
+    <link href="/static/css/navbar-fix.css" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary-color: #1e40af;
+            --primary-dark: #1e3a8a;
+            --secondary-color: #0ea5e9;
+            --accent-color: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --shadow-strong: 0 30px 60px rgba(0, 0, 0, 0.25);
+        }
 
-    .navbar-item,
-    .navbar-nav li a {
-      line-height: 50px;
-      height: 20px;
-      padding-top: 0;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            overflow-x: hidden;
+        }
+
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Modern Responsive Navbar - Completely Redesigned */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            backdrop-filter: blur(20px);
+            border: none;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0;
+            height: auto;
+            min-height: 80px; /* Increased minimum height for better spacing */
+        }
+
+        .navbar.scrolled {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem; /* Increased padding for better height */
+            overflow: visible;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+        
+        .brand-logo-container {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #4F46E5 0%, #7E22CE 100%);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .brand-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.6s ease;
+        }
+
+        .navbar-brand:hover .brand-logo {
+            transform: rotate(360deg);
+        }
+
+        .brand-text {
+            color: white;
+        }
+
+        .brand-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-subtitle {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .navbar-nav {
+            align-items: center;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover .nav-icon {
+            transform: scale(1.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(45deg, #ff5252, #ff7a7a);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+        
+        /* Dropdown Menu Styles */
+        .nav-item button.nav-link {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        #desktopFormationsContent {
+            transition: all 0.3s ease-in-out;
+            z-index: 50;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        #desktopFormationsContent.show {
+            display: block;
+        }
+        
+        #desktopFormationsContent a {
+            font-weight: 500;
+        }
+        
+        #desktopFormationsContent a:hover i {
+            transform: translateX(2px);
+            transition: transform 0.3s ease;
+        }
+        
+        /* Mobile Dropdown Styles */
+        .mobile-dropdown {
+            position: relative;
+        }
+        
+        .mobile-dropdown .nav-link {
+            width: 100%;
+        }
+        
+        .mobile-dropdown-content {
+            margin-top: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            backdrop-filter: blur(20px);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            padding: 1.5rem;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .mobile-nav .nav-link {
+            width: 100%;
+            justify-content: flex-start;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+        }
+        
+        /* Mobile Dropdown Styles */
+        .mobile-dropdown {
+            position: relative;
+        }
+        
+        .mobile-dropdown .nav-link {
+            width: 100%;
+        }
+        
+        .mobile-dropdown-content {
+            margin-top: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-dropdown-content .nav-link {
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .navbar-nav {
+                gap: 0.5rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+            }
+            
+            .navbar-content {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                padding: 0.75rem 1rem;
+            }
+            
+            .brand-title {
+                font-size: 1.25rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .brand-text {
+                display: none;
+            }
+            
+            .brand-logo {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .navbar-content {
+                padding: 0.5rem 1rem;
+            }
+            
+            .mobile-menu {
+                width: 85%;
+            }
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Modern Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: var(--shadow-medium);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-strong);
+        }
+
+        /* Button Animations - Updated */
+        .btn-modern {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Enhanced Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Page Transitions */
+        .page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced Floating Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .particle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            height: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(30, 64, 175, 0.3);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 3D Transform Effects */
+        .transform-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .card-3d {
+            transition: transform 0.6s ease;
+        }
+
+        .card-3d:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-link {
+                margin: 0.5rem 0;
+            }
+        }
+
+        /* Custom Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .animate-slideInLeft {
+            animation: slideInLeft 0.8s ease;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 <body>
-<section class="hero is-fullheight" style="background-color:#C4FCEF;">
-    <div class="hero-head" style="background-color:#f8e6e6;">
-        <nav class="navbar">
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
 
-            <a class="navbar-item" href="{{ url_for('main.index') }}"><img src="/static/logo_ecole.png" height="70px"/></a>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
 
-            <div class="container">
-                <div id="navbarMenuHeroA" class="navbar-menu">
-                  <div class="navbar-end">
-                      <a href="{{ url_for('main.index') }}" class="navbar-item" style="text-decoration: none">
-                          <i class="fa fa-home"></i>
-                          <b>Home</b>
-                      </a>
-                      {% if current_user.is_authenticated %}
-                      <a href="{{ url_for('main.profile') }}" class="navbar-item" style="text-decoration: none">
-                        <i class="fa fa-id-card"></i>
-                          <b>Profile</b>
-                      </a>
-                      {% endif %}
-                      {% if not current_user.is_authenticated %}
-                      <a href="{{ url_for('auth.login') }}" class="navbar-item" style="text-decoration: none">
-                        <i class="fa fa-sign-in"></i>
-                          <b>Login</b>
-                      </a>
-                      <a href="{{ url_for('auth.signup') }}" class="navbar-item" style="text-decoration: none">
-                        <i class="fa fa-user"></i>
-                          <b>Sign Up</b>
-                      </a>
-                      {% endif %}
-                      {% if current_user.is_authenticated %}
-                      <a href="{{ url_for('main.dashboard') }}" class="navbar-item" style="text-decoration: none">
-                        <i class="fa fa-bars"></i>
-                          <b>Dashboard</b>
-                      </a>
-                      <a href="{{ url_for('auth.logout') }}" class="navbar-item" style="text-decoration: none">
-                        <i class="fa fa-sign-out"></i>
-                          <b>Logout</b>
-                      </a>
-                      {% endif %}
+    <!-- Modern Responsive Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-content">
+            <!-- Brand -->
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">
+                <div class="brand-logo-container">
+                    <img src="/static/images/efet_logo_modern.svg" alt="EFET Logo" class="brand-logo"/>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-title">EFET</h1>
+                    <p class="brand-subtitle">École Française d'Enseignement Technique</p>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <ul class="navbar-nav hidden md:flex">
+                <li class="nav-item">
+                    <a href="{{ url_for('main.index') }}" class="nav-link {% if request.path == url_for('main.index') %}active{% endif %}">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                
+                <!-- Dropdown for Pôles de Formation on desktop -->
+                <li class="nav-item relative group">
+                    <button class="nav-link group flex items-center" id="desktopFormationsDropdown">
+                        <i class="fas fa-graduation-cap nav-icon"></i>
+                        <span>Formations</span>
+                        <i class="fas fa-chevron-down ml-1 text-xs transition-transform duration-300" id="desktopFormationsChevron"></i>
+                    </button>
+                    <div id="desktopFormationsContent" class="absolute left-0 mt-2 w-64 rounded-lg shadow-lg bg-white border border-gray-200 hidden">
+                        <div class="p-2 grid grid-cols-1 gap-1">
+                            <a href="{{ url_for('main.pole_commerce') }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center text-gray-800">
+                                <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                                <span>Commerce & Gestion</span>
+                            </a>
+                            <a href="{{ url_for('main.pole_finance') }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center text-gray-800">
+                                <i class="fas fa-calculator text-green-500 mr-2"></i>
+                                <span>Finance & Comptabilité</span>
+                            </a>
+                            <a href="{{ url_for('main.pole_informatique') }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center text-gray-800">
+                                <i class="fas fa-laptop-code text-purple-500 mr-2"></i>
+                                <span>Informatique</span>
+                            </a>
+                            <a href="{{ url_for('main.pole_logistique') }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center text-gray-800">
+                                <i class="fas fa-truck text-yellow-500 mr-2"></i>
+                                <span>Logistique</span>
+                            </a>
+                            <a href="{{ url_for('main.pole_management') }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center text-gray-800">
+                                <i class="fas fa-briefcase text-red-500 mr-2"></i>
+                                <span>Management</span>
+                            </a>
+                            <a href="{{ url_for('main.pole_sante') }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center text-gray-800">
+                                <i class="fas fa-heartbeat text-teal-500 mr-2"></i>
+                                <span>Santé</span>
+                            </a>
+                        </div>
                     </div>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="{{ url_for('main.about_us') }}" class="nav-link {% if request.path == url_for('main.about_us') %}active{% endif %}">
+                        <i class="fas fa-info-circle nav-icon"></i>
+                        <span>À propos</span>
+                    </a>
+                </li>
+                
+                {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{{ url_for('main.profile') }}" class="nav-link {% if request.path == url_for('main.profile') %}active{% endif %}">
+                        <i class="fas fa-user nav-icon"></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                
+                {% if current_user.role != 'visiteur' and current_user.status != 'pending' %}
+                <li class="nav-item">
+                    <a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.path == url_for('main.dashboard') %}active{% endif %}">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% if current_user.role == 'admin' %}
+                <li class="nav-item">
+                    <a href="{{ url_for('main.admin_notifications') }}" class="nav-link {% if request.path == url_for('main.admin_notifications') %}active{% endif %}">
+                        <i class="fas fa-bell nav-icon"></i>
+                        <span>Notifications</span>
+                        <span class="notification-badge">3</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                <li class="nav-item">
+                    <a href="{{ url_for('auth.logout') }}" class="btn-primary">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{{ url_for('auth.login') }}" class="nav-link {% if request.path == url_for('auth.login') %}active{% endif %}">
+                        <i class="fas fa-sign-in-alt nav-icon"></i>
+                        <span>Connexion</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('auth.signup') }}" class="btn-secondary">
+                        <i class="fas fa-user-plus"></i>
+                        <span>S'inscrire</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn md:hidden" id="mobileMenuBtn" aria-label="Open menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Mobile Menu - Redesigned for better mobile experience -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <a href="{{ url_for('main.index') }}" class="flex items-center">
+                <img src="/static/images/efet_logo_modern.svg" alt="EFET Logo" class="h-10 w-10 mr-3 rounded-full"/>
+                <div>
+                    <h1 class="text-xl font-bold text-white">EFET</h1>
+                    <p class="text-xs text-white/80">École Française d'Enseignement Technique</p>
+                </div>
+            </a>
+            <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="mobile-nav">
+            <a href="{{ url_for('main.index') }}" class="nav-link {% if request.path == url_for('main.index') %}active{% endif %}">
+                <i class="fas fa-home nav-icon"></i>
+                <span>Accueil</span>
+            </a>
+            
+            <!-- Collapsible Formations Menu for Mobile -->
+            <div class="mobile-dropdown">
+                <button class="nav-link w-full flex justify-between items-center" id="formationsDropdown" type="button">
+                    <div class="flex items-center">
+                        <i class="fas fa-graduation-cap nav-icon"></i>
+                        <span>Formations</span>
+                    </div>
+                    <i class="fas fa-chevron-down transition-transform duration-300" id="formationsChevron"></i>
+                </button>
+                <div class="mobile-dropdown-content hidden pl-6 mt-1 border-l-2 border-gray-200 ml-4 bg-white rounded-lg shadow-md" id="formationsContent">
+                    <a href="{{ url_for('main.pole_commerce') }}" class="nav-link py-2 text-gray-800 hover:bg-gray-100">
+                        <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                        <span>Commerce & Gestion</span>
+                    </a>
+                    <a href="{{ url_for('main.pole_finance') }}" class="nav-link py-2 text-gray-800 hover:bg-gray-100">
+                        <i class="fas fa-calculator text-green-500 mr-2"></i>
+                        <span>Finance & Comptabilité</span>
+                    </a>
+                    <a href="{{ url_for('main.pole_informatique') }}" class="nav-link py-2 text-gray-800 hover:bg-gray-100">
+                        <i class="fas fa-laptop-code text-purple-500 mr-2"></i>
+                        <span>Informatique</span>
+                    </a>
+                    <a href="{{ url_for('main.pole_logistique') }}" class="nav-link py-2 text-gray-800 hover:bg-gray-100">
+                        <i class="fas fa-truck text-yellow-500 mr-2"></i>
+                        <span>Logistique</span>
+                    </a>
+                    <a href="{{ url_for('main.pole_management') }}" class="nav-link py-2 text-gray-800 hover:bg-gray-100">
+                        <i class="fas fa-briefcase text-red-500 mr-2"></i>
+                        <span>Management</span>
+                    </a>
+                    <a href="{{ url_for('main.pole_sante') }}" class="nav-link py-2 text-gray-800 hover:bg-gray-100">
+                        <i class="fas fa-heartbeat text-teal-500 mr-2"></i>
+                        <span>Santé</span>
+                    </a>
                 </div>
             </div>
+            
+            <a href="{{ url_for('main.about_us') }}" class="nav-link {% if request.path == url_for('main.about_us') %}active{% endif %}">
+                <i class="fas fa-info-circle nav-icon"></i>
+                <span>À propos</span>
+            </a>
+            
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.profile') }}" class="nav-link {% if request.path == url_for('main.profile') %}active{% endif %}">
+                <i class="fas fa-user nav-icon"></i>
+                <span>Profil</span>
+            </a>
+            
+            {% if current_user.role != 'visiteur' and current_user.status != 'pending' %}
+            <a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.path == url_for('main.dashboard') %}active{% endif %}">
+                <i class="fas fa-tachometer-alt nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+            {% endif %}
+            
+            {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('main.admin_notifications') }}" class="nav-link {% if request.path == url_for('main.admin_notifications') %}active{% endif %}">
+                <i class="fas fa-bell nav-icon"></i>
+                <span>Notifications</span>
+                <span class="notification-badge">3</span>
+            </a>
+            {% endif %}
+            
+            <div class="mt-4 mb-2 border-t border-white/10 pt-4"></div>
+            
+            <div class="flex items-center space-x-3 px-4 py-3 bg-white/10 rounded-lg mb-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
+                    {{ current_user.name[0].upper() if current_user.name else 'U' }}
+                </div>
+                <div>
+                    <div class="text-white font-medium">{{ current_user.name }}</div>
+                    <div class="text-xs text-white/70">{{ current_user.email }}</div>
+                </div>
+            </div>
+            
+            <a href="{{ url_for('auth.logout') }}" class="btn-primary w-full flex justify-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span>Déconnexion</span>
+            </a>
+            {% else %}
+            <div class="mt-4 space-y-3">
+                <a href="{{ url_for('auth.login') }}" class="nav-link bg-white/10 rounded-lg {% if request.path == url_for('auth.login') %}active{% endif %}">
+                    <i class="fas fa-sign-in-alt nav-icon"></i>
+                    <span>Connexion</span>
+                </a>
+                <a href="{{ url_for('auth.signup') }}" class="btn-secondary w-full flex justify-center">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    <span>S'inscrire</span>
+                </a>
+            </div>
+            {% endif %}
         </nav>
     </div>
-    <div class="hero-body">
-        <div class="container has-text-centered">
-            {% block content %}{% endblock %}
+
+    <!-- Main Content -->
+    <main class="pt-32 min-h-screen page-transition">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="bg-gray-900 text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-700"></div>
         </div>
-    </div>
-    <div class="hero-footer" style="background-color:#f8e6e6;">
-      <div style="display: flex; justify-content: center;">
-
-        <div class="modal fade" id="test" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">About us</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- University Info -->
+                <div class="col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="/static/images/efet_logo_modern.svg" alt="EFET Logo" class="h-12 w-12 rounded-full"/>
+                        <div>
+                            <h3 class="font-poppins font-bold text-xl">EFET</h3>
+                            <p class="text-gray-400 text-sm">École Française d'Enseignement Technique</p>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                      <p> This web app has been developed by :</p>
+                    <p class="text-gray-300 mb-4 leading-relaxed">
+                        École Française d'Enseignement Technique - Excellence en formation technique et innovation pédagogique depuis 50 ans. Nous formons les leaders techniques de demain.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/EFETMaroc" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                        <a href="https://www.youtube.com/user/Efetmaroc" target="_blank" class="text-gray-400 hover:text-red-400 transition-colors duration-300">
+                            <i class="fab fa-youtube text-xl"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                            <i class="fab fa-linkedin-in text-xl"></i>
+                        </a>
+                        <a href="https://www.efetmaroc.com" target="_blank" class="text-gray-400 hover:text-purple-400 transition-colors duration-300">
+                            <i class="fas fa-globe text-xl"></i>
+                        </a>
+                    </div>
+                </div>
 
-                      <ul>
-                          <li><b>Amine JOUHRI & Oussama HATTAN</b></li>
-                          <li><b>Students at EFET Meknes</b></li>
-                      </ul>
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Liens Rapides</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('main.index') }}" class="text-gray-400 hover:text-white transition-colors duration-300">Accueil</a></li>
+                        {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('main.dashboard') }}" class="text-gray-400 hover:text-white transition-colors duration-300">Tableau de bord</a></li>
+                        <li><a href="{{ url_for('main.profile') }}" class="text-gray-400 hover:text-white transition-colors duration-300">Profil</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('auth.login') }}" class="text-gray-400 hover:text-white transition-colors duration-300">Connexion</a></li>
+                        <li><a href="{{ url_for('auth.signup') }}" class="text-gray-400 hover:text-white transition-colors duration-300">Inscription</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
 
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Contact</h4>
+                    <div class="space-y-2 text-gray-400">
+                        <p class="flex items-center space-x-2">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Maroc (5 Campus)</span>
+                        </p>
+                        <p class="flex items-center space-x-2">
+                            <i class="fas fa-phone"></i>
+                            <span>+212 5 35 52 47 78</span>
+                        </p>
+                        <p class="flex items-center space-x-2">
+                            <i class="fas fa-envelope"></i>
+                            <span>contact@efet.ac.ma</span>
+                        </p>
+                        <p class="flex items-center space-x-2">
+                            <i class="fas fa-globe"></i>
+                            <a href="https://www.efetmaroc.com" target="_blank" class="hover:text-blue-400 transition-colors">
+                                www.efetmaroc.com
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
+
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2025 EFET - École Française d'Enseignement Technique. Tous droits réservés.
+                </p>
+                <div class="mt-4">
+                    <button id="aboutBtn" class="text-blue-400 hover:text-blue-300 transition-colors duration-300 font-medium">
+                        À propos des développeurs
+                    </button>
+                </div>
+            </div>
         </div>
+    </footer>
 
-        <a href="#test" data-toggle="modal" data-target="#test" class="more-link" style="text-decoration: none"><b>About us</b></a>
-
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
-      </div>
+    <!-- About Modal -->
+    <div id="aboutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 backdrop-filter backdrop-blur-sm">
+        <div class="glass-card p-8 max-w-md mx-4 text-center animate-fadeInUp bg-gradient-to-br from-white to-blue-50 shadow-xl border border-white border-opacity-30">
+            <div class="mb-6">
+                <div class="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg transform transition-all duration-300 hover:scale-110">
+                    <i class="fas fa-code text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-poppins font-bold text-gray-800 mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Équipe de Développement</h3>
+                <p class="text-gray-600">Développé avec passion par</p>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+                <div class="p-4 bg-white bg-opacity-50 rounded-lg transition-all duration-300 hover:bg-opacity-70 hover:shadow-lg transform hover:-translate-y-1">
+                    <p class="font-semibold text-gray-800">Amine JOUHRI</p>
+                    <p class="text-sm text-gray-600">Étudiant EFET Meknès</p>
+                </div>
+                <div class="p-4 bg-white bg-opacity-50 rounded-lg transition-all duration-300 hover:bg-opacity-70 hover:shadow-lg transform hover:-translate-y-1">
+                    <p class="font-semibold text-gray-800">Oussama HATTAN</p>
+                    <p class="text-sm text-gray-600">Étudiant EFET Meknès</p>
+                    <div class="flex justify-center mt-2 space-x-3">
+                        <a href="https://github.com/H-Ossama" target="_blank" class="text-gray-700 hover:text-blue-600 transition-all transform hover:scale-110">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/h-oussama" target="_blank" class="text-gray-700 hover:text-blue-600 transition-all transform hover:scale-110">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="closeModal" class="btn-modern bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <i class="fas fa-times mr-2"></i>
+                Fermer
+            </button>
+        </div>
     </div>
 
-</section>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Loading Spinner
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                if (loadingSpinner) {
+                    loadingSpinner.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingSpinner.style.display = 'none';
+                    }, 500);
+                }
+            }, 1000);
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('overlay');
+
+        function openMobileMenu() {
+            mobileMenu.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', openMobileMenu);
+        }
+        
+        if (mobileCloseBtn) {
+            mobileCloseBtn.addEventListener('click', closeMobileMenu);
+        }
+        
+        if (overlay) {
+            overlay.addEventListener('click', closeMobileMenu);
+        }
+
+        // Close mobile menu when clicking on a link
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav .nav-link:not(#formationsDropdown)');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Desktop Formations Dropdown Toggle
+        const desktopFormationsDropdown = document.getElementById('desktopFormationsDropdown');
+        const desktopFormationsContent = document.getElementById('desktopFormationsContent');
+        const desktopFormationsChevron = document.getElementById('desktopFormationsChevron');
+        
+        if (desktopFormationsDropdown && desktopFormationsContent) {
+            // Toggle dropdown on click
+            desktopFormationsDropdown.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                desktopFormationsContent.classList.toggle('show');
+                if (desktopFormationsChevron) {
+                    desktopFormationsChevron.classList.toggle('rotate-180');
+                }
+            });
+            
+            // Close dropdown when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (desktopFormationsContent.classList.contains('show') && 
+                    !desktopFormationsDropdown.contains(e.target) && 
+                    !desktopFormationsContent.contains(e.target)) {
+                    desktopFormationsContent.classList.remove('show');
+                    if (desktopFormationsChevron) {
+                        desktopFormationsChevron.classList.remove('rotate-180');
+                    }
+                }
+            });
+        }
+
+        // Mobile Formations Dropdown Toggle
+        const formationsDropdown = document.getElementById('formationsDropdown');
+        const formationsContent = document.getElementById('formationsContent');
+        const formationsChevron = document.getElementById('formationsChevron');
+
+        if (formationsDropdown && formationsContent) {
+            formationsDropdown.addEventListener('click', function(e) {
+                e.preventDefault();
+                formationsContent.classList.toggle('hidden');
+                if (formationsChevron) {
+                    formationsChevron.classList.toggle('rotate-180');
+                }
+            });
+        }
+
+        // About Modal Functionality
+        const aboutBtn = document.getElementById('aboutBtn');
+        const closeModal = document.getElementById('closeModal');
+        const aboutModal = document.getElementById('aboutModal');
+        
+        if (aboutBtn && aboutModal) {
+            aboutBtn.addEventListener('click', function() {
+                aboutModal.classList.remove('hidden');
+                aboutModal.classList.add('flex');
+            });
+        }
+        
+        if (closeModal && aboutModal) {
+            closeModal.addEventListener('click', function() {
+                aboutModal.classList.add('hidden');
+                aboutModal.classList.remove('flex');
+            });
+        }
+        
+        if (aboutModal) {
+            // Close modal on backdrop click
+            aboutModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                }
+            });
+        }
+
+        // Floating Particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.background = `hsl(${Math.random() * 360}, 70%, 70%)`;
+            particle.style.width = particle.style.height = Math.random() * 10 + 5 + 'px';
+            particle.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 6000);
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 2000);
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Pôle {{ pole_name }} | EFET - École Française d'Enseignement Technique{% endblock title %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 bg-gradient-to-r from-{{ primary_color }}-700 to-{{ secondary_color }}-700 text-white">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <div class="w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-{{ icon }} text-{{ primary_color }}-600 text-3xl"></i>
+            </div>
+            <h1 class="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight shadow-text">
+                Pôle {{ pole_name }}
+            </h1>
+            <p class="text-xl text-gray-200 max-w-3xl mx-auto shadow-text">
+                {{ pole_description }}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Wave Separator -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full">
+            <path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,202.7C960,181,1056,139,1152,138.7C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Overview Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-6">
+                    Présentation du Pôle
+                </h2>
+                <div class="space-y-4 text-gray-600">
+                    {% for paragraph in overview %}
+                    <p>{{ paragraph }}</p>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-8 space-y-4">
+                    {% for key_point in key_points %}
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-{{ primary_color }}-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold text-gray-800">{{ key_point.title }}</h4>
+                            <p class="text-gray-600">{{ key_point.description }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="relative" data-aos="fade-left">
+                <img src="{{ image_url }}" alt="Pôle {{ pole_name }}" class="rounded-lg shadow-2xl w-full h-auto">
+                <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-xl max-w-xs transform -rotate-3">
+                    <div class="text-gray-800 font-semibold">{{ image_caption_title }}</div>
+                    <div class="text-gray-600 text-sm">{{ image_caption }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Programmes Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Nos Programmes de Formation
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Des formations adaptées aux besoins du marché
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for program in programs %}
+            <div class="bg-white p-6 rounded-xl shadow-lg relative overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="absolute top-0 left-0 w-full h-2 bg-{{ primary_color }}-500"></div>
+                <div class="text-{{ primary_color }}-500 text-sm font-semibold uppercase tracking-wider mb-2">{{ program.level }}</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">{{ program.title }}</h3>
+                <div class="space-y-3 mb-6">
+                    {% for feature in program.features %}
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-{{ primary_color }}-500 mt-1 mr-2"></i>
+                        <span class="text-gray-600">{{ feature }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>{{ program.duration }}</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-{{ primary_color }}-100 text-{{ primary_color }}-700 rounded-full text-sm font-medium">
+                                {{ program.type }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Advantages Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Pourquoi Choisir Notre Pôle {{ pole_name }}
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Les avantages qui font la différence
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            {% for advantage in advantages %}
+            <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="w-16 h-16 bg-gradient-to-br from-{{ primary_color }}-500 to-{{ secondary_color }}-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-{{ advantage.icon }} text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-4">{{ advantage.title }}</h3>
+                <p class="text-gray-600 text-center">
+                    {{ advantage.description }}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Career Opportunities Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Débouchés et Carrières
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Les métiers auxquels vous prépare notre formation
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden" data-aos="fade-right">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-briefcase text-{{ primary_color }}-600 mr-3"></i>
+                    Secteurs d'Emploi
+                </h3>
+                <ul class="space-y-4">
+                    {% for sector in career_sectors %}
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="w-6 h-6 bg-{{ primary_color }}-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-800">{{ sector.name }}</h4>
+                            <p class="text-gray-600">{{ sector.description }}</p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden" data-aos="fade-left">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-user-tie text-{{ secondary_color }}-600 mr-3"></i>
+                    Métiers Possibles
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    {% for job in career_jobs %}
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800 mb-1">{{ job.title }}</div>
+                        <div class="text-sm text-{{ primary_color }}-600">{{ job.salary }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="font-poppins font-bold text-3xl md:text-4xl text-gray-800 mb-4">
+                Témoignages d'Anciens Étudiants
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Ce que disent nos lauréats
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            {% for testimonial in testimonials %}
+            <div class="bg-gray-50 p-6 rounded-xl shadow-md relative" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="absolute top-4 left-4 text-gray-300 text-4xl opacity-50">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="relative z-10">
+                    <p class="text-gray-600 italic mb-6">{{ testimonial.quote }}</p>
+                    <div class="flex items-center">
+                        <img src="{{ testimonial.image }}" alt="{{ testimonial.name }}" class="w-12 h-12 rounded-full object-cover">
+                        <div class="ml-3">
+                            <div class="font-semibold text-gray-800">{{ testimonial.name }}</div>
+                            <div class="text-sm text-{{ primary_color }}-600">{{ testimonial.role }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-{{ primary_color }}-600 to-{{ secondary_color }}-700 text-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="font-poppins font-bold text-3xl md:text-4xl mb-6" data-aos="fade-up">
+            Prêt à Lancer Votre Carrière en {{ pole_name }} ?
+        </h2>
+        <p class="text-xl text-{{ primary_color }}-100 max-w-3xl mx-auto mb-10" data-aos="fade-up" data-aos-delay="100">
+            Rejoignez notre programme d'excellence et devenez un professionnel reconnu
+        </p>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('auth.signup') }}" class="inline-block px-8 py-4 bg-white text-{{ primary_color }}-700 font-semibold rounded-full shadow-2xl hover:shadow-{{ primary_color }}-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 text-lg" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-graduation-cap mr-2"></i>
+            S'inscrire Maintenant
+        </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock content %}

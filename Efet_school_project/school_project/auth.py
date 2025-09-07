@@ -40,9 +40,20 @@ def signup(): # define the sign up function
         # the plaintext version isn't saved.
         new_user = User(email=email, name=name, \
                         password=generate_password_hash(password, \
-                        method='sha256'))#add the new user to the db
+                        method='pbkdf2:sha256'), role='visiteur', status='pending')#add the new user to the db
         db.session.add(new_user)
         db.session.commit()
+        
+        # Create an admin notification for new registration
+        from models import AdminNotification
+        notification = AdminNotification(
+            user_id=new_user.id,
+            notification_type='new_registration',
+            message=f"Nouvel utilisateur {new_user.name} ({new_user.email}) s'est inscrit et attend l'approbation."
+        )
+        db.session.add(notification)
+        db.session.commit()
+        
         return redirect(url_for('auth.login'))
 
 @auth.route('/login', methods=['GET', 'POST']) # define login page path

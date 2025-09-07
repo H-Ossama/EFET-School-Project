@@ -1,256 +1,423 @@
 {% extends "base.html" %}
 
-{% block head %}
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-{% endblock head %}
+{% block title %}Mon Profil - EFET{% endblock title %}
 
 {% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8" data-aos="fade-down">
+            <h1 class="text-4xl font-bold text-gray-900 font-poppins mb-2">Mon Profil</h1>
+            <p class="text-gray-600">Gérez vos informations personnelles et préférences</p>
+        </div>
 
-<div class="container">
-    <div class="row my-2">
-        <div class="col-lg-8 order-lg-2">
-          <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
-            <li><a data-toggle="tab" href="#edit">Edit</a></li>
-          </ul>
-
-            <div class="tab-content py-4">
-                <div class="tab-pane active" id="profile">
-                    <h5 class="mb-3">User Profile</h5>
-                    <div class="row">
-                        <div class="col-md-5">
-                            <h6>About me</h6>
-                            <p>
-                                {{ current_user.about_me }}
-                            </p>
+        <!-- Profile Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Profile Card -->
+            <div class="lg:col-span-1">
+                <div class="glass-card p-8 text-center card-3d" data-aos="fade-right">
+                    <!-- Profile Picture -->
+                    <div class="relative mb-6">
+                        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1 shadow-2xl">
+                            {% if current_user.profile_picture %}
+                            <img src="{{ current_user.profile_picture }}" alt="Photo de profil" class="w-full h-full rounded-full object-cover">
+                            {% else %}
+                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
+                                <span class="text-4xl font-bold text-gray-600">{{ current_user.name[0].upper() if current_user.name else 'U' }}</span>
+                            </div>
+                            {% endif %}
                         </div>
-                        <div class="col-md-3">
-                            <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span></h5>
-                            <table class="table table-sm table-hover table-striped">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                          <strong>Name : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Email : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Phone : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Age : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Address : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Registration Id : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Gender : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Role : </strong>
-                                        </td>
-                                    </tr>
+                        
+                        <!-- Upload Button -->
+                        <label for="fileInput" class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-110">
+                            <i class="fas fa-camera text-sm"></i>
+                            <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="uploadProfilePicture()">
+                        </label>
+                    </div>
 
-                                    <tr>
-                                        <td>
-                                          <strong>Major : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Register date : </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>Current year : </strong>
-                                        </td>
-                                    </tr>
+                    <!-- User Info -->
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ current_user.name or 'Nom non défini' }}</h2>
+                    <p class="text-gray-600 mb-4">{{ current_user.email }}</p>
+                    
+                    <!-- Role Badge -->
+                    <div class="mb-6">
+                        {% if current_user.role == 'admin' %}
+                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                            <i class="fas fa-crown mr-2"></i>
+                            Administrateur
+                        </span>
+                        {% elif current_user.role == 'teacher' %}
+                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-chalkboard-teacher mr-2"></i>
+                            Enseignant
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                            <i class="fas fa-graduation-cap mr-2"></i>
+                            Étudiant
+                        </span>
+                        {% endif %}
+                    </div>
 
-                                </tbody>
-                            </table>
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-white bg-opacity-50 rounded-lg p-3">
+                            <div class="text-2xl font-bold text-blue-600">{{ current_user.year or 'N/A' }}</div>
+                            <div class="text-sm text-gray-600">Année</div>
                         </div>
-                        <div class="col-md-4">
-                            <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span></h5>
-                            <table class="table table-sm table-hover table-striped">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.name }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.email }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.phone }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.age }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.address }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.registration }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.gender }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.role }}</strong>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.major }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.register_date }}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                          <strong>{{ current_user.year }}</strong>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="bg-white bg-opacity-50 rounded-lg p-3">
+                            <div class="text-2xl font-bold text-purple-600">{{ current_user.age or 'N/A' }}</div>
+                            <div class="text-sm text-gray-600">Âge</div>
                         </div>
                     </div>
-                    <!--/row-->
-                </div>
 
-                <div class="tab-pane" id="edit">
-                    <form role="form" method="POST" action="/updateProfile">
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Name</label>
-                            <div class="col-lg-9">
-                                <input name="name" class="form-control" type="text" value="{{ current_user.name }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Email</label>
-                            <div class="col-lg-9">
-                                <input name="email" class="form-control" type="email" value="{{ current_user.email }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Phone</label>
-                            <div class="col-lg-9">
-                                <input name="phone" class="form-control" type="text" value="{{ current_user.phone }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Age</label>
-                            <div class="col-lg-9">
-                                <input name="age" class="form-control" type="text" value="{{ current_user.age }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Address</label>
-                            <div class="col-lg-9">
-                                <input name="address" class="form-control" type="text" value="{{ current_user.address }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Registration</label>
-                            <div class="col-lg-9">
-                                <input name="registration" class="form-control" type="text" value="{{ current_user.registration }}" disabled>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Major</label>
-                            <div class="col-lg-9">
-                                <input name="major" class="form-control" type="text" value="{{ current_user.major }}" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="control">
-                              <label class="col-lg-3 col-form-label form-control-label">Register Date :</label>
-                              <div class="col-lg-9">
-                                <input class="input" type="date" id="register_date" name="register_date" min="2000-01-01" value="{{ current_user.register_date }}" disabled>
-                              </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Current Year</label>
-                            <div class="col-lg-9">
-                                <input name="year" class="form-control" type="text" value="{{ current_user.year }}" disabled>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">About Me</label>
-                            <div class="col-lg-9">
-                                <input name="about_me" class="form-control" type="text" value="{{ current_user.about_me }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Gender :</label>
-                            <div class="col-lg-9">
-                              <select name="gender" class="form-select" aria-label="type">
-                                <option value="male" {% if current_user.gender == 'male' %} selected {% endif %}>Male</option>
-                                <option value="female" {% if current_user.gender == 'female' %} selected {% endif %}>Female</option>
-                              </select>
-                            </div>
-                        </div>
-                        <input class="btn btn-danger" type="submit" value="Save Changes">
-                    </form>
+                    <!-- Action Buttons -->
+                    <div class="space-y-3">
+                        <button onclick="toggleTab('view')" id="viewTabBtn" class="w-full btn-modern bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-all duration-300">
+                            <i class="fas fa-eye mr-2"></i>
+                            Voir le Profil
+                        </button>
+                        <button onclick="toggleTab('edit')" id="editTabBtn" class="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white py-3 rounded-lg transition-all duration-300">
+                            <i class="fas fa-edit mr-2"></i>
+                            Modifier le Profil
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- //placehold.it/150 -->
-        <div class="col-lg-4 order-lg-1 text-center">
-            <img src="{% if current_user.profile_picture %} {{current_user.profile_picture}} {% else %} //placehold.it/150 {% endif %}" class="mx-auto img-fluid img-circle d-block" alt="avatar">
-            <h6 class="mt-2">Upload a different photo</h6>
-            <label class="custom-file">
-            <form action = "/uploadPicture" method = "POST" enctype = "multipart/form-data">
-               <input type = "file" name = "file" id="file" class="custom-file-input">
-               <span class="custom-file-control">Choose file</span>
-               <input type = "submit">
-            </form>
-            </label>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                <!-- View Profile Tab -->
+                <div id="viewTab" class="tab-content">
+                    <!-- About Section -->
+                    <div class="glass-card p-6 mb-6 card-3d" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">À propos de moi</h3>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed">
+                            {{ current_user.about_me or "Aucune description disponible. Cliquez sur 'Modifier le Profil' pour ajouter une description." }}
+                        </p>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="glass-card p-6 mb-6 card-3d" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-id-card text-green-600"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Informations Personnelles</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-user w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Nom complet</div>
+                                        <div class="font-medium text-gray-900">{{ current_user.name or 'Non défini' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-envelope w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Email</div>
+                                        <div class="font-medium text-gray-900">{{ current_user.email or 'Non défini' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-phone w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Téléphone</div>
+                                        <div class="font-medium text-gray-900">{{ current_user.phone or 'Non défini' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-venus-mars w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Genre</div>
+                                        <div class="font-medium text-gray-900">
+                                            {% if current_user.gender == 'male' %}Masculin
+                                            {% elif current_user.gender == 'female' %}Féminin
+                                            {% else %}Non défini{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-map-marker-alt w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Adresse</div>
+                                        <div class="font-medium text-gray-900">{{ current_user.address or 'Non définie' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-calendar w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Date d'inscription</div>
+                                        <div class="font-medium text-gray-900">{{ current_user.register_date.strftime('%d/%m/%Y') if current_user.register_date else 'Non définie' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-id-badge w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">N° d'inscription</div>
+                                        <div class="font-medium text-gray-900">{{ current_user.registration or 'Non défini' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <i class="fas fa-graduation-cap w-5 h-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Filière</div>
+                                        <div class="font-medium text-gray-900">{{ current_user.major or 'Non définie' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="glass-card p-6 card-3d" data-aos="fade-up" data-aos-delay="400">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-bolt text-purple-600"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Actions Rapides</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {% if current_user.role == 'student' %}
+                            <a href="{{ url_for('main.consultGradesStudent', user_id=current_user.id) }}" class="flex items-center p-4 bg-white bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-chart-bar text-blue-600 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-gray-900">Mes Notes</div>
+                                    <div class="text-sm text-gray-500">Consulter</div>
+                                </div>
+                            </a>
+                            <a href="{{ url_for('main.consultAbsence', user_id=current_user.id) }}" class="flex items-center p-4 bg-white bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-calendar-times text-red-600 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-gray-900">Mes Absences</div>
+                                    <div class="text-sm text-gray-500">Consulter</div>
+                                </div>
+                            </a>
+                            <a href="{{ url_for('main.consultPayments', user_id=current_user.id) }}" class="flex items-center p-4 bg-white bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-credit-card text-green-600 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-gray-900">Mes Paiements</div>
+                                    <div class="text-sm text-gray-500">Consulter</div>
+                                </div>
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('main.dashboard') }}" class="flex items-center p-4 bg-white bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-tachometer-alt text-blue-600 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-gray-900">Tableau de Bord</div>
+                                    <div class="text-sm text-gray-500">Accéder</div>
+                                </div>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Profile Tab -->
+                <div id="editTab" class="tab-content hidden">
+                    <div class="glass-card p-6 card-3d" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-edit text-blue-600"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Modifier le Profil</h3>
+                        </div>
+
+                        <form method="POST" action="/updateProfile" class="space-y-6" id="profileForm">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Name -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                        </div>
+                                        <input name="name" type="text" value="{{ current_user.name or '' }}" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="Votre nom complet">
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-envelope text-gray-400"></i>
+                                        </div>
+                                        <input name="email" type="email" value="{{ current_user.email or '' }}" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="votre.email@efet.ma">
+                                    </div>
+                                </div>
+
+                                <!-- Phone -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-phone text-gray-400"></i>
+                                        </div>
+                                        <input name="phone" type="tel" value="{{ current_user.phone or '' }}" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="+212 6 69 95 97 82">
+                                    </div>
+                                </div>
+
+                                <!-- Age -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Âge</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-birthday-cake text-gray-400"></i>
+                                        </div>
+                                        <input name="age" type="number" value="{{ current_user.age or '' }}" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="Votre âge">
+                                    </div>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                                        </div>
+                                        <input name="address" type="text" value="{{ current_user.address or '' }}" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="Votre adresse complète">
+                                    </div>
+                                </div>
+
+                                <!-- Gender -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Genre</label>
+                                    <select name="gender" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
+                                        <option value="">Sélectionner</option>
+                                        <option value="male" {% if current_user.gender == 'male' %}selected{% endif %}>Masculin</option>
+                                        <option value="female" {% if current_user.gender == 'female' %}selected{% endif %}>Féminin</option>
+                                    </select>
+                                </div>
+
+                                <!-- Year -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Année d'études</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-graduation-cap text-gray-400"></i>
+                                        </div>
+                                        <input name="year" type="text" value="{{ current_user.year or '' }}" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="Année actuelle">
+                                    </div>
+                                </div>
+
+                                <!-- About Me -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">À propos de moi</label>
+                                    <textarea name="about_me" rows="4" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="Parlez-nous de vous...">{{ current_user.about_me or '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Read-only fields -->
+                            <div class="border-t pt-6">
+                                <h4 class="text-lg font-medium text-gray-900 mb-4">Informations non modifiables</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-2">N° d'inscription</label>
+                                        <input type="text" value="{{ current_user.registration or 'Non défini' }}" class="block w-full px-3 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-600" disabled>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-2">Filière</label>
+                                        <input type="text" value="{{ current_user.major or 'Non définie' }}" class="block w-full px-3 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-600" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="flex justify-end space-x-4 pt-6">
+                                <button type="button" onclick="toggleTab('view')" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-300">
+                                    Annuler
+                                </button>
+                                <button type="submit" class="btn-modern px-8 py-3">
+                                    <i class="fas fa-save mr-2"></i>
+                                    Sauvegarder
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Hidden form for file upload -->
+<form id="uploadForm" action="/uploadPicture" method="POST" enctype="multipart/form-data" style="display: none;">
+    <input type="file" name="file" id="hiddenFileInput">
+</form>
+
+<script>
+    // Tab switching
+    function toggleTab(tab) {
+        const viewTab = document.getElementById('viewTab');
+        const editTab = document.getElementById('editTab');
+        const viewBtn = document.getElementById('viewTabBtn');
+        const editBtn = document.getElementById('editTabBtn');
+
+        if (tab === 'view') {
+            viewTab.classList.remove('hidden');
+            editTab.classList.add('hidden');
+            viewBtn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+            viewBtn.classList.remove('border-2', 'border-blue-600', 'text-blue-600', 'hover:bg-blue-600', 'hover:text-white');
+            editBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+            editBtn.classList.add('border-2', 'border-blue-600', 'text-blue-600', 'hover:bg-blue-600', 'hover:text-white');
+        } else {
+            viewTab.classList.add('hidden');
+            editTab.classList.remove('hidden');
+            editBtn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+            editBtn.classList.remove('border-2', 'border-blue-600', 'text-blue-600', 'hover:bg-blue-600', 'hover:text-white');
+            viewBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+            viewBtn.classList.add('border-2', 'border-blue-600', 'text-blue-600', 'hover:bg-blue-600', 'hover:text-white');
+        }
+    }
+
+    // Profile picture upload
+    function uploadProfilePicture() {
+        const fileInput = document.getElementById('fileInput');
+        const hiddenFileInput = document.getElementById('hiddenFileInput');
+        const uploadForm = document.getElementById('uploadForm');
+        
+        if (fileInput.files && fileInput.files[0]) {
+            // Copy the file to the hidden form
+            hiddenFileInput.files = fileInput.files;
+            
+            // Show loading state
+            const uploadBtn = fileInput.parentElement;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i>';
+            
+            // Submit the form
+            uploadForm.submit();
+        }
+    }
+
+    // Form validation
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sauvegarde...';
+        submitBtn.disabled = true;
+    });
+
+    // Initialize with view tab
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleTab('view');
+    });
+</script>
 {% endblock %}

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications Administrateur - EFET{% endblock title %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="bg-white shadow rounded-lg mb-6">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-gray-900 font-poppins">
+                    <i class="fas fa-bell mr-3 text-yellow-500"></i>
+                    Notifications Administrateur
+                </h1>
+                <p class="text-gray-600 mt-1">Gérez les nouvelles inscriptions et les demandes d'approbation</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-user-clock text-2xl text-yellow-500"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">En attente</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle text-2xl text-green-500"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Traitées</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ notifications|selectattr("is_read", "equalto", true)|list|length }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-users text-2xl text-blue-500"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total</dt>
+                                <dd class="text-lg font-medium text-gray-900">{{ notifications|length }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-medium text-gray-900">Notifications récentes</h2>
+            </div>
+            
+            {% if notifications %}
+            <ul class="divide-y divide-gray-200">
+                {% for notification in notifications %}
+                <li class="{% if not notification.is_read %}bg-yellow-50{% endif %}">
+                    <div class="px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center">
+                                    {% if not notification.is_read %}
+                                    <div class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+                                    {% else %}
+                                    <div class="w-2 h-2 bg-gray-300 rounded-full mr-3"></div>
+                                    {% endif %}
+                                    
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-900">
+                                            {% set user = notification.user %}
+                                            {{ notification.message }}
+                                        </p>
+                                        <p class="text-sm text-gray-500">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            {{ notification.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                                        </p>
+                                        {% if notification.is_read %}
+                                        <p class="text-xs text-green-600">
+                                            <i class="fas fa-check mr-1"></i>
+                                            Traitée le {{ notification.resolved_at.strftime('%d/%m/%Y à %H:%M') }}
+                                        </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if not notification.is_read %}
+                            <div class="flex items-center space-x-2">
+                                {% set user = notification.user %}
+                                
+                                <!-- Approve as Student -->
+                                <form method="POST" action="{{ url_for('main.approve_user') }}" class="inline">
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <input type="hidden" name="role" value="student">
+                                    <button type="submit" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                        <i class="fas fa-graduation-cap mr-1"></i>
+                                        Étudiant
+                                    </button>
+                                </form>
+                                
+                                <!-- Approve as Teacher -->
+                                <form method="POST" action="{{ url_for('main.approve_user') }}" class="inline">
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <input type="hidden" name="role" value="teacher">
+                                    <button type="submit" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        <i class="fas fa-chalkboard-teacher mr-1"></i>
+                                        Enseignant
+                                    </button>
+                                </form>
+                                
+                                <!-- Reject -->
+                                <form method="POST" action="{{ url_for('main.reject_user') }}" class="inline">
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <button type="submit" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="return confirm('Êtes-vous sûr de vouloir rejeter cet utilisateur ?')">
+                                        <i class="fas fa-times mr-1"></i>
+                                        Rejeter
+                                    </button>
+                                </form>
+                                
+                                <!-- Send Email -->
+                                <a href="{{ url_for('main.send_email', user_id=user.id) }}" class="inline-flex items-center px-3 py-1 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <i class="fas fa-envelope mr-1"></i>
+                                    Email
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if not notification.is_read %}
+                        {% set user = notification.user %}
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-900 mb-2">Informations utilisateur :</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                                <div><strong>Email:</strong> {{ user.email }}</div>
+                                <div><strong>Nom:</strong> {{ user.name }}</div>
+                                <div><strong>Statut actuel:</strong> 
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        {{ user.status }}
+                                    </span>
+                                </div>
+                                <div><strong>Rôle actuel:</strong> 
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        {{ user.role }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="text-center py-8">
+                <i class="fas fa-bell-slash text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">Aucune notification pour le moment</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
