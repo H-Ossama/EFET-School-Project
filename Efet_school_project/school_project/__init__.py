@@ -4,7 +4,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 ##################################################################### init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -13,11 +16,19 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__) # creates the Flask instance, __name__ is
                           # the name of the current Python module
-    app.config['SECRET_KEY'] = 'secret-key-goes-here' # it is used
-                         #by Flask and extensions to keep data safe
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-                   #it is the path where the SQLite database file
-                   #will be saved
+    
+    # Configuration for both development and production
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret-key-goes-here')
+    
+    # Database configuration - use PostgreSQL in production, SQLite in development
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        # Railway PostgreSQL
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    else:
+        # Local SQLite
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
                    # deactivate Flask-SQLAlchemy track modifications
     db.init_app(app) # Initialiaze sqlite database

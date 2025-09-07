@@ -1,7 +1,7 @@
 ####################################################################
 ###############          Import packages         ###################
 ####################################################################
-from flask import Blueprint, render_template, flash, g, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, flash, g, request, redirect, url_for, jsonify, current_app
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from __init__ import create_app
@@ -13,6 +13,7 @@ from datetime import datetime
 from fpdf import FPDF
 from pathlib import Path
 from functools import wraps
+import os
 
 def require_approved_user(f):
     """Decorator to require that user has been approved by admin"""
@@ -189,10 +190,19 @@ def upload_file():
     if request.method == 'POST':
         f = request.files['file']
         if f:
-            path_to_picture = f'./static/uploaded_pictures/{f.filename}'
-            f.save(path_to_picture)
+            # Ensure upload directory exists
+            upload_dir = os.path.join(current_app.static_folder, 'uploaded_pictures')
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            # Save file
+            filename = f.filename
+            file_path = os.path.join(upload_dir, filename)
+            f.save(file_path)
+            
+            # Store relative path in database
+            relative_path = f'/static/uploaded_pictures/{filename}'
             user = User.query.filter_by(id=current_user.id).first()
-            user.profile_picture = path_to_picture
+            user.profile_picture = relative_path
             db.session.commit()
         return redirect(url_for('main.profile'))
 

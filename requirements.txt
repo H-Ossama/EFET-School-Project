@@ -1,0 +1,8 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Login==0.6.3
+Werkzeug==2.3.7
+psycopg2-binary==2.9.7
+gunicorn==21.2.0
+fpdf2==2.7.5
+python-dotenv==1.0.0
