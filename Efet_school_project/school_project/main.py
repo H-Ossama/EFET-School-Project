@@ -758,7 +758,13 @@ def admin_notifications():
     if current_user.role != 'admin':
         return redirect('/forbidden')
     
+    # Get all notifications with user information
     notifications = AdminNotification.query.order_by(AdminNotification.created_at.desc()).all()
+    
+    # Fetch users for each notification and attach them to the notification objects
+    for notification in notifications:
+        notification.user = User.query.get(notification.user_id)
+    
     return render_template('admin_notifications.html', notifications=notifications)
 
 @main.route('/admin/approve_user', methods=['POST'])

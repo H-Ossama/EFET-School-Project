@@ -8,7 +8,11 @@ from school_project import db
 
 
 def connect_db():
-    sql = sqlite3.connect('./instance/db.sqlite')
+    import os
+    # Use absolute path for better reliability
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_path = os.path.join(base_dir, 'instance', 'db.sqlite')
+    sql = sqlite3.connect(db_path)
     sql.row_factory = sqlite3.Row
     return sql
 
