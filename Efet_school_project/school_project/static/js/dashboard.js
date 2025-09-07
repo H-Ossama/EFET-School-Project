@@ -80,64 +80,145 @@ class DashboardManager {
         const sidebar = document.getElementById('sidebar');
         const dashboard = document.getElementById('dashboard');
         
-        // Handle mobile differently
-        if (window.innerWidth <= 768) {
-            // Mobile behavior - use mobile-open class
-            const isOpen = sidebar.classList.contains('mobile-open');
-            
-            if (isOpen) {
-                // Close sidebar
-                sidebar.classList.remove('mobile-open');
-                this.sidebarCollapsed = true;
+        if (!sidebar) return;
+        
+        try {
+            // Handle mobile differently
+            if (window.innerWidth <= 768) {
+                // Mobile behavior - use mobile-open class
+                const isOpen = sidebar.classList.contains('mobile-open');
+                
+                if (isOpen) {
+                    // Close sidebar
+                    sidebar.classList.remove('mobile-open');
+                    this.sidebarCollapsed = true;
+                } else {
+                    // Open sidebar
+                    sidebar.classList.add('mobile-open');
+                    this.sidebarCollapsed = false;
+                }
+                
+                // Handle overlay
+                let overlay = document.querySelector('.sidebar-overlay');
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.className = 'sidebar-overlay';
+                    overlay.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.closeMobileSidebar();
+                    });
+                    document.body.appendChild(overlay);
+                }
+                
+                // Explicitly set active state based on sidebar state
+                if (!this.sidebarCollapsed) {
+                    overlay.classList.add('active');
+                } else {
+                    overlay.classList.remove('active');
+                }
+                
+                // Prevent body scroll when sidebar is open
+                document.body.style.overflow = this.sidebarCollapsed ? '' : 'hidden';
             } else {
-                // Open sidebar
-                sidebar.classList.add('mobile-open');
-                this.sidebarCollapsed = false;
+                // Desktop behavior - use collapsed class
+                this.sidebarCollapsed = !this.sidebarCollapsed;
+                sidebar.classList.toggle('collapsed', this.sidebarCollapsed);
+                dashboard.classList.toggle('sidebar-collapsed', this.sidebarCollapsed);
             }
             
-            // Handle overlay
-            let overlay = document.querySelector('.sidebar-overlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.className = 'sidebar-overlay';
-                overlay.addEventListener('click', () => {
-                    this.closeMobileSidebar();
-                });
-                document.body.appendChild(overlay);
-            }
+            // Save state
+            localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
             
-            overlay.classList.toggle('active', !this.sidebarCollapsed);
-            
-            // Prevent body scroll when sidebar is open
-            document.body.style.overflow = this.sidebarCollapsed ? '' : 'hidden';
-        } else {
-            // Desktop behavior - use collapsed class
-            this.sidebarCollapsed = !this.sidebarCollapsed;
-            sidebar.classList.toggle('collapsed', this.sidebarCollapsed);
-            dashboard.classList.toggle('sidebar-collapsed', this.sidebarCollapsed);
+            // Trigger animation
+            this.triggerSidebarAnimation();
+        } catch (error) {
+            console.error('Error in toggleSidebar:', error);
+            // Recovery code to ensure UI doesn't get stuck
+            this.recoverFromSidebarError();
         }
-        
-        // Save state
-        localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
-        
-        // Trigger animation
-        this.triggerSidebarAnimation();
     }
 
     closeMobileSidebar() {
-        if (window.innerWidth <= 768) {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
+        try {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                
+                if (sidebar) {
+                    sidebar.classList.remove('mobile-open');
+                }
+                
+                if (overlay) {
+                    overlay.classList.remove('active');
+                }
+                
+                document.body.style.overflow = '';
+                this.sidebarCollapsed = true;
+                localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
+            }
+        } catch (error) {
+            console.error('Error in closeMobileSidebar:', error);
+            this.recoverFromSidebarError();
+        }
+    }
+    
+    recoverFromSidebarError() {
+        // Emergency recovery if sidebar gets stuck
+        try {
+            // Reset sidebar state
+            this.sidebarCollapsed = true;
+            localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
             
-            sidebar.classList.remove('mobile-open');
+            // Reset body scroll
+            document.body.style.overflow = '';
+            
+            // Remove overlay if exists
+            const overlay = document.querySelector('.sidebar-overlay');
             if (overlay) {
                 overlay.classList.remove('active');
             }
             
-            document.body.style.overflow = '';
-            this.sidebarCollapsed = true;
-            localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
+            // Reset sidebar if exists
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.remove('mobile-open');
+            }
+            
+            // Add emergency reset class to body
+            document.body.classList.add('emergency-reset');
+            
+            // Show hint to user
+            this.showEmergencyHint();
+            
+            // Remove emergency class after a delay
+            setTimeout(() => {
+                document.body.classList.remove('emergency-reset');
+            }, 1000);
+        } catch (finalError) {
+            console.error('Critical error in sidebar recovery:', finalError);
         }
+    }
+    
+    showEmergencyHint() {
+        // Create hint element if it doesn't exist
+        let hintElement = document.querySelector('.double-tap-escape-hint');
+        if (!hintElement) {
+            hintElement = document.createElement('div');
+            hintElement.className = 'double-tap-escape-hint';
+            hintElement.innerHTML = '<i class="fas fa-info-circle"></i> Double-tap ESC anytime to reset the interface';
+            document.body.appendChild(hintElement);
+        }
+        
+        // Show hint
+        setTimeout(() => {
+            hintElement.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                hintElement.classList.remove('show');
+            }, 3000);
+        }, 300);
     }
 
     triggerSidebarAnimation() {
@@ -358,9 +439,17 @@ class DashboardManager {
     handleKeyboardShortcuts(e) {
         // ESC to close modals
         if (e.key === 'Escape') {
+            // First try to close any active modal
             const activeModal = document.querySelector('.modal-overlay.active');
             if (activeModal) {
                 this.closeModal(activeModal);
+                return; // Exit to prevent also closing sidebar
+            }
+            
+            // Then try to close mobile sidebar if open
+            if (window.innerWidth <= 768 && !this.sidebarCollapsed) {
+                this.closeMobileSidebar();
+                return;
             }
         }
         
@@ -885,4 +974,96 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleNotifications = () => window.dashboardManager.toggleNotifications();
     window.toggleUserMenu = () => window.dashboardManager.toggleUserMenu();
     window.markAsRead = (id) => window.dashboardManager.markAsRead(id);
+    
+    // Add emergency escape key - double tap Escape to close sidebar and reset UI
+    let escapeKeyPressTime = 0;
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const currentTime = new Date().getTime();
+            if (currentTime - escapeKeyPressTime < 500) {
+                // Double tap detected - emergency reset
+                try {
+                    // Add emergency reset class
+                    document.body.classList.add('emergency-reset');
+                    
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.querySelector('.sidebar-overlay');
+                    
+                    // Reset sidebar
+                    if (sidebar) {
+                        sidebar.classList.remove('mobile-open');
+                        sidebar.classList.remove('active');
+                    }
+                    
+                    // Remove overlay
+                    if (overlay) {
+                        overlay.classList.remove('active');
+                        overlay.style.display = 'none';
+                    }
+                    
+                    // Reset body
+                    document.body.style.overflow = '';
+                    
+                    // Reset modals
+                    document.querySelectorAll('.modal-overlay').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                    
+                    // Show hint
+                    if (window.dashboardManager) {
+                        window.dashboardManager.showEmergencyHint();
+                    }
+                    
+                    console.log('Emergency UI reset performed');
+                    
+                    // Remove emergency class after a delay
+                    setTimeout(() => {
+                        document.body.classList.remove('emergency-reset');
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error during emergency reset:', error);
+                    // Last resort - reload the page if all else fails
+                    if (confirm('Interface appears to be stuck. Reload the page?')) {
+                        window.location.reload();
+                    }
+                }
+            }
+            escapeKeyPressTime = currentTime;
+        }
+    });
+    
+    // Prevent horizontal scrolling on mobile by handling touch events
+    if ('ontouchstart' in window) {
+        document.addEventListener('touchmove', function(e) {
+            // If we're not in a scrollable element, prevent horizontal scrolling
+            if (!isInScrollableArea(e.target)) {
+                // If the movement is more horizontal than vertical
+                if (Math.abs(e.touches[0].clientX - lastTouchX) > 
+                    Math.abs(e.touches[0].clientY - lastTouchY)) {
+                    e.preventDefault();
+                }
+            }
+        }, { passive: false });
+        
+        // Track touch start positions
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+        document.addEventListener('touchstart', function(e) {
+            lastTouchX = e.touches[0].clientX;
+            lastTouchY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        // Function to check if we're in a horizontally scrollable area
+        function isInScrollableArea(element) {
+            // Check if we're in a table or data-table-container which should scroll horizontally
+            while (element && element !== document.body) {
+                if (element.classList.contains('data-table-container') || 
+                    element.tagName === 'TABLE') {
+                    return true;
+                }
+                element = element.parentElement;
+            }
+            return false;
+        }
+    }
 });

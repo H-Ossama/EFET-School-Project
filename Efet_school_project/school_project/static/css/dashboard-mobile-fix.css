@@ -1,0 +1,467 @@
+/* Dashboard Mobile Fixes CSS */
+
+/* Prevent horizontal scrolling on mobile */
+html, body {
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Mobile-first Sidebar Adjustments */
+@media (max-width: 768px) {
+    /* Sidebar sizing and positioning */
+    .sidebar {
+        width: 280px !important; /* Reduce width slightly */
+        max-width: 85vw !important; /* Prevent sidebar from being too wide */
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        transform: translateX(-100%) !important;
+        z-index: 1010 !important; /* Higher z-index to ensure it appears above other content */
+        transition: transform 0.3s ease-in-out !important;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2) !important;
+        height: 100% !important;
+        overflow-y: auto;
+    }
+
+    /* Show sidebar when mobile-open class is applied */
+    .sidebar.mobile-open {
+        transform: translateX(0) !important;
+    }
+
+    /* Sidebar Header - Show it on mobile */
+    .sidebar-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Sidebar Footer - Show on mobile for better spacing */
+    .sidebar-footer {
+        display: block !important;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: auto;
+    }
+
+    /* User profile styling */
+    .user-profile {
+        display: flex !important;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .user-avatar {
+        display: flex !important;
+    }
+
+    .user-info {
+        display: flex !important;
+        flex-direction: column;
+    }
+
+    .user-name, .user-role {
+        display: block !important;
+    }
+
+    /* Overlay styling */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1005;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(2px);
+        cursor: pointer;
+        /* Ensure overlay is clickable and captures all events */
+        pointer-events: none;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    /* Main content adjustments */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        transition: all 0.3s ease;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        padding-top: 0 !important;
+        position: relative;
+    }
+
+    /* Content padding adjustments */
+    .content-section {
+        padding: 1rem !important;
+        overflow-x: hidden;
+        margin-bottom: 2rem !important;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Dashboard wrapper container */
+    .dashboard-wrapper,
+    #dashboard {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Ensure proper spacing for content and scrolling */
+    .content-section.active {
+        display: block;
+        min-height: calc(100vh - var(--header-height) - 1rem);
+    }
+    
+    /* Fix header positioning */
+    .top-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--bg-primary);
+        box-shadow: var(--shadow-sm);
+        padding: 0.75rem 1rem !important;
+        height: auto !important;
+        min-height: var(--header-height);
+    }
+    
+    /* Improved header layout for mobile */
+    .header-left {
+        gap: 0.75rem !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+    }
+    
+    /* Better positioned action buttons */
+    .header-actions {
+        gap: 0.25rem !important;
+    }
+    
+    .action-btn {
+        padding: 0.5rem !important;
+    }
+
+    /* Top header adjustments */
+    .top-header {
+        padding: 0 1rem !important;
+    }
+
+    .page-title {
+        font-size: 1.25rem !important;
+    }
+
+    /* Grid and card adjustments */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .majors-grid,
+    .subjects-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Card styling improvements */
+    .stat-card, 
+    .dashboard-card, 
+    .major-card, 
+    .subject-card {
+        padding: 1rem !important;
+        margin-bottom: 0.75rem !important;
+        border-radius: var(--radius-lg) !important;
+    }
+    
+    .card-header {
+        padding-bottom: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .card-header h3 {
+        font-size: 1rem !important;
+    }
+    
+    /* Stat card specific adjustments */
+    .stat-card {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+    
+    .stat-icon {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1rem !important;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem !important;
+        margin-bottom: 0 !important;
+    }
+    
+    .stat-content p {
+        font-size: 0.875rem !important;
+    }
+
+    /* Section header adjustments */
+    .section-header {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        align-items: stretch !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .section-header h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    .section-header .btn-primary {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    /* Table controls adjustments */
+    .table-controls {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        padding: 1rem !important;
+    }
+    
+    .search-box {
+        width: 100% !important;
+    }
+    
+    .table-actions {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: stretch !important;
+    }
+    
+    .table-actions .btn-secondary {
+        flex: 1 !important;
+        justify-content: center !important;
+    }
+
+    /* Mobile table improvements */
+    .data-table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        margin: 0 !important;
+        border-radius: var(--radius-lg) !important;
+    }
+
+    /* Fix horizontal scrolling issues */
+    .modern-table {
+        min-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    
+    /* Smooth scrolling for all elements */
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Table styling improvements */
+    .modern-table table {
+        width: 100% !important;
+        min-width: 650px !important; /* Ensure minimum width for readability */
+    }
+    
+    .modern-table th {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .modern-table td {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.875rem !important;
+        white-space: nowrap !important;
+    }
+    
+    /* User cell in tables */
+    .user-cell {
+        gap: 0.5rem !important;
+    }
+    
+    .user-avatar {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .user-details {
+        max-width: 120px !important;
+        overflow: hidden !important;
+    }
+    
+    .user-name {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 100% !important;
+        font-size: 0.875rem !important;
+    }
+    
+    .user-id {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Action buttons in tables */
+    .action-buttons {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+        justify-content: flex-start !important;
+    }
+    
+    .action-buttons .btn-icon {
+        padding: 0.5rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Table scroll indicators */
+    .data-table-container::after,
+    .data-table-container::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 15px !important;
+        pointer-events: none !important;
+        z-index: 5 !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+    }
+    
+    .data-table-container::after {
+        right: 0 !important;
+        background: linear-gradient(to left, rgba(255,255,255,0.9) 0%, transparent 100%) !important;
+    }
+    
+    .data-table-container::before {
+        left: 0 !important;
+        background: linear-gradient(to right, rgba(255,255,255,0.9) 0%, transparent 100%) !important;
+    }
+    
+    .data-table-container.scrollable-right::after {
+        opacity: 1 !important;
+    }
+    
+    .data-table-container.scrolled-left::before {
+        opacity: 1 !important;
+    }
+
+    /* Improved touch targets for mobile */
+    .btn,
+    .menu-link,
+    .btn-icon,
+    input,
+    select,
+    textarea {
+        min-height: 44px !important;
+        touch-action: manipulation;
+    }
+
+    /* Modal improvements for mobile */
+    .modal-overlay {
+        padding: 1rem !important;
+    }
+
+    .modal-container {
+        width: 100% !important;
+        max-height: calc(100vh - 2rem) !important;
+    }
+
+    /* Adjust for mobile notch areas */
+    @supports (padding-top: env(safe-area-inset-top)) {
+        .sidebar {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .top-header {
+            padding-top: max(0.5rem, env(safe-area-inset-top));
+        }
+    }
+}
+
+/* Emergency escape rules for overlay and sidebar issues */
+.emergency-reset .sidebar-overlay {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.emergency-reset .sidebar {
+    transform: translateX(-100%) !important;
+}
+
+.emergency-reset {
+    overflow: auto !important;
+}
+
+/* Double-tap class for showing a hint to users */
+.double-tap-escape-hint {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+
+.double-tap-escape-hint.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Make sure sidebar toggle works correctly */
+@media (max-width: 768px) {
+    /* Hide collapsed state control - we only use mobile-open for mobile */
+    .sidebar.collapsed {
+        width: 280px !important;
+        transform: translateX(-100%) !important;
+    }
+
+    /* But when it's open, it should show regardless of collapsed state */
+    .sidebar.mobile-open,
+    .sidebar.collapsed.mobile-open {
+        transform: translateX(0) !important;
+    }
+
+    /* Ensure content doesn't shift when sidebar opens */
+    .dashboard-wrapper.sidebar-collapsed .main-content {
+        margin-left: 0 !important;
+    }
+}

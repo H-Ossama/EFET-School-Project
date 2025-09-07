@@ -5,10 +5,15 @@
 {% block head %}
 <!-- Dashboard Specific Styles -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<!-- Mobile Dashboard Fixes -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-mobile-fix.css') }}">
 {% endblock head %}
 
 {% block content %}
 <div class="dashboard-wrapper" id="dashboard">
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
     <!-- Sidebar Navigation -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -18,8 +23,8 @@
                 </div>
                 <h2 class="logo-text">EFET</h2>
             </div>
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
+            <button class="sidebar-toggle" onclick="closeMobileSidebar()">
+                <i class="fas fa-times"></i>
             </button>
         </div>
         
@@ -118,7 +123,7 @@
         <!-- Top Header -->
         <header class="top-header">
             <div class="header-left">
-                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
                     <i class="fas fa-bars"></i>
                 </button>
                 <h1 class="page-title">Tableau de Bord Administrateur</h1>
@@ -973,15 +978,71 @@ let currentSection = 'dashboard-overview';
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const dashboard = document.getElementById('dashboard');
+    const overlay = document.getElementById('sidebarOverlay');
     
-    sidebarCollapsed = !sidebarCollapsed;
-    
-    if (sidebarCollapsed) {
-        sidebar.classList.add('collapsed');
-        dashboard.classList.add('sidebar-collapsed');
+    // Different behavior for mobile vs desktop
+    if (window.innerWidth <= 768) {
+        // Mobile behavior
+        if (sidebar.classList.contains('mobile-open')) {
+            // If already open, close it
+            closeMobileSidebar();
+        } else {
+            // Open the sidebar
+            sidebar.classList.add('mobile-open');
+            // Prevent body scrolling when sidebar is open
+            document.body.style.overflow = 'hidden';
+            // Show overlay
+            if (overlay) overlay.classList.add('active');
+        }
     } else {
-        sidebar.classList.remove('collapsed');
-        dashboard.classList.remove('sidebar-collapsed');
+        // Desktop behavior
+        sidebarCollapsed = !sidebarCollapsed;
+        
+        if (sidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+            dashboard.classList.add('sidebar-collapsed');
+        } else {
+            sidebar.classList.remove('collapsed');
+            dashboard.classList.remove('sidebar-collapsed');
+        }
+    }
+}
+
+// Function to specifically close mobile sidebar
+function closeMobileSidebar() {
+    try {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        // Remove mobile-open class from sidebar
+        if (sidebar) sidebar.classList.remove('mobile-open');
+        
+        // Remove active class from overlay
+        if (overlay) {
+            overlay.classList.remove('active');
+            // Extra safety: make sure overlay doesn't block interactions
+            overlay.style.pointerEvents = 'none';
+        }
+        
+        // Re-enable body scrolling
+        document.body.style.overflow = '';
+        
+        // Ensure other potentially blocking elements are also reset
+        document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+            modal.classList.remove('active');
+        });
+        
+        // Extra safety: add emergency-reset class briefly
+        document.body.classList.add('emergency-reset');
+        setTimeout(() => {
+            document.body.classList.remove('emergency-reset');
+        }, 500);
+    } catch (error) {
+        console.error('Error in closeMobileSidebar:', error);
+        // Last resort - reload if everything else fails
+        if (confirm('The interface appears to be stuck. Reload the page?')) {
+            window.location.reload();
+        }
     }
 }
 
@@ -1289,19 +1350,42 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.classList.remove('active');
             document.body.style.overflow = '';
         }
+        
+        // Allow clicking the sidebar overlay to close the sidebar
+        if (e.target.id === 'sidebarOverlay') {
+            closeMobileSidebar();
+        }
     });
     
     // Initialize responsive behavior
     function handleResize() {
         if (window.innerWidth <= 768) {
-            if (!sidebarCollapsed) {
-                toggleSidebar();
-            }
+            // On mobile, ensure sidebar is closed initially
+            closeMobileSidebar();
+            
+            // Initialize table scroll indicators
+            setupTableScrollIndicators();
         }
     }
     
     window.addEventListener('resize', handleResize);
     handleResize(); // Call on load
+    
+    // Add double-tap to escape functionality for mobile (safety feature)
+    let lastTap = 0;
+    document.addEventListener('touchend', function(e) {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 500 && tapLength > 0) {
+            // Double tap detected
+            closeMobileSidebar();
+            document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            document.body.style.overflow = '';
+        }
+        lastTap = currentTime;
+    });
     
     // Add animation classes
     const cards = document.querySelectorAll('.stat-card, .dashboard-card, .major-card, .subject-card');
@@ -1309,6 +1393,40 @@ document.addEventListener('DOMContentLoaded', function() {
         card.style.animationDelay = `${index * 0.1}s`;
         card.classList.add('fade-in');
     });
+    
+    // Setup table scroll indicators
+    function setupTableScrollIndicators() {
+        const tableContainers = document.querySelectorAll('.data-table-container');
+        tableContainers.forEach(container => {
+            // Check if container is scrollable
+            if (container.scrollWidth > container.clientWidth) {
+                container.classList.add('scrollable-right');
+                
+                // Add scroll event listener
+                container.addEventListener('scroll', function() {
+                    const scrollLeft = this.scrollLeft;
+                    const maxScroll = this.scrollWidth - this.clientWidth;
+                    
+                    // Handle left indicator
+                    if (scrollLeft > 10) {
+                        this.classList.add('scrolled-left');
+                    } else {
+                        this.classList.remove('scrolled-left');
+                    }
+                    
+                    // Handle right indicator
+                    if (scrollLeft < maxScroll - 10) {
+                        this.classList.add('scrollable-right');
+                    } else {
+                        this.classList.remove('scrollable-right');
+                    }
+                });
+            }
+        });
+    }
+    
+    // Call setupTableScrollIndicators after a short delay to ensure DOM is fully loaded
+    setTimeout(setupTableScrollIndicators, 500);
 });
 
 // Animation on scroll
