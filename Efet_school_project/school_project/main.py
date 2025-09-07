@@ -40,6 +40,11 @@ def forbidden():
 def index():
     return render_template('index.html')
 
+@main.route('/health') # health check for Railway
+def health():
+    """Health check endpoint for Railway deployment"""
+    return {'status': 'healthy', 'service': 'EFET School Management System'}, 200
+
 @main.route('/about_us') # about us page
 def about_us():
     return render_template('about_us.html')

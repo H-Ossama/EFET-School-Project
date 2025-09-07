@@ -1,1 +1,1 @@
-web: cd Efet_school_project && gunicorn -w 4 -b 0.0.0.0:$PORT app:app
+web: cd Efet_school_project && gunicorn --bind 0.0.0.0:$PORT --timeout 120 --workers 1 wsgi:app

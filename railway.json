@@ -3,10 +3,10 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd Efet_school_project && gunicorn -w 4 -b 0.0.0.0:$PORT app:app",
-    "healthcheckPath": "/",
-    "healthcheckTimeout": 100,
+    "startCommand": "cd Efet_school_project && gunicorn --bind 0.0.0.0:$PORT --timeout 120 --workers 1 wsgi:app",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10
+    "restartPolicyMaxRetries": 3
   }
 }
