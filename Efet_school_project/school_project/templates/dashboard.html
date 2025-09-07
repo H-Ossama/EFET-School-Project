@@ -70,7 +70,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="#notifications-section" onclick="showSection('notifications-section')" data-tooltip="Notifications">
+                        <a href="{{ url_for('main.admin_notifications') }}" data-tooltip="Notifications">
                             <i class="fas fa-bell"></i>
                             <span>Notifications</span>
                             {% if notifications %}
@@ -117,12 +117,12 @@
             </div>
             <div class="header-right">
                 <div class="header-actions">
-                    <button class="action-btn" onclick="toggleNotifications()">
+                    <a href="{{ url_for('main.admin_notifications') }}" class="action-btn" style="text-decoration:none; color:inherit;">
                         <i class="fas fa-bell"></i>
                         {% if notifications %}
                         <span class="notification-dot">{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</span>
                         {% endif %}
-                    </button>
+                    </a>
                     <button class="action-btn" onclick="toggleUserMenu()">
                         <i class="fas fa-user-circle"></i>
                     </button>
@@ -237,13 +237,13 @@
                         <span class="notification-count">{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</span>
                     </div>
                     <div class="card-content">
-                        <div class="notification-alert">
+                        <a href="{{ url_for('main.admin_notifications') }}" class="notification-alert" style="display:block; text-decoration:none; color:inherit;">
                             <i class="fas fa-bell"></i>
                             <div>
                                 <p><strong>{{ notifications|selectattr("is_read", "equalto", false)|list|length }}</strong> nouvelles notifications</p>
-                                <a href="{{ url_for('main.admin_notifications') }}">Voir toutes →</a>
+                                <span style="color:#3b82f6;">Voir toutes →</span>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
                 {% endif %}
@@ -538,7 +538,7 @@
             {% if notifications %}
             <div class="notifications-container">
                 {% for notification in notifications %}
-                <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                <a href="{{ url_for('main.admin_notifications') }}" class="notification-card {% if not notification.is_read %}unread{% endif %}">
                     <div class="notification-icon">
                         <i class="fas fa-bell"></i>
                     </div>
@@ -548,11 +548,11 @@
                         <span class="notification-time">{{ notification.created_at or 'Maintenant' }}</span>
                     </div>
                     {% if not notification.is_read %}
-                    <button class="mark-read-btn" onclick="markAsRead({{ notification.id }})">
+                    <button class="mark-read-btn" onclick="event.stopPropagation(); markAsRead({{ notification.id }})">
                         <i class="fas fa-check"></i>
                     </button>
                     {% endif %}
-                </div>
+                </a>
                 {% endfor %}
             </div>
             {% else %}

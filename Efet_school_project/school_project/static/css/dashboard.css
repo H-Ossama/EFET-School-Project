@@ -825,6 +825,14 @@ body {
     padding: 1rem;
     background: #fffbeb;
     border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.notification-alert:hover {
+    background: #fff7cd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .notification-alert i {
@@ -837,14 +845,11 @@ body {
     font-weight: 500;
 }
 
-.notification-alert a {
+.notification-alert a,
+.notification-alert span {
     color: var(--warning-color);
     text-decoration: none;
     font-weight: 500;
-}
-
-.notification-alert a:hover {
-    text-decoration: underline;
 }
 
 /* Data Table Container */

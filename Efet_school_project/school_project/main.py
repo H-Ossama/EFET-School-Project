@@ -763,7 +763,10 @@ def admin_notifications():
     
     # Fetch users for each notification and attach them to the notification objects
     for notification in notifications:
-        notification.user = User.query.get(notification.user_id)
+        user = User.query.get(notification.user_id)
+        # Only set the user if it exists
+        if user:
+            notification.user = user
     
     return render_template('admin_notifications.html', notifications=notifications)
 
