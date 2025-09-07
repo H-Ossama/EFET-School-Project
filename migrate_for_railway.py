@@ -7,17 +7,67 @@ This script initializes the PostgreSQL database with all required tables
 import os
 import sys
 
-# Add the school_project directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'Efet_school_project', 'school_project'))
+# Add the application paths
+current_dir = os.path.dirname(os.path.abspath(__file__))
+app_dir = os.path.join(current_dir, 'Efet_school_project')
+school_project_dir = os.path.join(app_dir, 'school_project')
 
-from school_project import create_app, db
-from school_project.models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
-from werkzeug.security import generate_password_hash
-from datetime import datetime
+# Add paths to Python path
+sys.path.insert(0, current_dir)
+sys.path.insert(0, app_dir)
+sys.path.insert(0, school_project_dir)
+
+try:
+    from Efet_school_project.school_project import create_app, db
+    from Efet_school_project.school_project.models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
+    from werkzeug.security import generate_password_hash
+    from datetime import datetime
+except ImportError as e:
+    print(f"Import error: {e}")
+    print("Trying alternative import paths...")
+    try:
+        os.chdir(app_dir)  # Change to app directory
+        from school_project import create_app, db
+        from school_project.models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
+        from werkzeug.security import generate_password_hash
+        from datetime import datetime
+    except ImportError as e2:
+        print(f"Secondary import error: {e2}")
+        sys.exit(1)
 
 def create_admin_user():
     """Create a default admin user if none exists"""
-    admin = User.query.filter_by(role='admin').first()
+    # Create custom admin account
+    custom_admin = User.query.filter_by(email='ossamahattan@gmail.com').first()
+    if not custom_admin:
+        custom_admin_user = User(
+            email='ossamahattan@gmail.com',
+            name='Ossama Hattan',
+            password=generate_password_hash('1324Haddadi@', method='pbkdf2:sha256'),
+            role='admin',
+            status='approved',
+            age=30,
+            address='EFET School',
+            registration='ADMIN001',
+            gender='Male',
+            register_date=datetime.now().date()
+        )
+        db.session.add(custom_admin_user)
+        db.session.commit()
+        print("✅ Custom admin user created successfully!")
+        print("   Email: ossamahattan@gmail.com")
+    else:
+        # Ensure the user has admin role
+        if custom_admin.role != 'admin':
+            custom_admin.role = 'admin'
+            custom_admin.status = 'approved'
+            db.session.commit()
+            print("✅ Updated existing user to admin role")
+        else:
+            print("✅ Custom admin user already exists")
+    
+    # Also create default admin as backup
+    admin = User.query.filter_by(email='admin@efet.edu').first()
     if not admin:
         admin_user = User(
             email='admin@efet.edu',
@@ -33,12 +83,12 @@ def create_admin_user():
         )
         db.session.add(admin_user)
         db.session.commit()
-        print("✅ Admin user created successfully!")
+        print("✅ Default admin user created successfully!")
         print("   Email: admin@efet.edu")
         print("   Password: admin123")
         print("   ⚠️  Please change the password after first login!")
     else:
-        print("✅ Admin user already exists")
+        print("✅ Default admin user already exists")
 
 def create_sample_majors():
     """Create sample majors if none exist"""

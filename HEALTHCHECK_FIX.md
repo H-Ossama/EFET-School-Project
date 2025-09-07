@@ -52,7 +52,8 @@ git push origin main
 ### 4. **Verify Deployment**
 - Visit your Railway app URL
 - Check `/health` endpoint returns healthy status
-- Login with admin credentials: `admin@efet.edu` / `admin123`
+- Login with custom admin credentials: `ossamahattan@gmail.com` / `******`
+- Alternatively, login with backup admin: `admin@efet.edu` / `admin123`
 
 ## 🔧 **Key Changes Made**
 
@@ -70,6 +71,35 @@ git push origin main
 2. **Verify Environment Variables**: Ensure `DATABASE_URL` is set by Railway PostgreSQL service
 3. **Database Issues**: Railway might need time to provision PostgreSQL - wait 2-3 minutes
 4. **Port Binding**: The app now properly binds to Railway's `$PORT` variable
+
+## 🔐 **Login/Signup 404 Issues Fixed**
+
+If you were experiencing 404 errors on login and signup pages or seeing this error:
+```
+Login error: The current Flask app is not registered with this 'SQLAlchemy' instance. 
+Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+```
+
+The following fixes have been applied:
+
+1. **Fixed relative imports** in auth.py, models.py, and other files
+2. **Updated import statements** to use proper package paths
+3. **Corrected Python path setup** in wsgi.py and app.py
+4. **Ensured proper SQLAlchemy initialization**
+5. **Added custom admin account** creation during startup
+
+If you still encounter issues with login/signup:
+
+1. Run the admin creation script:
+```bash
+cd /path/to/EFET-School-Project
+python create_admin_user.py
+```
+
+2. Check the application logs for specific error messages
+3. Try using both admin accounts to login:
+   - Custom admin: `ossamahattan@gmail.com` / `1324Haddadi@`
+   - Backup admin: `admin@efet.edu` / `admin123`
 
 ## 📋 **Expected Behavior**
 

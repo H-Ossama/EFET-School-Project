@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, flash, g, request, redirect, url_for
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from __init__ import create_app
-from models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
+from school_project import create_app
+from school_project.models import User, Payment, Grade, Major, Message, Absence, Subject, AdminNotification, EmailLog
 import sqlite3
-from __init__ import db
+from school_project import db
 
 
 def connect_db():

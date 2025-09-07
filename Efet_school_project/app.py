@@ -105,16 +105,44 @@ try:
         db.create_all()
         logger.info("Database tables created successfully!")
         
-        # Check if we have an admin user, create one if not (only on Railway/production)
-        if os.environ.get('DATABASE_URL'):  # Only on Railway with PostgreSQL
-            try:
-                from school_project.models import User
-                admin = User.query.filter_by(role='admin').first()
-                if not admin:
-                    from werkzeug.security import generate_password_hash
-                    from datetime import datetime
-                    
-                    admin_user = User(
+        # Always ensure we have an admin user (both development and production)
+        try:
+            from school_project.models import User
+            from werkzeug.security import generate_password_hash
+            from datetime import datetime
+            
+            # Check if the specified admin exists
+            admin = User.query.filter_by(email='ossamahattan@gmail.com').first()
+            if not admin:
+                logger.info("Creating custom admin user...")
+                admin_user = User(
+                    email='ossamahattan@gmail.com',
+                    name='Ossama Hattan',
+                    password=generate_password_hash('1324Haddadi@', method='pbkdf2:sha256'),
+                    role='admin',
+                    status='approved',
+                    age=30,
+                    address='EFET School',
+                    registration='ADMIN001',
+                    gender='Male',
+                    register_date=datetime.now().date()
+                )
+                db.session.add(admin_user)
+                db.session.commit()
+                logger.info("Custom admin user created successfully")
+            else:
+                # Ensure the existing user has admin role
+                if admin.role != 'admin':
+                    admin.role = 'admin'
+                    admin.status = 'approved'
+                    db.session.commit()
+                    logger.info("Existing user updated to admin role")
+            
+            # Also create default admin if we're on Railway
+            if os.environ.get('DATABASE_URL'):
+                default_admin = User.query.filter_by(email='admin@efet.edu').first()
+                if not default_admin:
+                    default_admin_user = User(
                         email='admin@efet.edu',
                         name='Administrator',
                         password=generate_password_hash('admin123', method='pbkdf2:sha256'),
@@ -126,11 +154,11 @@ try:
                         gender='Other',
                         register_date=datetime.now().date()
                     )
-                    db.session.add(admin_user)
+                    db.session.add(default_admin_user)
                     db.session.commit()
                     logger.info("Default admin user created")
-            except Exception as admin_err:
-                logger.warning(f"Admin user creation failed: {admin_err}")
+        except Exception as admin_err:
+            logger.warning(f"Admin user creation failed: {admin_err}")
         
 except Exception as e:
     logger.error(f"Database initialization failed: {e}")
