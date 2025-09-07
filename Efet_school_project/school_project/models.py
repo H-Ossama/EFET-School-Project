@@ -1,4 +1,12 @@
 from flask_login import UserMixin
+from flask_sqlalchemy import SQLAlchemy
+
+# Import db - this will work when called from within app context
+def get_db():
+    from flask import current_app
+    return current_app.extensions['sqlalchemy'].db
+
+# Import the db instance directly - this should work now
 from __init__ import db
 
 class User(UserMixin, db.Model):

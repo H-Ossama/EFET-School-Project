@@ -3,9 +3,8 @@
 ####################################################################
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User
 from flask_login import login_user, logout_user, login_required, current_user
-from __init__ import db
+from flask_sqlalchemy import SQLAlchemy
 
 
 ####################################################################
@@ -26,6 +25,9 @@ def signup(): # define the sign up function
         return render_template('signup.html')
     else: # if the request is POST, then we check if the email
           # doesn't already exist and then we save data
+        from models import User, AdminNotification
+        from __init__ import db
+        
         try:
             email = request.form.get('email')
             name = request.form.get('name')
@@ -68,7 +70,6 @@ def signup(): # define the sign up function
             
             # Create an admin notification for new registration
             try:
-                from models import AdminNotification
                 notification = AdminNotification(
                     user_id=new_user.id,
                     notification_type='new_registration',
@@ -97,6 +98,7 @@ def login(): # define login page function
         return render_template('login.html')
     else: # if the request is POST then we check if the user exist
           # and with the right password
+        from models import User
         try:
             email = request.form.get('email')
             password = request.form.get('password')
